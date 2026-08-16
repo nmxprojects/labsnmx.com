@@ -1,95 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMX Labs — Designed to perform.</title>
+<meta name="description" content="NMX Labs — a creative & performance marketing studio in Gurugram. Meta Ads, brand design and content systems for teams that measure everything.">
 
-    <title>NMX Labs — Designed to Perform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+  :root{
+    --navy-950:#070c2c;
+    --navy-900:#0b1450;
+    --navy-800:#141d63;
+    --navy-line:rgba(140,151,206,0.18);
+    --ink:#eef0fb;
+    --ink-muted:#8c97ce;
+    --orange-500:#ff5a2b;
+    --orange-300:#ffb27a;
+    --cream:#fff3e6;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f5f5f3;
-            color: #111;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+  *{ margin:0; padding:0; box-sizing:border-box; }
 
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            text-align: center;
-        }
+  html{ background:var(--navy-950); }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 80px;
-        }
+  body{
+    min-height:100vh;
+    background:var(--navy-950);
+    color:var(--ink);
+    font-family:'Inter', Helvetica, Arial, sans-serif;
+    overflow-x:hidden;
+    cursor:none;
+    position:relative;
+  }
 
-        .eyebrow {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 24px;
-            opacity: 0.5;
-        }
+  ::selection{ background:var(--orange-500); color:var(--navy-950); }
 
-        h1 {
-            font-size: clamp(60px, 10vw, 140px);
-            line-height: 0.9;
-            letter-spacing: -7px;
-            font-weight: 700;
-        }
+  a{ color:inherit; text-decoration:none; }
 
-        .description {
-            margin: 35px auto 0;
-            max-width: 500px;
-            font-size: 18px;
-            line-height: 1.5;
-            color: #555;
-        }
+  /* ---------- grain (matches the brand's textured gradient marks) ---------- */
+  .grain{
+    position:fixed; inset:0;
+    z-index:5;
+    pointer-events:none;
+    opacity:.05;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
-        .footer {
-            margin-top: 100px;
-            font-size: 13px;
-            color: #888;
-        }
-    </style>
+  /* ---------- ambient gradient blob that trails the cursor ---------- */
+  .blob{
+    position:fixed;
+    top:0; left:0;
+    width:640px; height:640px;
+    margin:-320px 0 0 -320px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--orange-500) 0%, rgba(255,90,43,0.55) 32%, rgba(255,90,43,0) 68%);
+    filter:blur(10px);
+    opacity:.55;
+    z-index:0;
+    pointer-events:none;
+    will-change:transform;
+  }
+
+  .no-js-blob{
+    position:fixed;
+    top:50%; left:78%;
+    width:900px; height:900px;
+    margin:-450px 0 0 -450px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,90,43,0.35) 0%, rgba(255,90,43,0) 65%);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* ---------- custom cursor ---------- */
+  .cursor-dot, .cursor-ring{
+    position:fixed;
+    top:0; left:0;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:60;
+    transform:translate(-50%,-50%);
+    will-change:transform;
+  }
+  .cursor-dot{
+    width:6px; height:6px;
+    background:var(--orange-500);
+  }
+  .cursor-ring{
+    width:34px; height:34px;
+    border:1px solid rgba(238,240,251,0.55);
+    transition:width .25s var(--ease), height .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+  }
+  .cursor-ring.is-active{
+    width:64px; height:64px;
+    background:rgba(255,90,43,0.12);
+    border-color:var(--orange-500);
+  }
+
+  body.touch{ cursor:auto; }
+  body.touch .cursor-dot, body.touch .cursor-ring{ display:none; }
+
+  /* ---------- layout ---------- */
+  .frame{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding:36px clamp(20px,5vw,64px) 32px;
+  }
+
+  header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+  }
+
+  .wordmark{
+    font-family:'Clash Display', 'Inter', sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:-0.02em;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .wordmark .dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--orange-500);
+    display:inline-block;
+  }
+
+  .status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--ink-muted);
+    border:1px solid var(--navy-line);
+    padding:7px 12px 7px 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.02);
+  }
+  .status .pulse{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:#4ee39a;
+    box-shadow:0 0 0 0 rgba(78,227,154,.6);
+    animation:pulse 2.2s ease-out infinite;
+    flex-shrink:0;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(78,227,154,.55); }
+    70%{ box-shadow:0 0 0 8px rgba(78,227,154,0); }
+    100%{ box-shadow:0 0 0 0 rgba(78,227,154,0); }
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:clamp(28px,4vw,40px);
+    max-width:1180px;
+    margin:0 auto;
+    width:100%;
+    padding:40px 0;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--orange-300);
+    overflow:hidden;
+  }
+  .eyebrow span{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(60%);
+    animation:rise .7s var(--ease) forwards;
+    animation-delay:.05s;
+  }
+
+  h1{
+    font-family:'Clash Display', 'Inter', sans-serif;
+    font-weight:700;
+    font-size:clamp(52px, 9.2vw, 132px);
+    line-height:.92;
+    letter-spacing:-0.03em;
+  }
+  h1 .line{
+    display:block;
+    overflow:hidden;
+  }
+  h1 .line span{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(105%);
+    animation:rise .85s var(--ease) forwards;
+  }
+  h1 .line:nth-child(1) span{ animation-delay:.12s; }
+  h1 .line:nth-child(2) span{ animation-delay:.24s; color:var(--orange-500); }
+
+  @keyframes rise{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .sub{
+    max-width:520px;
+    font-size:clamp(16px,1.6vw,19px);
+    line-height:1.55;
+    color:var(--ink-muted);
+    opacity:0;
+    animation:fadeUp .8s var(--ease) forwards;
+    animation-delay:.55s;
+  }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .ctas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    opacity:0;
+    animation:fadeUp .8s var(--ease) forwards;
+    animation-delay:.7s;
+  }
+
+  .btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:16px 26px;
+    border-radius:999px;
+    font-size:15px;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    will-change:transform;
+    transition:transform .35s var(--ease), background .3s ease, border-color .3s ease, color .3s ease;
+  }
+  .btn .arrow{
+    transition:transform .35s var(--ease);
+    font-size:16px;
+  }
+  .btn:hover .arrow{ transform:translate(3px,-3px); }
+
+  .btn-primary{
+    background:var(--orange-500);
+    color:var(--navy-950);
+    box-shadow:0 18px 40px -18px rgba(255,90,43,.65);
+  }
+  .btn-primary:hover{ background:var(--cream); }
+
+  .btn-ghost{
+    border:1px solid var(--navy-line);
+    color:var(--ink);
+    background:rgba(255,255,255,0.02);
+  }
+  .btn-ghost:hover{
+    border-color:var(--orange-500);
+    color:var(--orange-300);
+  }
+
+  footer{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding-top:28px;
+    border-top:1px solid var(--navy-line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-muted);
+    letter-spacing:.01em;
+  }
+  footer .coords{ opacity:.7; }
+  footer .links{ display:flex; gap:22px; flex-wrap:wrap; }
+  footer .links a{
+    position:relative;
+    color:var(--ink-muted);
+    transition:color .25s ease;
+  }
+  footer .links a::after{
+    content:'';
+    position:absolute;
+    left:0; right:0; bottom:-4px;
+    height:1px;
+    background:var(--orange-500);
+    transform:scaleX(0);
+    transform-origin:right;
+    transition:transform .35s var(--ease);
+  }
+  footer .links a:hover{ color:var(--ink); }
+  footer .links a:hover::after{ transform:scaleX(1); transform-origin:left; }
+
+  a:focus-visible, .btn:focus-visible{
+    outline:2px solid var(--orange-500);
+    outline-offset:3px;
+    border-radius:999px;
+  }
+
+  @media (max-width:640px){
+    .frame{ padding:24px 20px 24px; }
+    header{ flex-direction:column; gap:14px; }
+    main{ gap:26px; padding:24px 0; }
+    .ctas{ flex-direction:column; align-items:flex-start; }
+    .btn{ width:100%; justify-content:space-between; }
+    footer{ flex-direction:column; align-items:flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .blob{ display:none; }
+  }
+</style>
 </head>
-
 <body>
 
-    <main class="container">
+  <div class="grain"></div>
+  <div class="blob" id="blob"></div>
 
-        <div class="logo">nmx labs</div>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-        <div class="eyebrow">Creative & Marketing Studio</div>
+  <div class="frame">
+    <header>
+      <div class="wordmark"><span class="dot"></span>nmx labs</div>
+      <div class="status"><span class="pulse"></span>Onboarding new clients</div>
+    </header>
 
-        <h1>
-            Designed<br>
-            to perform.
-        </h1>
+    <main>
+      <p class="eyebrow"><span>Creative &amp; performance marketing studio</span></p>
 
-        <p class="description">
-            We're building something for brands that want to
-            look better, communicate better and perform better.
-        </p>
+      <h1>
+        <span class="line"><span>Designed</span></span>
+        <span class="line"><span>to perform.</span></span>
+      </h1>
 
-        <div class="footer">
-            Coming soon · nmxprojects@gmail.com
-        </div>
+      <p class="sub">
+        We're building the site — meanwhile, we're already running Meta Ads,
+        brand design and content systems for teams that measure everything
+        and waste nothing. Say hello, we reply fast.
+      </p>
 
+      <div class="ctas">
+        <a class="btn btn-primary magnetic" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">
+          Message on WhatsApp <span class="arrow">↗</span>
+        </a>
+        <a class="btn btn-ghost magnetic" href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">
+          @_nmxlabs on Instagram <span class="arrow">↗</span>
+        </a>
+      </div>
     </main>
+
+    <footer>
+      <span class="coords">28.4595° N, 77.0266° E — Gurugram, IN</span>
+      <div class="links">
+        <a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a>
+        <a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  (function(){
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    if (isTouch) {
+      document.body.classList.add('touch');
+    }
+
+    if (isTouch || reduceMotion) {
+      // static ambient glow instead of a live cursor-follow blob
+      var blob = document.getElementById('blob');
+      if (blob) blob.remove();
+      var staticGlow = document.createElement('div');
+      staticGlow.className = 'no-js-blob';
+      document.body.appendChild(staticGlow);
+      return; // skip custom cursor / magnetic JS entirely
+    }
+
+    var dot = document.getElementById('cursorDot');
+    var ring = document.getElementById('cursorRing');
+    var blob = document.getElementById('blob');
+
+    var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    var ringX = mouseX, ringY = mouseY;
+    var blobX = mouseX, blobY = mouseY;
+
+    window.addEventListener('mousemove', function(e){
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.transform = 'translate3d(' + mouseX + 'px,' + mouseY + 'px,0) translate(-50%,-50%)';
+    });
+
+    function lerp(a, b, n){ return a + (b - a) * n; }
+
+    function raf(){
+      ringX = lerp(ringX, mouseX, 0.18);
+      ringY = lerp(ringY, mouseY, 0.18);
+      ring.style.transform = 'translate3d(' + ringX + 'px,' + ringY + 'px,0) translate(-50%,-50%)';
+
+      blobX = lerp(blobX, mouseX, 0.07);
+      blobY = lerp(blobY, mouseY, 0.07);
+      blob.style.transform = 'translate3d(' + blobX + 'px,' + blobY + 'px,0)';
+
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // hover state on interactive elements
+    document.querySelectorAll('a, .btn, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ ring.classList.add('is-active'); });
+      el.addEventListener('mouseleave', function(){ ring.classList.remove('is-active'); });
+    });
+
+    // magnetic pull for CTA buttons
+    document.querySelectorAll('.magnetic').forEach(function(el){
+      var strength = 0.35;
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var relX = e.clientX - (r.left + r.width / 2);
+        var relY = e.clientY - (r.top + r.height / 2);
+        el.style.transform = 'translate(' + relX * strength + 'px,' + relY * strength + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.transform = 'translate(0,0)';
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>
