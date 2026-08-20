@@ -8,6 +8,29 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://labsnmx.com/privacy-policy.html">
 <meta name="theme-color" content="#faf9f6">
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NMX Labs">
+<meta property="og:title" content="Privacy Policy | NMX Labs">
+<meta property="og:description" content="How NMX Labs collects, uses, stores and protects your personal data.">
+<meta property="og:url" content="https://labsnmx.com/privacy-policy.html">
+
+<!-- Structured data: breadcrumb -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://labsnmx.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://labsnmx.com/privacy-policy.html" }
+  ]
+}
+</script>
+
 <style>
   :root{
     --bg:#faf9f6;
@@ -15,34 +38,138 @@
     --muted:#8c8a84;
     --line:rgba(17,17,16,0.1);
     --orange:#ff5a2b;
+    --ease:cubic-bezier(.16,1,.3,1);
     --font-body:'General Sans','Inter',system-ui,-apple-system,sans-serif;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
   html,body{ background:var(--bg); color:var(--ink); font-family:var(--font-body); }
-  body{ line-height:1.65; padding:60px 20px 80px; }
-  .wrap{ max-width:760px; margin:0 auto; }
+  body{ line-height:1.65; }
   a{ color:var(--orange); text-decoration:none; }
   a:hover{ text-decoration:underline; }
+
+  /* ---------- shared site nav (matches index.html) ---------- */
+  .site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:70;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:16px clamp(20px,5vw,64px);
+    background:rgba(250,249,246,0.85);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo{ display:flex; align-items:center; flex-shrink:0; font-weight:700; font-size:18px; letter-spacing:-0.02em; color:var(--ink); }
+  .nav-logo:hover{ text-decoration:none; }
+  .nav-links{ display:flex; gap:30px; }
+  .nav-links a{ font-size:13px; font-weight:600; letter-spacing:-0.01em; color:var(--ink); opacity:.72; transition:opacity .2s ease; }
+  .nav-links a:hover{ opacity:1; text-decoration:none; }
+  .nav-cta{
+    display:inline-flex; align-items:center; gap:8px; flex-shrink:0;
+    padding:10px 18px; border-radius:999px; font-size:13px; font-weight:600;
+    background:var(--ink); color:#fff;
+  }
+  .nav-cta:hover{ background:#000; text-decoration:none; }
+  .nav-cta svg{ width:15px; height:15px; }
+  .nav-book{ display:none; }
+  .nav-burger{
+    display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+    width:44px; height:44px; padding:0; background:#fff; border:1px solid var(--line);
+    border-radius:13px; cursor:pointer; flex-shrink:0;
+  }
+  .nav-burger span{ display:block; width:18px; height:2px; background:var(--ink); border-radius:2px; transition:transform .3s var(--ease), opacity .2s ease; }
+  .nav-burger.is-open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-burger.is-open span:nth-child(2){ opacity:0; }
+  .nav-burger.is-open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed; inset:0; z-index:65; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px;
+    opacity:0; pointer-events:none; transform:translateY(-14px);
+    transition:opacity .3s var(--ease), transform .3s var(--ease);
+  }
+  .mobile-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  .mobile-menu-links{ display:flex; flex-direction:column; align-items:center; gap:24px; }
+  .mobile-menu-links a{ font-size:28px; font-weight:700; letter-spacing:-0.02em; color:var(--ink); }
+  .mobile-menu-links a:hover{ text-decoration:none; }
+  .mobile-menu .nav-cta{ font-size:15px; padding:14px 24px; }
+  .mobile-menu-social{ display:flex; gap:22px; margin-top:6px; }
+  .mobile-menu-social a{ font-size:13px; color:var(--muted); }
+
+  @media (max-width:860px){
+    .site-nav{ padding:10px 14px; }
+    .nav-links, .nav-cta.desktop-cta{ display:none !important; }
+    .nav-burger{ display:flex; order:-1; }
+    .nav-logo{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-size:16px; }
+    .nav-book{
+      display:inline-flex; align-items:center; justify-content:center; margin-left:auto;
+      width:44px; height:44px; border-radius:13px; background:var(--ink); color:#fff; flex-shrink:0;
+    }
+    .nav-book svg{ width:20px; height:20px; }
+  }
+
+  /* ---------- page body ---------- */
+  .wrap{ max-width:760px; margin:0 auto; padding:120px 20px 40px; }
   .back{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin-bottom:32px; }
-  .back:hover{ color:var(--ink); }
+  .back:hover{ color:var(--ink); text-decoration:none; }
   h1{ font-size:clamp(30px,5vw,44px); font-weight:700; letter-spacing:-0.02em; line-height:1.1; margin-bottom:10px; }
   .updated{ font-size:13px; color:var(--muted); margin-bottom:36px; }
   h2{ font-size:20px; font-weight:700; letter-spacing:-0.01em; margin:36px 0 12px; }
   p,ul{ font-size:15px; color:#333; margin-bottom:14px; }
   ul{ padding-left:22px; }
   li{ margin-bottom:6px; }
-  .contact-box{
-    margin-top:40px;
-    padding:22px;
-    border:1px solid var(--line);
-    border-radius:14px;
-    background:#fff;
-  }
+  .contact-box{ margin-top:40px; padding:22px; border:1px solid var(--line); border-radius:14px; background:#fff; }
   .contact-box h3{ font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
-  footer{ margin-top:60px; padding-top:24px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); text-align:center; }
+
+  /* ---------- shared footer (matches index.html) ---------- */
+  footer{
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
+    max-width:1180px; margin:0 auto; padding:22px clamp(20px,5vw,64px) 40px;
+    border-top:1px solid var(--line); font-size:12px; color:var(--muted);
+  }
+  footer .links{ display:flex; gap:20px; flex-wrap:wrap; align-items:center; }
+  footer .links a{ display:inline-flex; align-items:center; gap:6px; color:var(--muted); transition:color .25s ease; }
+  footer .links a svg{ width:14px; height:14px; fill:var(--muted); transition:fill .25s ease; }
+  footer .links a:hover{ color:var(--ink); text-decoration:none; }
+  footer .links a:hover svg{ fill:var(--ink); }
+  @media (max-width:640px){ footer{ flex-direction:column; align-items:center; text-align:center; } footer .links{ justify-content:center; } }
 </style>
 </head>
 <body>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html" class="nav-logo">nmx labs</a>
+    <div class="nav-links">
+      <a href="index.html#mservices">Services</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#clients">Clients</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <a class="nav-cta desktop-cta" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M16 2v4M8 2v4M3 10h18"></path><path d="m9.5 15 1.8 1.8L15 13.2"></path></svg>
+      Book a 1:1 Session
+    </a>
+    <a class="nav-book" aria-label="Book a 1:1 session" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><path d="M16 2v4M8 2v4M3 10h18"></path><path d="m9.5 15 1.8 1.8L15 13.2"></path></svg>
+    </a>
+    <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-links">
+      <a href="index.html#mservices">Services</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#clients">Clients</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <a class="nav-cta" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 Session</a>
+    <div class="mobile-menu-social">
+      <a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+
   <div class="wrap">
     <a href="index.html" class="back">← Back to NMX Labs</a>
     <h1>Privacy Policy</h1>
@@ -106,8 +233,40 @@
       <p style="margin-bottom:4px;">Gurugram, Haryana, India</p>
       <p style="margin-bottom:0;">Email: <a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a></p>
     </div>
-
-    <footer>© 2026 NMX Labs. All rights reserved.</footer>
   </div>
+
+  <footer id="contact">
+    <span>HQ: Gurugram, India · Serving clients worldwide</span>
+    <div class="links">
+      <a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a>
+      <a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.5.5.9 1.11 1.15 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77A4.9 4.9 0 0 1 5.45.53C6.09.28 6.82.11 7.88.06 8.94.01 9.28 0 12 0Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4Zm5.2-8.4a1.17 1.17 0 1 1 0-2.34 1.17 1.17 0 0 1 0 2.34Z"/></svg>
+        Instagram
+      </a>
+      <a href="https://wa.me/918810438717" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.77.46 3.45 1.28 4.94L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.13-2.9-7C17.18 3.03 14.7 2 12.04 2Zm0 18.06h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.32a8.16 8.16 0 0 1-1.26-4.36c0-4.52 3.68-8.2 8.27-8.2 2.21 0 4.28.86 5.85 2.42a8.15 8.15 0 0 1 2.42 5.81c0 4.52-3.69 8.22-8.28 8.22Zm4.53-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.24-.64.81-.79.97-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.24-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.16 1.73 2.64 4.19 3.7.59.25 1.04.4 1.4.52.59.19 1.12.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28Z"/></svg>
+        WhatsApp
+      </a>
+      <a href="privacy-policy.html" style="opacity:.6;">Privacy Policy</a>
+    </div>
+  </footer>
+
+<script>
+  (function(){
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    function toggle(force){
+      var open = typeof force === 'boolean' ? force : !burger.classList.contains('is-open');
+      burger.classList.toggle('is-open', open);
+      menu.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    burger.addEventListener('click', function(){ toggle(); });
+    menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ toggle(false); }); });
+    window.addEventListener('keydown', function(e){ if (e.key === 'Escape') toggle(false); });
+  })();
+</script>
+
 </body>
 </html>
