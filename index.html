@@ -1342,6 +1342,96 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
   gtag('config', 'G-Q0TGPP1DYZ');
 </script>
 <!-- End Google tag -->
+<style id="px-redesign">
+/* ===========================================================
+   NMX LABS — homepage parallax layer
+   Uses only the visuals already on the page. No new imagery.
+
+   Elements that already own `transform` through a `forwards`
+   CSS animation (.sub, .ctas, .logo-img, h1 .word) are never
+   touched — the engine moves their parents instead, so the
+   entrance animations still play exactly as authored.
+   =========================================================== */
+
+.px-on{--px-ease:cubic-bezier(.16,1,.3,1)}
+
+/* ---------- 1 · hero: existing type, separated into depth planes ---------- */
+@media (min-width:861px){
+  .px-on .frame#top{
+    position:relative;
+    perspective:1200px;
+    perspective-origin:50% 42%;
+  }
+  .px-on .frame#top > .brandmark,
+  .px-on .frame#top > main{
+    position:relative;
+    z-index:2;
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  .px-on h1{transform-style:preserve-3d}
+  .px-on h1 .line{will-change:transform}
+  .px-on .glow{will-change:transform,opacity}
+}
+
+/* ---------- 2 · clients strip drifts against the scroll ---------- */
+.px-on .clients{overflow:hidden}
+.px-on .clients-inner{will-change:transform}
+
+/* ---------- 3 · services: the stack arrives from depth ---------- */
+@media (min-width:861px){
+  .px-on .services-section .stage{perspective:1300px;perspective-origin:50% 46%}
+  .px-on #cardStack{transform-style:preserve-3d;will-change:transform}
+  .px-on .stage-label{will-change:transform}
+}
+
+/* ---------- 4 · about: an oversized mark, drawn from the studio name ---------- */
+.px-on .about-section{position:relative;overflow:hidden}
+.px-mark{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  font-family:var(--font-display);
+  font-size:clamp(180px,30vw,460px);
+  font-weight:700;letter-spacing:-.06em;line-height:1;
+  color:var(--ink);opacity:.035;
+  pointer-events:none;user-select:none;z-index:0;
+  white-space:nowrap;will-change:transform;
+}
+.px-on .about-inner{position:relative;z-index:1}
+
+/* ---------- 5 · scroll reveals ---------- */
+.px-rise{
+  opacity:0;
+  transform:translate3d(0,32px,0);
+  transition:opacity .9s var(--px-ease), transform .9s var(--px-ease);
+  will-change:transform,opacity;
+}
+.px-rise.px-in{opacity:1;transform:none}
+.px-rise[data-px-delay="1"]{transition-delay:.07s}
+.px-rise[data-px-delay="2"]{transition-delay:.14s}
+.px-rise[data-px-delay="3"]{transition-delay:.21s}
+.px-rise[data-px-delay="4"]{transition-delay:.28s}
+.px-rise[data-px-delay="5"]{transition-delay:.35s}
+
+.px-line{position:relative}
+.px-line::before{
+  content:'';position:absolute;left:0;top:-26px;
+  width:100%;height:1px;background:var(--line);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 1.1s var(--px-ease);
+}
+.px-line.px-in::before{transform:scaleX(1)}
+
+.px-on .contact-card{will-change:transform}
+
+/* ---------- 6 · respect the user's settings ---------- */
+@media (prefers-reduced-motion:reduce){
+  .px-mark{display:none}
+  .px-rise{opacity:1!important;transform:none!important;transition:none!important}
+  .px-line::before{transform:scaleX(1)!important;transition:none!important}
+}
+
+</style>
 </head>
 <body>
 
@@ -1353,7 +1443,7 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
     <div class="nav-links">
       <a href="#services">Services</a>
       <a href="#about">About</a>
-      <a href="#clients">Clients</a>
+      <a href="/clients">Clients</a>
       <a href="#contact">Contact</a>
     </div>
     <a class="btn btn-primary nav-cta magnetic" data-pixel-event="contact" data-pixel-source="nav_book_1_1" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 Session</a>
@@ -1369,7 +1459,7 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
     <div class="mobile-menu-links">
       <a href="#mservices">Services</a>
       <a href="#about">About</a>
-      <a href="#clients">Clients</a>
+      <a href="/clients">Clients</a>
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </div>
@@ -1712,7 +1802,7 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
           <h4>Studio</h4>
           <ul>
             <li><a href="#about">About</a></li>
-            <li><a href="#clients">Clients</a></li>
+            <li><a href="/clients">Clients</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contact">Start a project</a></li>
             <li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li>
@@ -2403,5 +2493,175 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
   })();
 </script>
 
+<script id="px-engine">
+/* ===========================================================
+   NMX LABS — homepage parallax engine
+   Works with the page's own elements only. It never writes to
+   .card, .magnetic, .marquee-track, .sub, .ctas, .logo-img,
+   h1 .word or the cursor elements, because those already have
+   an owner (your card script, the magnetic script, or a CSS
+   `forwards` animation). Containers move instead.
+   =========================================================== */
+(function(){
+  'use strict';
+
+  var reduced = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var desktop = function(){ return window.innerWidth > 860; };
+  document.body.classList.add('px-on');
+
+  var clamp = function(v,a,b){ return v<a?a:v>b?b:v; };
+  var lerp  = function(a,b,t){ return a+(b-a)*t; };
+
+  /* -------- oversized mark behind About -------- */
+  if (!reduced){
+    var about = document.querySelector('.about-section');
+    if (about){
+      var mark = document.createElement('div');
+      mark.className = 'px-mark';
+      mark.setAttribute('aria-hidden','true');
+      mark.textContent = 'NMX';
+      about.insertBefore(mark, about.firstChild);
+    }
+  }
+
+  /* -------- scroll reveals -------- */
+  var riseSel = [
+    '.clients-label',
+    '.about-eyebrow','.about-title','.about-lead','.about-cell',
+    '.faq-title','.faq-item',
+    '.contact-intro','.contact-form',
+    '.stage-label'
+  ];
+  riseSel.forEach(function(sel){
+    Array.prototype.forEach.call(document.querySelectorAll(sel), function(n,i){
+      n.classList.add('px-rise');
+      if (i < 6) n.setAttribute('data-px-delay', String(Math.min(i,5)));
+    });
+  });
+  ['.about-title','.faq-title','.contact-intro'].forEach(function(sel){
+    var n = document.querySelector(sel);
+    if (n) n.classList.add('px-line');
+  });
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('px-in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:.08});
+    Array.prototype.forEach.call(document.querySelectorAll('.px-rise'), function(n){ io.observe(n); });
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll('.px-rise'), function(n){ n.classList.add('px-in'); });
+  }
+
+  if (reduced) return;
+
+  /* -------- the scroll camera -------- */
+  var brandmark = document.querySelector('.frame#top > .brandmark');
+  var mainEl    = document.querySelector('.frame#top > main');
+  var lines     = Array.prototype.slice.call(document.querySelectorAll('h1 .line'));
+  var glowEl    = document.querySelector('.glow');
+  var clientsIn = document.querySelector('.clients-inner');
+  var stack     = document.getElementById('cardStack');
+  var stageLbl  = document.querySelector('.stage-label');
+  var contactCd = document.querySelector('.contact-card');
+  var markEl    = document.querySelector('.px-mark');
+
+  var tpx=0, tpy=0, cpx=0, cpy=0, running=false;
+
+  function progress(el){
+    if (!el) return 0;
+    var r = el.getBoundingClientRect(), vh = window.innerHeight;
+    return clamp((vh - r.top) / (r.height + vh), 0, 1);
+  }
+
+  function frame(){
+    var vh = window.innerHeight;
+    var y  = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+    cpx = lerp(cpx, tpx, .07);
+    cpy = lerp(cpy, tpy, .07);
+
+    /* hero — each existing element sits on its own plane */
+    if (desktop()){
+      var hp = clamp(y / vh, 0, 1.2);
+
+      if (brandmark){
+        brandmark.style.transform =
+          'translate3d(' + (cpx*0.6).toFixed(2) + 'px,' + (hp*-28 + cpy*0.5).toFixed(1) + 'px,0)';
+      }
+      if (mainEl){
+        mainEl.style.transform =
+          'translate3d(' + (cpx*1.4).toFixed(2) + 'px,' + (hp*-72).toFixed(1) + 'px,' + (hp*130).toFixed(1) + 'px)';
+        mainEl.style.opacity = (1 - clamp(hp*1.15,0,1)).toFixed(3);
+      }
+      // the two headline lines move at different rates — the depth cue
+      for (var i=0;i<lines.length;i++){
+        var d = i === 0 ? 1 : 1.7;
+        lines[i].style.transform =
+          'translate3d(' + (cpx*d*1.1).toFixed(2) + 'px,' + (hp*-16*d).toFixed(1) + 'px,0)';
+      }
+      if (glowEl){
+        glowEl.style.transform = 'translateX(-50%) translate3d(0,' + (hp*90).toFixed(1) + 'px,0) scale(' + (1 + hp*0.5).toFixed(3) + ')';
+        glowEl.style.opacity = (1 - hp*0.75).toFixed(3);
+      }
+    } else {
+      if (brandmark) brandmark.style.transform = '';
+      if (mainEl){ mainEl.style.transform=''; mainEl.style.opacity=''; }
+      lines.forEach(function(l){ l.style.transform=''; });
+      if (glowEl){ glowEl.style.transform='translateX(-50%)'; glowEl.style.opacity=''; }
+    }
+
+    if (clientsIn){
+      var cp = progress(clientsIn);
+      clientsIn.style.transform = 'translate3d(0,' + ((cp-.5)*-46).toFixed(1) + 'px,0)';
+    }
+
+    if (stack && desktop()){
+      var sp = progress(stack);
+      var sz = clamp((sp/.55),0,1);
+      stack.style.transform =
+        'translate3d(0,' + ((sp-.5)*-40).toFixed(1) + 'px,' + (-520 + sz*520).toFixed(1) + 'px)' +
+        'rotateX(' + (11 - sz*11).toFixed(2) + 'deg)';
+    } else if (stack){
+      stack.style.transform = '';
+    }
+
+    if (stageLbl){
+      var lp = progress(stageLbl);
+      stageLbl.style.transform = 'translate3d(0,' + ((lp-.5)*-30).toFixed(1) + 'px,0)';
+    }
+
+    if (markEl){
+      var mp = progress(markEl);
+      markEl.style.transform =
+        'translate(-50%,-50%) translate3d(' + ((mp-.5)*-90).toFixed(1) + 'px,' + ((mp-.5)*70).toFixed(1) + 'px,0)';
+    }
+
+    if (contactCd){
+      var kp = progress(contactCd);
+      contactCd.style.transform = 'translate3d(0,' + ((kp-.5)*-26).toFixed(1) + 'px,0)';
+    }
+
+    if (Math.abs(cpx-tpx) > .01 || Math.abs(cpy-tpy) > .01) requestAnimationFrame(frame);
+    else running = false;
+  }
+
+  function kick(){ if(!running){ running = true; requestAnimationFrame(frame); } }
+
+  window.addEventListener('scroll', kick, {passive:true});
+  window.addEventListener('resize', kick, {passive:true});
+  if (window.matchMedia('(hover:hover)').matches){
+    window.addEventListener('pointermove', function(e){
+      tpx = ((e.clientX/window.innerWidth) - .5) * 14;
+      tpy = ((e.clientY/window.innerHeight) - .5) * 10;
+      kick();
+    }, {passive:true});
+  }
+  window.addEventListener('load', kick);
+  kick();
+})();
+
+</script>
 </body>
 </html>
