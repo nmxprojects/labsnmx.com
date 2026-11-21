@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>NMX Labs Blog</title>
+  <link>https://labsnmx.com/blog/</link>
+  <atom:link href="https://labsnmx.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+  <description>Branding, Meta ads and design notes from NMX Labs, Gurugram. New posts every Thursday.</description>
+  <language>en-IN</language>
+  <lastBuildDate>Thu, 19 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <item>
+    <title>Adobe MAX 2026 Sneaks: all 10 projects, ranked by how useful they are for brand work</title>
+    <link>https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/</guid>
+    <category>Adobe</category>
+    <pubDate>Thu, 19 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Sneaks are Adobe’s research previews, and not all of them ship. We went through all ten from this year and sorted them by what they’d actually change for a brand or ad team.</description>
+  </item>
+  <item>
+    <title>Adobe MAX 2026: 5 announcements that change how Indian D2C brands make ads</title>
+    <link>https://labsnmx.com/blog/adobe-max-2026-what-it-means-for-indian-brands/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/adobe-max-2026-what-it-means-for-indian-brands/</guid>
+    <category>Design news</category>
+    <pubDate>Thu, 12 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Most MAX coverage is written for American agencies with big teams. Here’s what this year’s launches mean for a five-person D2C brand in Delhi, Bengaluru or Mumbai that ships ads every week.</description>
+  </item>
+  <item>
+    <title>AI in your Meta ads: the “AI info” label, automatic enhancements and what the new terms mean</title>
+    <link>https://labsnmx.com/blog/meta-ai-info-labels-ai-creative/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/meta-ai-info-labels-ai-creative/</guid>
+    <category>AI design</category>
+    <pubDate>Thu, 05 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Meta now labels AI-made ads, its tools can change your creative after you upload it, and its updated commercial terms put more of the responsibility on you. A practical checklist.</description>
+  </item>
+  <item>
+    <title>WhatsApp Business pricing changed in October. Here’s why Click-to-WhatsApp ads matter more now</title>
+    <link>https://labsnmx.com/blog/whatsapp-business-pricing-click-to-whatsapp-ads/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/whatsapp-business-pricing-click-to-whatsapp-ads/</guid>
+    <category>Meta ads</category>
+    <pubDate>Thu, 29 Oct 2026 09:00:00 +0530</pubDate>
+    <description>Service replies on the WhatsApp Business Platform are no longer unlimited and free in India. Conversations that start from an ad still come with a 72-hour free window.</description>
+  </item>
+  <item>
+    <title>Our AI design workflow: where AI earns its place and where we keep it out</title>
+    <link>https://labsnmx.com/blog/ai-design-workflow-for-brands/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/ai-design-workflow-for-brands/</guid>
+    <category>AI design</category>
+    <pubDate>Thu, 22 Oct 2026 09:00:00 +0530</pubDate>
+    <description>We use AI on almost every project, and on almost no final pixels of a logo or a label. Here’s the exact workflow, step by step, including the checks that catch the mistakes AI makes confidently.</description>
+  </item>
+  <item>
+    <title>Meta’s Andromeda, explained: why your ad creative now does the targeting</title>
+    <link>https://labsnmx.com/blog/meta-andromeda-creative-diversity/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/meta-andromeda-creative-diversity/</guid>
+    <category>Meta ads</category>
+    <pubDate>Thu, 15 Oct 2026 09:00:00 +0530</pubDate>
+    <description>Meta rebuilt the system that decides which ads are even considered for each person. The practical result: ten near-identical ads now behave like one.</description>
+  </item>
+  <item>
+    <title>How we build a Meta ads creative system instead of a batch of ads</title>
+    <link>https://labsnmx.com/blog/meta-ads-creative-system/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/meta-ads-creative-system/</guid>
+    <category>Meta ads</category>
+    <pubDate>Thu, 08 Oct 2026 09:00:00 +0530</pubDate>
+    <description>Most brands brief Meta creative one ad at a time. Then they can’t tell why anything worked. This is the system we use to make creative testable, repeatable and cheaper to refresh.</description>
+  </item>
+  <item>
+    <title>Packaging labels in India: the mandatory details your designer must leave room for</title>
+    <link>https://labsnmx.com/blog/packaging-label-rules-india-d2c/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/packaging-label-rules-india-d2c/</guid>
+    <category>Branding</category>
+    <pubDate>Thu, 01 Oct 2026 09:00:00 +0530</pubDate>
+    <description>A beautiful pack that’s missing the unit sale price or the month of manufacture can be held up at a warehouse or a marketplace. Plan the legal text before the artwork.</description>
+  </item>
+  <item>
+    <title>How much should an Indian startup spend on Meta ads? A budget guide with the maths</title>
+    <link>https://labsnmx.com/blog/meta-ads-budget-guide-india/</link>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/meta-ads-budget-guide-india/</guid>
+    <category>Meta ads</category>
+    <pubDate>Thu, 24 Sep 2026 09:00:00 +0530</pubDate>
+    <description>“Start with ₹500 a day” is the most common advice and usually the wrong number. Your budget should come from your cost per sale, not from a round figure. Here’s how to work it out.</description>
+  </item>
+  <item>
+    <title>Trademarking your brand name in India: a founder’s guide to classes, fees and timelines</title>
+    <link>https://labsnmx.com/blog/trademark-registration-india-founders/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/trademark-registration-india-founders/</guid>
+    <category>Branding</category>
+    <pubDate>Thu, 17 Sep 2026 09:00:00 +0530</pubDate>
+    <description>You can design a beautiful brand on a name someone else already owns. A trademark search and filing early on costs little compared to a rebrand later.</description>
+  </item>
+  <item>
+    <title>AI product photography for D2C brands: what to generate, and what you still need to shoot</title>
+    <link>https://labsnmx.com/blog/ai-product-photography-d2c/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/ai-product-photography-d2c/</guid>
+    <category>AI design</category>
+    <pubDate>Thu, 10 Sep 2026 09:00:00 +0530</pubDate>
+    <description>AI can put your product on a beach, a marble counter or a Diwali table in minutes. It can’t be trusted to draw the product itself. Here’s how we split the work.</description>
+  </item>
+  <item>
+    <title>What goes in brand guidelines, and how to keep them short enough that people use them</title>
+    <link>https://labsnmx.com/blog/brand-guidelines-what-to-include/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/brand-guidelines-what-to-include/</guid>
+    <category>Branding</category>
+    <pubDate>Thu, 03 Sep 2026 09:00:00 +0530</pubDate>
+    <description>Most brand guidelines are long PDFs nobody opens after launch. Good ones answer the questions your team, freelancers and marketplace managers ask every week.</description>
+  </item>
+  <item>
+    <title>How much does a logo cost in India, and what are you actually paying for?</title>
+    <link>https://labsnmx.com/blog/logo-design-cost-india/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/logo-design-cost-india/</guid>
+    <category>Branding</category>
+    <pubDate>Thu, 27 Aug 2026 09:00:00 +0530</pubDate>
+    <description>Quotes for “a logo” range from a few thousand rupees to several lakhs. The difference is rarely the drawing. It’s everything that happens before and after it.</description>
+  </item>
+  <item>
+    <title>The startup branding checklist: what to have ready before you launch</title>
+    <link>https://labsnmx.com/blog/startup-branding-checklist/</link>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/startup-branding-checklist/</guid>
+    <category>Branding</category>
+    <pubDate>Thu, 20 Aug 2026 09:00:00 +0530</pubDate>
+    <description>A logo isn’t a brand, but a brand does need more than good intentions. This is the checklist we use with founders to make sure nothing important is missing on launch day.</description>
+  </item>
+</channel>
+</rss>
