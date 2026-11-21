@@ -31,12 +31,32 @@
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0TGPP1DYZ"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Q0TGPP1DYZ');</script>
+<script>(function(){try{var t=localStorage.getItem('nmx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '730249939578083');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+<script defer src="/assets/nmx.js"></script>
 </head>
 <body>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=730249939578083&ev=PageView&noscript=1"
+/></noscript>
 <nav class="site-nav" aria-label="Main">
   <a href="/" class="nav-logo"><img src="/assets/logo.png" alt="NMX Labs" width="102" height="19"></a>
   <div class="nav-links"><a href="/#services">Services</a><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="/about/">About</a><a href="/contact/">Contact</a></div>
   <a class="btn" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" aria-pressed="false" data-track="ThemeToggle"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg></button>
   <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu"><a href="/">Home</a><a href="/#services">Services</a><a href="/blog/">Blog</a><a href="/videos/">Videos</a><a href="/about/">About</a><a href="/contact/">Contact</a></div>
@@ -54,14 +74,17 @@
 <p>We use Google Analytics to understand how people find and use the site, such as which pages are visited and roughly where visitors come from. Google Analytics uses cookies and similar technologies and collects information like your device, browser, pages viewed and approximate location. You can opt out with the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics opt-out browser add-on</a>.</p>
 
 <h2>3. Meta Pixel</h2>
-<p>We use the Meta Pixel (Facebook and Instagram) to measure the results of our ads and to show relevant ads to people who have visited the site. The pixel records actions such as page views, clicks on contact links and enquiry form submissions (not the contents of your enquiry). You can manage how Meta uses this data in your <a href="https://www.facebook.com/adpreferences/ad_settings" target="_blank" rel="noopener">Meta ad preferences</a>.</p>
+<p>We use the Meta Pixel (Facebook and Instagram) to measure the results of our ads and to show relevant ads to people who have visited the site. The pixel records actions such as page views, clicks on links and buttons, which blog posts are opened, how far you scroll, how long a page stays open, theme changes and enquiry or newsletter sign-ups (not the contents of your enquiry or your email address). You can manage how Meta uses this data in your <a href="https://www.facebook.com/adpreferences/ad_settings" target="_blank" rel="noopener">Meta ad preferences</a>.</p>
 
 <h2>4. Advertising</h2>
 <p>This site shows ads served by Google AdSense. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this and other websites. Google’s use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and other sites on the internet. You can opt out of personalised advertising at <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">google.com/settings/ads</a>. You can also opt out of some third-party vendors’ use of cookies for personalised advertising at <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener">aboutads.info</a>.</p>
 <p>For more on how Google uses data from sites that use its services, see <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses information from sites or apps that use our services</a>.</p>
 
 <h2>5. Listening and summaries on blog posts</h2>
-<p>Blog posts have a Listen button that reads the article aloud using your browser’s built-in speech feature. The text is processed by your device or browser, not sent to us. The “Summarise with Google” link opens Google Search in a new tab with the article’s address in the query; anything you do there is covered by Google’s privacy policy.</p>
+<p>Blog posts have a Listen button that reads the article aloud using your browser’s built-in speech feature. The text is processed by your device or browser, not sent to us. The “Summarise with Google AI” button shows a summary on the same page: the text of that article (not any information about you) is sent to Google’s Gemini API through our server to generate it. On AMP pages the button takes you to the full article on this site.</p>
+<h2>Blog newsletter</h2>
+<p>If you subscribe to the blog, we store your email address, the page you subscribed from and the date in a Google Sheet, and use them only to send the weekly post. Every email has a one-click unsubscribe link. Your light or dark theme choice is saved in your browser only.</p>
+
 <h2>6. AMP versions of blog posts</h2>
 <p>Our blog posts also have AMP (Accelerated Mobile Pages) versions that may be served from Google’s AMP cache when you open them from Google Search. These pages use the same Google Analytics and Google AdSense services described above.</p>
 <h2>7. Embedded videos</h2>

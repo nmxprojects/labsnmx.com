@@ -32,7 +32,7 @@
    "name": "NMX Labs",
    "url": "https://labsnmx.com/"
   },
-  "url": "https://labsnmx.com/about/"
+  "url": "https://labsnmx.com/blog/author/neeraj/"
  },
  "publisher": {
   "@type": "Organization",
@@ -96,24 +96,27 @@ th{background:rgba(17,17,16,.03)}
 .tt{display:block;font-family:var(--display);font-size:19px;line-height:1.15;margin-top:6px}
 .tm{display:block;font-size:12px;color:var(--muted);margin-top:10px}
 footer{border-top:1px solid var(--line);padding:24px 20px 40px;font-size:12px;color:var(--muted)}
-footer a{color:var(--muted);margin-right:14px}</style>
+footer a{color:var(--muted);margin-right:14px}.source-quote{border-left:3px solid var(--orange);margin:1.6em 0;padding:2px 0 2px 18px}.source-quote p{font-style:italic;margin:0}.source-quote footer{font-size:13px;color:var(--muted);margin-top:6px}.related-reading{font-size:15px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;margin-top:2em}.byline a{color:inherit}@media (prefers-color-scheme:dark){:root{--bg:#121211;--ink:#f1eee7;--muted:#a7a49c;--line:rgba(241,238,231,.13);--cream:#25231f}.dek{color:#d8d5cd}.bar amp-img{filter:brightness(0) invert(1)}}</style>
 </head>
 <body>
 <amp-auto-ads type="adsense"
         data-ad-client="ca-pub-7861938494663653">
 </amp-auto-ads>
 <amp-analytics type="gtag" data-credentials="include"><script type="application/json">{"vars":{"gtag_id":"G-Q0TGPP1DYZ","config":{"G-Q0TGPP1DYZ":{"groups":"default"}}}}</script></amp-analytics>
+<amp-analytics type="facebookpixel" id="fbpixel"><script type="application/json">{"vars": {"pixelId": "730249939578083"}, "triggers": {"trackPageview": {"on": "visible", "request": "pageview"}, "viewContent": {"on": "visible", "request": "eventViewContent", "vars": {"content_name": "How we build a Meta ads creative system instead of a batch of ads", "content_type": "blog_post", "content_ids": "meta-ads-creative-system", "value": "0", "currency": "INR"}}, "scroll": {"on": "scroll", "scrollSpec": {"verticalBoundaries": [25, 50, 75, 100]}, "request": "event", "vars": {"eventName": "AMPScrollDepth", "content_name": "meta-ads-creative-system ${verticalScrollBoundary}%"}}, "linkClick": {"on": "click", "selector": "a", "request": "event", "vars": {"eventName": "AMPLinkClick", "content_name": "meta-ads-creative-system"}}}}</script></amp-analytics>
 <header class="bar"><a href="https://labsnmx.com/"><amp-img src="https://labsnmx.com/assets/logo.png" width="102" height="19" alt="NMX Labs"></amp-img></a><nav aria-label="Main"><a href="https://labsnmx.com/blog/">Blog</a><a href="https://labsnmx.com/about/">About</a><a href="https://labsnmx.com/contact/">Contact</a></nav></header>
 <main class="wrap">
 <article>
 <p class="crumbs"><a href="https://labsnmx.com/blog/">Blog</a> / <a href="https://labsnmx.com/blog/category/meta-ads/">Meta ads</a></p>
 <h1>How we build a Meta ads creative system instead of a batch of ads</h1>
 <p class="dek">Most brands brief Meta creative one ad at a time. Then they can’t tell why anything worked. This is the system we use to make creative testable, repeatable and cheaper to refresh.</p>
-<div class="byline"><span>By Neeraj, NMX Labs</span><span>8 October 2026</span><span>5 min read</span></div>
-<div class="tools"><a class="tool" href="https://labsnmx.com/blog/meta-ads-creative-system/#listen">Listen to this article</a><a class="tool" href="https://www.google.com/search?udm=50&q=Summarise+this+article+from+NMX+Labs+in+5+short+bullet+points%2C+then+list+who+it+is+most+useful+for%3A+https%3A%2F%2Flabsnmx.com%2Fblog%2Fmeta-ads-creative-system%2F" target="_blank" rel="noopener nofollow">Summarise with Google</a></div>
+<div class="byline"><span>By <a href="https://labsnmx.com/blog/author/neeraj/" rel="author">Neeraj</a>, NMX Labs</span><span>8 October 2026</span><span>5 min read</span></div>
+<div class="tools"><a class="tool" href="https://labsnmx.com/blog/meta-ads-creative-system/#listen">Listen to this article</a><a class="tool" href="https://labsnmx.com/blog/meta-ads-creative-system/#ai-summary">Summarise with Google AI</a></div>
 <details class="qs"><summary>Quick summary</summary><ul><li>Treat Meta creative as a grid of angles, hooks and formats, not a folder of one-off ads.</li><li>Name every ad Angle_Hook_Format_Size_Version so reports show what actually worked.</li><li>Design 4:5 for Feed and 9:16 for Stories and Reels, and keep text out of the safe zones.</li><li>Test three to five concepts at a time, judge after meaningful spend, and iterate on winning angles.</li></ul></details>
 <div class="prose">
 <p>On Meta, creative is targeting. With broad audiences and Advantage+ placements doing more of the work, the main lever you still control is what people see. That’s why we treat ad creative as a system with parts you can swap and measure, not as a folder of nice-looking images.</p>
+<blockquote class="source-quote"><p><em>“…better performance automatically from the retrieval system matching ads across a larger candidate pool”</em></p><footer>Engineering at Meta, <a href="https://engineering.fb.com/2026/10/28/ml-applications/meta-andromeda-next-gen-ads-retrieval-gpu-co-design/" rel="noopener" target="_blank">the next generation of Meta Andromeda</a>, 28 October 2026</footer></blockquote>
+
 
 <h2>The three building blocks: angle, hook, format</h2>
 
@@ -199,6 +202,8 @@ footer a{color:var(--muted);margin-right:14px}</style>
 <h2>Where design and media meet</h2>
 
 <p>This system is the reason we sell <a href="/#services">creative and Meta Ads management as one bundle</a>. When the people reading the numbers also make the ads, a weak hold rate on Tuesday becomes a re-cut by Thursday, not a note in a monthly report.</p>
+
+<p class="related-reading"><strong>Related reading:</strong> <a href="https://labsnmx.com/blog/meta-andromeda-creative-diversity/">Meta Andromeda explained</a>, <a href="https://labsnmx.com/blog/meta-ads-budget-guide-india/">a Meta ads budget guide for India</a> and <a href="https://labsnmx.com/blog/brand-guidelines-what-to-include/">brand guidelines people actually use</a>. More from <a href="https://labsnmx.com/blog/author/neeraj/">Neeraj, our AI design expert</a>, or browse every <a href="https://labsnmx.com/blog/category/meta-ads/">Meta ads post</a>.</p>
 </div>
 </article>
 <aside class="cta"><h2>Want this done for your brand?</h2><p>We’re a small senior studio in Gurugram. Branding from ₹25,000, Meta ads management from ₹8,000 a month.</p><a class="btn" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a free 1:1 session</a></aside>

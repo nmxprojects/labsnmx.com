@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>NMX Labs Blog</title>
   <link>https://labsnmx.com/blog/</link>
   <atom:link href="https://labsnmx.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
   <description>Branding, Meta ads and design notes from NMX Labs, Gurugram. New posts every Thursday.</description>
   <language>en-IN</language>
-  <lastBuildDate>Thu, 19 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <lastBuildDate>Sat, 21 Nov 2026 09:00:00 +0530</lastBuildDate>
   <item>
+      <title>Latest Adobe AI updates, 21 November 2026: what’s live, what’s beta, and what changed since MAX</title>
+      <link>https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/</link>
+      <guid isPermaLink="true">https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/</guid>
+      <pubDate>Sat, 21 Nov 2026 09:00:00 +0530</pubDate>
+      <category>Adobe</category>
+      <dc:creator>Neeraj</dc:creator>
+      <description>Eleven days after MAX, the release notes have caught up with the keynote. Here’s what you can open today, what’s still in beta, what got clearer this week, and whether the Black Friday offer makes sense for an Indian brand team.</description>
+    </item>
+    <item>
     <title>Adobe MAX 2026 Sneaks: all 10 projects, ranked by how useful they are for brand work</title>
     <link>https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/</link>
     <author>nmxprojects@gmail.com (Neeraj)</author>
