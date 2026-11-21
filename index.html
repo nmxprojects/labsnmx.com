@@ -119,6 +119,8 @@
     { "@type": "SiteNavigationElement", "name": "Services", "url": "https://labsnmx.com/#services" },
     { "@type": "SiteNavigationElement", "name": "About", "url": "https://labsnmx.com/#about" },
     { "@type": "SiteNavigationElement", "name": "Clients", "url": "https://labsnmx.com/#clients" },
+    { "@type": "SiteNavigationElement", "name": "Blog", "url": "https://labsnmx.com/blog/" },
+    { "@type": "SiteNavigationElement", "name": "Videos", "url": "https://labsnmx.com/videos/" },
     { "@type": "SiteNavigationElement", "name": "FAQ", "url": "https://labsnmx.com/#faq" },
     { "@type": "SiteNavigationElement", "name": "Contact", "url": "https://labsnmx.com/#contact" }
   ]
@@ -1439,6 +1441,19 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
   crossorigin="anonymous">
 </script>
 
+<style id="blog-teaser">
+.bt-section{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:72px clamp(20px,5vw,64px) 24px}
+.bt-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:48px;border-top:1px solid var(--line);padding-top:40px}
+.bt-head h2{font-family:var(--font-display);font-size:clamp(34px,4.6vw,56px);line-height:1;letter-spacing:-.03em;margin-bottom:16px}
+.bt-head p{color:var(--muted);font-size:15px;line-height:1.6;max-width:36ch;margin-bottom:22px}
+.bt-list{list-style:none;border-top:1px solid var(--line)}
+.bt-list li{border-bottom:1px solid var(--line)}
+.bt-list a{display:flex;flex-direction:column;gap:6px;padding:20px 0}
+.bt-cat{font-size:12px;font-weight:600;color:var(--muted)}
+.bt-title{font-family:var(--font-display);font-size:clamp(20px,2.2vw,26px);line-height:1.15;letter-spacing:-.01em;transition:color .2s ease}
+.bt-list a:hover .bt-title{color:var(--orange)}
+@media (max-width:860px){.bt-inner{grid-template-columns:1fr;gap:24px}}
+</style>
 </head>
 <body>
 
@@ -1451,6 +1466,7 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
       <a href="#services">Services</a>
       <a href="#about">About</a>
       <a href="/clients">Clients</a>
+      <a href="/blog/">Blog</a>
       <a href="#contact">Contact</a>
     </div>
     <a class="btn btn-primary nav-cta magnetic" data-pixel-event="contact" data-pixel-source="nav_book_1_1" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 Session</a>
@@ -1467,6 +1483,8 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
       <a href="#mservices">Services</a>
       <a href="#about">About</a>
       <a href="/clients">Clients</a>
+      <a href="/blog/">Blog</a>
+      <a href="/videos/">Videos</a>
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </div>
@@ -1740,6 +1758,23 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
     </div>
   </div>
 
+  <!-- ---------- from the blog ---------- -->
+  <section class="bt-section" id="blog" aria-labelledby="bt-heading">
+    <div class="bt-inner">
+      <div class="bt-head">
+        <h2 id="bt-heading">From the blog</h2>
+        <p>What we’re learning from real campaigns: tool news for brand teams, our process, and guides on branding and Meta ads.</p>
+        <a class="btn btn-primary" href="/blog/">Read the blog</a>
+      </div>
+      <ul class="bt-list">
+        <li><a href="/blog/adobe-max-2026-what-it-means-for-indian-brands/"><span class="bt-cat">Design news</span><span class="bt-title">Adobe MAX 2026: 5 announcements that change how Indian D2C brands make ads</span></a></li>
+        <li><a href="/blog/adobe-max-2026-sneaks-explained/"><span class="bt-cat">Adobe</span><span class="bt-title">Adobe MAX 2026 Sneaks: all 10 projects, ranked by how useful they are for brand work</span></a></li>
+        <li><a href="/blog/ai-design-workflow-for-brands/"><span class="bt-cat">AI design</span><span class="bt-title">Our AI design workflow: where AI earns its place and where we keep it out</span></a></li>
+        <li><a href="/blog/meta-ads-creative-system/"><span class="bt-cat">Meta ads</span><span class="bt-title">How we build a Meta ads creative system instead of a batch of ads</span></a></li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ---------- contact form ---------- -->
   <section class="contact-section" id="contact">
     <div class="contact-card">
@@ -1808,8 +1843,10 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
         <div class="footer-col">
           <h4>Studio</h4>
           <ul>
-            <li><a href="#about">About</a></li>
+            <li><a href="/about/">About</a></li>
             <li><a href="/clients">Clients</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/videos/">Videos</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contact">Start a project</a></li>
             <li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li>
@@ -1835,9 +1872,13 @@ src="https://www.facebook.com/tr?id=2009429739772101&ev=PageView&noscript=1"
     <div class="footer-bottom">
       <span>Copyright &copy; <span id="footerYear">2026</span> NMX Labs. All rights reserved.</span>
       <div class="legal">
-        <a href="privacy-policy.html" data-pixel-source="footer_privacy">Privacy Policy</a>
+        <a href="/privacy-policy.html" data-pixel-source="footer_privacy">Privacy Policy</a>
         <span class="sep">|</span>
-        <a href="#contact">Contact</a>
+        <a href="/terms/">Terms</a>
+        <span class="sep">|</span>
+        <a href="/about/">About</a>
+        <span class="sep">|</span>
+        <a href="/contact/">Contact</a>
         <span class="sep">|</span>
         <span>India</span>
       </div>
