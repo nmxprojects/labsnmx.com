@@ -34,7 +34,8 @@
     ['Quick commerce', 'Blinkit OR Zepto OR Instamart OR "Flipkart Minutes"'],
     ['AI design', 'Adobe Firefly OR Canva AI OR Figma AI'],
     ['Meta ads', 'Meta ads India advertisers'],
-    ['D2C', 'D2C brand India launch']
+    ['D2C', 'D2C brand India launch'],
+    ['Platforms', 'YouTube OR Instagram creators policy update']
   ];
   var EXTRA_FEEDS = [
     // [topic label, RSS URL, publisher name]. Add or remove freely; feeds that fail are skipped.

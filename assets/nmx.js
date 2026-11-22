@@ -1,4 +1,4 @@
-/* NMX Labs: analytics events, light/dark theme, blog subscribe, in-page Google AI summary, blog filters.
+/* NMX Labs: analytics events, light/dark theme, blog subscribe + unsubscribe, comments, Google AI summary link, blog filters.
    Loaded with `defer` on every page. Events go to the Meta Pixel (both pixel IDs on the page) and to GA4. */
 (function () {
   'use strict';
@@ -7,8 +7,8 @@
   var CFG = {
     // OPTIONAL. Apps Script web-app URL (ends in /exec) from Code-Blog.gs. When set, subscribers go to your
     // Google Sheet and get a welcome email. When empty or unreachable, the form falls back to FALLBACK_INBOX.
-    BACKEND_URL: 'https://script.google.com/macros/s/AKfycbyDdkvXF9eEHXatZ0SmEk2v5GodF35eH2AaOvhsJQ17YK8BNjirhyNIe5JcAnTpLyqz/exec',
-    BACKEND_VERSION: 'v2',
+    BACKEND_URL: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE',
+    BACKEND_VERSION: 'v3',
     // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
     // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
     FALLBACK_INBOX: 'nmxprojects@gmail.com'
@@ -149,7 +149,14 @@
     $$('.subscribe').forEach(function (b) {
       b.classList.add('done');
       var n = $('.sub-note', b);
-      if (n) n.textContent = already ? 'You’re already on the list. New posts will keep landing in your inbox.' : 'You’re subscribed. Thanks for reading.';
+      if (n) n.innerHTML = esc(already ? 'You’re subscribed. New posts land in your inbox with a quick read.' : 'You’re subscribed. Thanks for reading.') +
+        ' <span class="sub-manage"><a href="/unsubscribe/" data-track="ManageSubscription">Unsubscribe</a> or <a href="#" data-sub-other>use a different email</a>.</span>';
+      var o = $('[data-sub-other]', b);
+      if (o) o.addEventListener('click', function (e) {
+        e.preventDefault(); store('nmx-subscribed', null);
+        $$('.subscribe').forEach(function (x) { x.classList.remove('done'); var nn = $('.sub-note', x); if (nn) nn.innerHTML = 'Enter the email you’d like new posts sent to.'; });
+        var inp = $('input[type="email"]', b); if (inp) inp.focus();
+      });
     });
   }
   if (read('nmx-subscribed') === '1') markSubscribed(true);
@@ -181,7 +188,7 @@
       btn.disabled = true; note.textContent = 'Subscribing…';
       var run = backendReady() ? viaBackend(email).catch(function () { return viaInbox(email); }) : viaInbox(email);
       run.then(function (d) {
-          store('nmx-subscribed', '1'); markSubscribed(d.already);
+          store('nmx-subscribed', '1'); store('nmx-sub-email', email); markSubscribed(d.already);
           track('Lead', { content_name: 'Blog newsletter', content_category: 'subscribe' }, true);
           track('BlogSubscribe', { source: path, page_type: page.type, returning: !!d.already, route: backendReady() ? 'sheet' : 'inbox' });
         })
@@ -229,6 +236,83 @@
   $$('img[data-fallback]').forEach(function (img) {
     setTimeout(function () { if ((!img.complete || !img.naturalWidth) && typeof img.onerror === 'function') img.onerror(); }, 5000);
   });
+
+  /* ===== comments (posts) =====
+     Needs the Apps Script backend (Code-Blog.gs v3). Every comment is held for review; you approve it from the email
+     the backend sends you, or by setting Status to "Approved" in the Comments tab of the Sheet. Text is always inserted
+     with textContent, never as HTML. */
+  var cBox = $('[data-comments]');
+  if (cBox) {
+    var cSlug = cBox.getAttribute('data-slug'), cList = $('[data-c-list]', cBox), cForm = $('[data-c-form]', cBox), cStat = $('.c-status', cBox);
+    function cDate(iso) { var t = new Date(iso); return isNaN(t) ? '' : t.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }); }
+    function cItem(c, reply) {
+      var li = doc.createElement('li'); li.className = 'c-item' + (reply ? ' c-reply' : '');
+      var h = doc.createElement('header'), n = doc.createElement('strong'), d = doc.createElement('span'), p = doc.createElement('p');
+      n.textContent = c.name; d.textContent = (reply ? 'replied · ' : '') + cDate(c.date); p.textContent = c.text;
+      h.appendChild(n); h.appendChild(d); li.appendChild(h); li.appendChild(p); return li;
+    }
+    function cRender(items) {
+      cList.innerHTML = '';
+      if (!items.length) { var e = doc.createElement('li'); e.className = 'c-empty'; e.textContent = 'No comments yet. Start the conversation.'; cList.appendChild(e); return; }
+      items.forEach(function (c) { cList.appendChild(cItem(c)); if (c.reply && c.reply.text) cList.appendChild(cItem(c.reply, true)); });
+      var h2 = $('#commentsH', cBox); if (h2) h2.textContent = 'Comments (' + items.length + ')';
+    }
+    if (backendReady()) {
+      fetch(CFG.BACKEND_URL + '?action=comments&slug=' + encodeURIComponent(cSlug))
+        .then(function (r) { return r.json(); })
+        .then(function (d) { cRender(d && d.ok ? d.items || [] : []); })
+        .catch(function () { cRender([]); });
+    } else { cRender([]); }
+    var mine = read('nmx-sub-email'); if (mine && cForm.email && !cForm.email.value) cForm.email.value = mine;
+    cForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (cForm.website.value) return;                                  // bot trap
+      var name = cForm.name.value.trim(), email = cForm.email.value.trim(), text = cForm.comment.value.trim(), btn = $('button', cForm);
+      if (name.length < 2) { cStat.textContent = 'Add your name (at least 2 characters).'; cForm.name.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { cStat.textContent = 'Enter a valid email address, like name@example.com.'; cForm.email.focus(); return; }
+      if (text.length < 3) { cStat.textContent = 'Write a comment first.'; cForm.comment.focus(); return; }
+      btn.disabled = true; cStat.textContent = 'Sending…';
+      var send = backendReady()
+        ? fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'comment', slug: cSlug, name: name, email: email, comment: text, page: location.href, v: CFG.BACKEND_VERSION }) })
+            .then(function (r) { return r.json(); }).then(function (d) { if (!d || !d.ok) throw new Error((d && d.error) || 'backend'); return d; })
+        : fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CFG.FALLBACK_INBOX), {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'New comment on ' + cSlug, name: name, email: email, comment: text, page: location.href, _template: 'table' })
+          }).then(function (r) { return r.json(); }).then(function (d) { if (!d || String(d.success) !== 'true') throw new Error('inbox'); return { ok: true }; });
+      send.then(function (d) {
+          cForm.comment.value = ''; store('nmx-sub-email', email);
+          cStat.textContent = d && d.error ? d.error : 'Thanks, ' + name + '. Your comment will appear here once we’ve checked it, usually within a day.';
+          track('CommentPosted', { slug: cSlug, route: backendReady() ? 'sheet' : 'inbox' });
+        })
+        .catch(function (err) { cStat.textContent = /limit|wait/i.test(String(err && err.message)) ? String(err.message) : 'That didn’t go through. Try again in a minute, or email nmxprojects@gmail.com.'; track('CommentError', { slug: cSlug }); })
+        .then(function () { btn.disabled = false; });
+    });
+  }
+
+  /* ===== /unsubscribe/ page =====
+     The form asks the backend to email a one-click unsubscribe link to that address (so nobody can remove someone
+     else). Without the backend, the request is emailed to the studio inbox and handled by hand. */
+  var uForm = $('[data-unsub-form]');
+  if (uForm) {
+    var uStat = $('.u-status'), uMine = read('nmx-sub-email');
+    if (uMine) uForm.email.value = uMine;
+    uForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = uForm.email.value.trim(), btn = $('button', uForm);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { uStat.textContent = 'Enter the email address you subscribed with.'; uForm.email.focus(); return; }
+      btn.disabled = true; uStat.textContent = 'Sending…';
+      var go = backendReady()
+        ? fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'unsubscribe_request', email: email, v: CFG.BACKEND_VERSION }) }).then(function (r) { return r.json(); })
+            .then(function (d) { if (!d || !d.ok) throw new Error('backend'); return 'If ' + email + ' is subscribed, we’ve just emailed it a link. Open it to unsubscribe in one click.'; })
+        : fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CFG.FALLBACK_INBOX), {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'Unsubscribe request', email: email, _template: 'table' })
+          }).then(function (r) { return r.json(); }).then(function (d) { if (!d || String(d.success) !== 'true') throw new Error('inbox'); return 'Got it. We’ll remove ' + email + ' from the list within two working days.'; });
+      go.then(function (msg) { uStat.textContent = msg; store('nmx-subscribed', null); track('UnsubscribeRequest', { route: backendReady() ? 'sheet' : 'inbox' }); })
+        .catch(function () { uStat.textContent = 'That didn’t go through. Email nmxprojects@gmail.com with the subject “Unsubscribe” and we’ll remove you.'; })
+        .then(function () { btn.disabled = false; });
+    });
+  }
 
   /* ===== blog filters: month, category, author, search ===== */
   var list = $('#postList');

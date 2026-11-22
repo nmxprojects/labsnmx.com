@@ -467,3 +467,71 @@ img{max-width:100%;display:block}
 .news-credits li:target{background:rgba(255,197,48,.22);border-radius:6px}
 @media (max-width:720px){.pillars{grid-template-columns:1fr}.case-file dl{grid-template-columns:1fr;gap:2px}.case-file dd{margin-bottom:8px}}
 @media (prefers-reduced-motion:reduce){.read-progress{display:none}}
+
+/* ===================== v3 (22 Nov 2026) ===================== */
+/* Blog + News nav links: colour pop every 3 seconds (Blog first, News 1.5 s later). Set --pop-repeat:1 to play once on load. */
+:root{--pop-repeat:infinite}
+.nav-links a.nav-pop{opacity:1;padding:6px 12px;margin:-6px -12px;border-radius:999px;animation:navPop 3s var(--ease) var(--pop-repeat)}
+.nav-links a.nav-pop + a.nav-pop{animation-delay:1.5s}
+.nav-links a.nav-pop:hover,.nav-links a.nav-pop:focus-visible{animation-play-state:paused;background:var(--orange);color:#fff}
+.nav-links a.nav-pop[aria-current="page"]{box-shadow:none;background:rgba(255,90,43,.12)}
+.mobile-menu a.nav-pop{color:var(--orange)}
+@keyframes navPop{0%,46%,100%{background:transparent;color:inherit;transform:none}8%{background:var(--orange);color:#fff;transform:scale(1.08)}30%{background:var(--orange);color:#fff;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.nav-links a.nav-pop{animation:none;background:rgba(255,90,43,.14)}}
+
+/* Compact blog header (the "Notes from the studio" intro now sits below the posts) */
+.page-head--compact{padding:36px 0 22px}
+.page-head--compact h1{font-size:clamp(34px,4.6vw,52px);max-width:none}
+.page-head--compact p{margin-top:10px;font-size:16px;max-width:70ch}
+.about-notes{border-top:1px solid var(--line);padding:48px 0 8px;margin-top:40px}
+.about-notes h2{font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1;letter-spacing:-.03em}
+.about-notes > p{margin-top:14px;font-size:16.5px;color:var(--muted);max-width:68ch;line-height:1.6}
+.about-notes .standards-line{font-size:15px}
+.about-notes .tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+.about-notes .tracks div{border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:var(--surface)}
+.about-notes .tracks strong{display:block;font-size:17px;margin-bottom:4px}
+.about-notes .tracks p{font-size:14.5px;color:var(--muted);line-height:1.5}
+@media (max-width:720px){.about-notes .tracks{grid-template-columns:1fr}}
+.pillars--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1000px){.pillars--4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.pillars--4{grid-template-columns:1fr}}
+
+/* Footer: five link columns */
+.footer-inner{grid-template-columns:1.4fr repeat(5,1fr)}
+
+/* Subscription state */
+.sub-manage{font-size:13px;color:var(--muted)}
+.sub-manage a{color:var(--ink)}
+
+/* Comments */
+.comments{max-width:var(--measure);margin:8px auto 40px;padding-top:28px;border-top:1px solid var(--line)}
+.comments h2{font-family:var(--font-display);font-size:clamp(26px,3vw,34px);letter-spacing:-.02em;line-height:1.05}
+.comments .c-intro{color:var(--muted);font-size:15px;margin-top:8px}
+.c-list{list-style:none;margin:20px 0 8px;padding:0;display:flex;flex-direction:column;gap:14px}
+.c-item{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--surface)}
+.c-item header{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.c-item header strong{color:var(--ink);font-size:14.5px}
+.c-item p{margin-top:6px;font-size:15.5px;line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
+.c-item.c-reply{margin-left:22px;border-color:rgba(255,90,43,.35)}
+.c-empty{color:var(--muted);font-size:14.5px}
+.c-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.c-form label{font-size:13px;font-weight:600;display:block;margin-bottom:4px}
+.c-form .c-full{grid-column:1/-1}
+.c-form input,.c-form textarea{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.c-form textarea{min-height:120px;resize:vertical}
+.c-form input:focus,.c-form textarea:focus{outline:2px solid var(--orange);outline-offset:1px}
+.c-form .c-hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+.c-status{font-size:14px;color:var(--muted);margin-top:10px;min-height:1.3em}
+@media (max-width:620px){.c-form{grid-template-columns:1fr}}
+
+/* Unsubscribe + HTML sitemap pages */
+.unsub-card{max-width:560px;border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:clamp(22px,4vw,34px);margin:28px 0 72px}
+.unsub-card form{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.unsub-card input{flex:1 1 240px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--bg);color:var(--ink)}
+.unsub-card p{color:var(--muted);margin-top:8px}
+.unsub-card .u-status{color:var(--ink);font-weight:600}
+.sitemap-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:28px 0 72px}
+.sitemap-cols h2{font-size:17px;margin:0 0 10px}
+.sitemap-cols ul{list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:7px}
+.sitemap-cols a{color:var(--ink);font-size:14.5px}
+@media (max-width:860px){.sitemap-cols{grid-template-columns:1fr}}
