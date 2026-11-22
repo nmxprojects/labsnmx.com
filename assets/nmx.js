@@ -7,7 +7,7 @@
   var CFG = {
     // OPTIONAL. Apps Script web-app URL (ends in /exec) from Code-Blog.gs. When set, subscribers go to your
     // Google Sheet and get a welcome email. When empty or unreachable, the form falls back to FALLBACK_INBOX.
-    BACKEND_URL: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE',
+    BACKEND_URL: 'https://script.google.com/macros/s/AKfycbykQn2peyin4EGFbHeQdzKbM5a_NVi8gqdo_qtTLdCvoQ3KE8mGz79VrgaU7h4sIzXp/exec',
     BACKEND_VERSION: 'v3',
     // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
     // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
