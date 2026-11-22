@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /_scheduled/
+Disallow: /scripts/
+Disallow: /content/
+Disallow: /tools/
+Disallow: /unsubscribe/
 
 Sitemap: https://labsnmx.com/sitemap.xml

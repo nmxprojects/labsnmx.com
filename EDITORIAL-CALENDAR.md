@@ -1,22 +1,42 @@
-# NMX Labs blog: editorial calendar (updated 22 Nov 2026)
+# NMX Labs blog: editorial calendar (updated 22 Nov 2026, v3)
 
-Rules (unchanged): publish on each post's real date. Don't backdate.
-Every post: 1,200+ words, named sources, one hero image, one infographic, a "How we checked this" box with work we actually did.
-Every fact marked ✱ must be re-checked against a primary source before writing.
-Cadence: Tuesday + Thursday, plus a Saturday slot in busy weeks (2–3 a week). Date-tied posts keep their dates.
+Two tracks, never more than 2 posts on one date (scripts/build.py refuses more):
+- **Studio notes** (regular): Tuesday + Thursday, plus a Saturday slot in busy weeks. 1,200+ words, named sources, hero image, infographic, a "How we checked this" box.
+- **Growth playbook** (new): Monday + Friday. 600–900 words, timely: what changed on YouTube, Instagram, Meta or Google Search, linked to the platform's own announcement, plus "what to do this week". Category slug `growth`; the category page, filter chip and pillar appear automatically with the first post.
 
-## Published 22 Nov 2026 (calendar #1–#6)
+Every fact marked ✱ must be re-checked against the platform's own announcement before writing.
+To schedule a post: put it in `_scheduled/<slug>/`, add it to `content/posts.json` with `"status": "scheduled"` and its date. It goes live at 00:05 IST that day and subscribers get the email from 9 AM.
 
-| # | Title | Category | Author |
-|---|---|---|---|
-| 1 | Swiggy vs Zomato: the push-notification copy war, and why brand voice beats discounts | Brand stories | Anisha |
-| 2 | Campa Cola's comeback: how Reliance restarted the cola war on price | Brand stories | Anisha |
-| 3 | 10-minute food: Zepto Cafe vs Swiggy Bolt vs Blinkit Bistro (angle updated: Snacc shut, Cafe scaled back) | Brand stories | Anisha |
-| 4 | Generative video for D2C ads in 2026: Veo, Firefly and what Sora's shutdown teaches (Sora closed Apr/Sep 2026) | AI design | Neeraj |
-| 5 | Cadbury's "Not Just a Cadbury Ad": the AI personalisation campaign that came too early | AI design | Neeraj |
-| 6 | Custom brand typefaces in India: why apps commission their own fonts | Branding | Anisha |
+## Already published (dates redistributed 22 Nov: max 2 a day)
 
-## Next 24 (rescheduled)
+| Date | Posts |
+|---|---|
+| Sun 22 Nov 2026 | Custom brand typefaces in India; Generative video for D2C ads |
+| Sat 21 Nov 2026 | Latest Adobe AI updates; Canva vs Figma vs Adobe |
+| Fri 20 Nov 2026 | Swiggy vs Zomato notification copy; 10-minute food |
+| Thu 19 Nov 2026 | Adobe MAX 2026 Sneaks; Cadbury "Not Just a Cadbury Ad" |
+| Wed 18 Nov 2026 | Campa Cola's comeback |
+| Tue 17 Nov 2026 | Quick-commerce brand war; Zomato to Eternal |
+| Mon 16 Nov 2026 | Amul topical ads; CRED against-type casting |
+| 20 Aug – 12 Nov 2026 | 13 earlier posts, one a week (unchanged) |
+
+## Growth playbook: first eight (new track)
+
+| Date | Working title | Author |
+|---|---|---|
+| Fri 27 Nov 2026 | Google's November 2026 core update: what an Indian brand site should check in Search Console, and what not to panic about ✱ (rollout began 10 Nov) | Neeraj |
+| Mon 30 Nov 2026 | YouTube's 2027 Partner Programme changes: what doubling the bar means for brand channels and the creators you hire ✱ (new applicants from 1 Feb 2027; Shorts view thresholds) | Neeraj |
+| Fri 4 Dec 2026 | Instagram's India ranking change after MeitY's request: what it means for brand Reels ✱ | Anisha |
+| Mon 7 Dec 2026 | Instagram's originality rules: why reposting memes and UGC can now cost your brand reach ✱ | Anisha |
+| Fri 11 Dec 2026 | "Your Algorithm" on Instagram and Facebook: when users pick their own topics, how should brands plan content? ✱ | Neeraj |
+| Mon 14 Dec 2026 | Affiliate links inside Reels: what Instagram's Amazon integration means for creator deals (check India availability) ✱ | Anisha |
+| Fri 18 Dec 2026 | YouTube's inauthentic-content policy and AI: what brand channels using AI voiceovers can and can't do ✱ | Neeraj |
+| Mon 28 Dec 2026 | Every YouTube, Instagram and Google change of 2026 that mattered for Indian brands, in one page | Neeraj |
+
+Format idea for Mondays from January: "This week in platforms", five changes in 60 seconds each.
+
+## Studio notes: next 24
+
 
 | Date | # | Working title | Category | Author |
 |---|---|---|---|---|

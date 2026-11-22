@@ -2,43 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://labsnmx.com/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/clients</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://labsnmx.com/blog/</loc>
     <lastmod>2026-11-22</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://labsnmx.com/news/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://labsnmx.com/videos/</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://labsnmx.com/about/</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://labsnmx.com/contact/</loc>
-    <lastmod>2026-11-21</lastmod>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://labsnmx.com/blog/category/design-news/</loc>
+    <loc>https://labsnmx.com/editorial-standards/</loc>
     <lastmod>2026-11-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/sitemap/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/privacy-policy.html</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/terms/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/category/design-news/</loc>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -50,13 +74,13 @@
   </url>
   <url>
     <loc>https://labsnmx.com/blog/category/adobe/</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://labsnmx.com/blog/category/meta-ads/</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -67,16 +91,71 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://labsnmx.com/privacy-policy.html</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://labsnmx.com/blog/category/brand-stories/</loc>
+    <lastmod>2026-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://labsnmx.com/terms/</loc>
+    <loc>https://labsnmx.com/blog/author/neeraj/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/author/anisha/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/custom-brand-typefaces-india/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/</loc>
     <lastmod>2026-11-21</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/canva-figma-adobe-ai-design-war/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg</image:loc></image:image>
   </url>
   <url>
     <loc>https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/</loc>
@@ -84,6 +163,41 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image><image:loc>https://labsnmx.com/assets/blog/adobe-max-2026-sneaks-explained.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/campa-cola-comeback-price-war/</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/zomato-to-eternal-house-of-brands/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/quick-commerce-brand-war-blinkit-zepto-instamart/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/amul-topical-ads-moment-marketing/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/cred-against-type-celebrity-ads/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads.jpg</image:loc></image:image>
   </url>
   <url>
     <loc>https://labsnmx.com/blog/adobe-max-2026-what-it-means-for-indian-brands/</loc>
@@ -175,115 +289,5 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image><image:loc>https://labsnmx.com/assets/blog/startup-branding-checklist.jpg</image:loc></image:image>
-  </url>
-  <url><loc>https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/</loc><lastmod>2026-11-21</lastmod>  <image:image><image:loc>https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026.jpg</image:loc></image:image>
-  </url>
-  <url><loc>https://labsnmx.com/blog/author/neeraj/</loc><lastmod>2026-11-22</lastmod></url>
-  <url><loc>https://labsnmx.com/blog/author/anisha/</loc><lastmod>2026-11-22</lastmod></url>
-  <url>
-    <loc>https://labsnmx.com/news/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/category/brand-stories/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/zomato-to-eternal-house-of-brands/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/eternal-timeline.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/quick-commerce-brand-war-blinkit-zepto-instamart/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/qcom-scoreboard.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/amul-topical-ads-moment-marketing/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/amul-anatomy.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/cred-against-type-celebrity-ads/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/cred-formula.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/canva-figma-adobe-ai-design-war/</loc>
-    <lastmod>2026-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/design-war-map.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/notification-copy-test.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/campa-cola-comeback-price-war/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/campa-by-the-numbers.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/ten-minute-food-timeline.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/ai-video-use-avoid.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/srk-my-ad-anatomy.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/custom-brand-typefaces-india/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg</image:loc></image:image>
-    <image:image><image:loc>https://labsnmx.com/assets/blog/font-coverage-test.png</image:loc></image:image>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/editorial-standards/</loc>
-    <lastmod>2026-11-22</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>
