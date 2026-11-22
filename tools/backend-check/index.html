@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup check | NMX Labs</title>
+<meta name="description" content="Checks the blog subscription and news feed setup.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://labsnmx.com/tools/backend-check/">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+<meta name="theme-color" content="#faf9f6">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NMX Labs">
+<meta property="og:title" content="Setup check | NMX Labs">
+<meta property="og:description" content="Checks the blog subscription and news feed setup.">
+<meta property="og:url" content="https://labsnmx.com/tools/backend-check/">
+<meta property="og:image" content="https://labsnmx.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0TGPP1DYZ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Q0TGPP1DYZ');</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7861938494663653" crossorigin="anonymous"></script>
+<script>(function(){try{var t=localStorage.getItem('nmx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '730249939578083');
+fbq('track', 'PageView');
+</script>
+<!-- End Meta Pixel Code -->
+<script defer src="/assets/nmx.js"></script>
+</head>
+<body>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=730249939578083&ev=PageView&noscript=1"
+/></noscript>
+<nav class="site-nav" aria-label="Main">
+  <a href="/" class="nav-logo"><img src="/assets/logo.png" alt="NMX Labs" width="102" height="19"></a>
+  <div class="nav-links"><a href="/#services">Services</a><a href="/about/" >About</a><a href="/clients">Clients</a><a href="/blog/">Blog</a><a href="/news/">News</a><a href="/videos/">Videos</a><a href="/contact/">Contact</a></div>
+  <a class="btn" href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" aria-pressed="false" data-track="ThemeToggle"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg></button>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu"><a href="/">Home</a><a href="/#services">Services</a><a href="/about/" >About</a><a href="/clients">Clients</a><a href="/blog/">Blog</a><a href="/news/">News</a><a href="/videos/">Videos</a><a href="/contact/">Contact</a><a href="/#faq">FAQ</a></div>
+<main class="wrap">
+<header class="page-head"><h1>Setup check</h1><p>For the site owner. This page isn’t indexed. It checks the subscription and news-feed setup from your browser.</p></header>
+<div class="prose" style="padding-top:32px">
+<ol id="checks"><li>Running checks…</li></ol>
+<p class="notes-meta">Subscriptions work without the Apps Script backend, through FormSubmit. The backend only adds the Google Sheet, welcome email and unsubscribe links. See UPLOAD-NOTES.md.</p>
+</div>
+<script>
+window.addEventListener('load', function () {
+  var ol = document.getElementById('checks'); ol.innerHTML = '';
+  function line(ok, txt) { var li = document.createElement('li'); li.textContent = (ok === true ? '✅ ' : ok === false ? '❌ ' : 'ℹ️ ') + txt; ol.appendChild(li); }
+  var C = window.NMX_CFG || {}, ready = window.NMX_backendReady ? window.NMX_backendReady() : false;
+  line(!!window.NMX_CFG, 'Site script /assets/nmx.js loaded');
+  line(true, 'Subscribe fallback inbox: ' + (C.FALLBACK_INBOX || 'not set') + ' (first submission sends FormSubmit an activation email)');
+  if (!ready) { line(null, 'Apps Script backend not configured (optional). Subscriptions go to the fallback inbox.'); }
+  else fetch(C.BACKEND_URL).then(function (r) { return r.json(); }).then(function (d) { line(!!(d && d.ok), 'Apps Script backend responds, version ' + (d && d.version)); })
+    .catch(function () { line(false, 'Apps Script URL is set but did not respond. Check the deployment is "Anyone" and the URL ends in /exec.'); });
+  fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://news.google.com/rss/search?q=India%20brand%20campaign&hl=en-IN&gl=IN&ceid=IN:en'))
+    .then(function (r) { return r.json(); }).then(function (d) { line(d && d.status === 'ok', 'News wire browser fallback (rss2json + Google News): ' + (d && d.status === 'ok' ? d.items.length + ' headlines' : (d && d.message) || 'no response')); })
+    .catch(function () { line(false, 'News wire browser fallback did not respond'); });
+});
+</script>
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/"><img src="/assets/logo.png" alt="NMX Labs" width="97" height="18"></a><p>Creative &amp; performance marketing studio, D3B, Shyam Kunj, Gurugram, Haryana, India. Serving clients worldwide.</p></div>
+    <div class="footer-col"><h4>Services</h4><ul><li><a href="/#services">Branding &amp; Identity</a></li><li><a href="/#services">Social Media Creative</a></li><li><a href="/#services">Campaign Creative</a></li><li><a href="/#services">Meta Ads Management</a></li><li><a href="/#services">Creative + Meta Ads Bundle</a></li><li><a href="/#services">Brand &amp; Marketing Design</a></li></ul></div>
+    <div class="footer-col"><h4>Blog</h4><ul><li><a href="/blog/">All posts</a></li><li><a href="/blog/category/design-news/">Design news</a></li><li><a href="/blog/category/ai-design/">AI design</a></li><li><a href="/blog/category/adobe/">Adobe</a></li><li><a href="/blog/category/meta-ads/">Meta ads</a></li><li><a href="/blog/category/branding/">Branding</a></li><li><a href="/blog/category/brand-stories/">Brand stories</a></li></ul></div>
+    <div class="footer-col"><h4>Studio</h4><ul><li><a href="/about/">About</a></li><li><a href="/editorial-standards/">Editorial standards</a></li><li><a href="/clients">Clients</a></li><li><a href="/videos/">Videos</a></li><li><a href="/news/">News</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/contact/">Contact</a></li><li><a href="/blog/author/neeraj/">Neeraj (author)</a></li><li><a href="/blog/author/anisha/">Anisha (author)</a></li></ul></div>
+    <div class="footer-col"><h4>Get in touch</h4><ul><li><a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a></li><li><a href="tel:+918810438717">+91 88104 38717</a></li><li><a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 NMX Labs. All rights reserved.</span>
+    <span><a href="/editorial-standards/">Editorial standards</a><a href="/privacy-policy.html">Privacy policy</a><a href="/terms/">Terms</a><a href="/about/">About</a><a href="/contact/">Contact</a></span>
+  </div>
+</footer>
+<script>
+(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');
+if(b&&m)b.addEventListener('click',function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Close menu':'Open menu');});})();
+</script>
+</body>
+</html>
