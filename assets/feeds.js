@@ -1,5 +1,6 @@
 /* NMX Labs: news wire + Instagram + X feeds.
-   Paste the same Apps Script /exec URL you put in /assets/nmx.js into BACKEND_URL.
+   Optional: paste the same Apps Script /exec URL you put in /assets/nmx.js into BACKEND_URL.
+   Without it, the news wire still works through the browser fallback below.
    X_HANDLE: your X username without @ (leave empty to hide the X panel). */
 (function () {
   'use strict';
@@ -8,7 +9,7 @@
     INSTAGRAM_HANDLE: '_nmxlabs',
     X_HANDLE: ''
   };
-  var ready = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(String(CFG.BACKEND_URL).trim());
+  var ready = /^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/.test(String(CFG.BACKEND_URL).trim());
   function get(action) {
     return fetch(CFG.BACKEND_URL + '?action=' + action).then(function (r) { return r.json(); });
   }
@@ -22,21 +23,72 @@
   }
   function track(name, data) { try { if (window.fbq) fbq('trackCustom', name, data || {}); if (window.gtag) gtag('event', name, data || {}); } catch (e) {} }
 
-  /* ---- live news wire ---- */
+  /* ---- live news wire ----
+     Route 1: your Apps Script backend (?action=news), cached on Google's side for 30 minutes.
+     Route 2 (no setup): Google News RSS searches + publisher feeds, converted to JSON by rss2json.com
+     and cached in the visitor's browser for 30 minutes. Every headline links to the original story and
+     names its publisher; the page's "Sources and credits" notes explain where headlines come from. */
+  var TOPICS = [
+    ['Brands', 'India brand campaign OR rebrand'],
+    ['Advertising', 'India ad campaign agency'],
+    ['Quick commerce', 'Blinkit OR Zepto OR Instamart OR "Flipkart Minutes"'],
+    ['AI design', 'Adobe Firefly OR Canva AI OR Figma AI'],
+    ['Meta ads', 'Meta ads India advertisers'],
+    ['D2C', 'D2C brand India launch']
+  ];
+  var EXTRA_FEEDS = [
+    // [topic label, RSS URL, publisher name]. Add or remove freely; feeds that fail are skipped.
+    ['Advertising', 'https://brandequity.economictimes.indiatimes.com/rss/topstories', 'ET BrandEquity']
+  ];
+  function gnews(q) { return 'https://news.google.com/rss/search?q=' + encodeURIComponent(q + ' when:7d') + '&hl=en-IN&gl=IN&ceid=IN:en'; }
+  function viaRss2Json(url) { return fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url)).then(function (r) { return r.json(); }); }
+  function clientWire() {
+    var KEY = 'nmx-wire-v2', hit = null;
+    try { hit = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    if (hit && Date.now() - hit.t < 30 * 60 * 1000 && hit.d && hit.d.items && hit.d.items.length) return Promise.resolve(hit.d);
+    var jobs = TOPICS.map(function (t) { return { topic: t[0], url: gnews(t[1]), via: 'Google News' }; })
+      .concat(EXTRA_FEEDS.map(function (f) { return { topic: f[0], url: f[1], via: f[2], publisher: f[2] }; }));
+    return Promise.all(jobs.map(function (j) {
+      return viaRss2Json(j.url).then(function (d) {
+        if (!d || d.status !== 'ok') return [];
+        return (d.items || []).slice(0, 8).map(function (it) {
+          var title = String(it.title || ''), src = j.publisher || '';
+          if (!src) { var k = title.lastIndexOf(' - '); if (k > 20) { src = title.slice(k + 3); title = title.slice(0, k); } }
+          var iso = ''; try { iso = it.pubDate ? new Date(String(it.pubDate).replace(' ', 'T') + 'Z').toISOString() : ''; } catch (e) {}
+          return { title: title, link: it.link, source: src || 'Unknown publisher', date: iso, topic: j.topic, via: j.via };
+        });
+      }).catch(function () { return []; });
+    })).then(function (lists) {
+      var seen = {}, items = [];
+      lists.forEach(function (l) { l.forEach(function (it) { var key = it.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 80); if (it.title && !seen[key]) { seen[key] = 1; items.push(it); } }); });
+      items.sort(function (a, b) { return b.date < a.date ? -1 : 1; });
+      var d = { ok: items.length > 0, updated: new Date().toISOString(), items: items.slice(0, 30), route: 'client' };
+      try { if (d.ok) localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), d: d })); } catch (e) {}
+      return d;
+    });
+  }
   Array.prototype.forEach.call(document.querySelectorAll('[data-news-wire]'), function (box) {
-    var sec = box.closest('section');
-    if (!ready) { if (sec) sec.hidden = true; return; }
-    get('news').then(function (d) {
+    var stamp = document.querySelector('[data-wire-updated]');
+    var load = ready ? get('news').then(function (d) { return d && d.ok && d.items && d.items.length ? d : clientWire(); }).catch(clientWire) : clientWire();
+    load.then(function (d) {
       box.innerHTML = '';
-      if (!d.ok || !d.items || !d.items.length) { if (sec) sec.hidden = true; return; }
-      d.items.slice(0, 20).forEach(function (it) {
+      if (!d.ok || !d.items || !d.items.length) { box.appendChild(el('li', 'wire-empty', 'Headlines couldn’t load right now. The curated stories above are updated by the studio every week.')); return; }
+      d.items.slice(0, 24).forEach(function (it) {
         var li = el('li', 'wire-item');
-        var a = link(it.link, it.title, 'wire-title'); a.addEventListener('click', function () { track('NewsWireClick', { source: it.source }); });
+        var a = link(it.link, it.title, 'wire-title'); a.rel = 'noopener nofollow';
+        a.addEventListener('click', function () { track('NewsWireClick', { source: it.source, topic: it.topic }); });
         li.appendChild(a);
-        li.appendChild(el('span', 'wire-meta', [it.source, ago(it.date), it.topic].filter(Boolean).join(' · ')));
+        var meta = el('span', 'wire-meta'), g = (it.via === 'Google News' || !it.via);
+        meta.appendChild(document.createTextNode([it.source, ago(it.date), it.topic].filter(Boolean).join(' · ') + ' '));
+        var mark = el('a', 'wire-mark', g ? '*' : '†');
+        mark.href = g ? '#credit-wire' : '#credit-feeds';
+        mark.setAttribute('aria-label', 'How this headline is sourced');
+        meta.appendChild(mark);
+        li.appendChild(meta);
         box.appendChild(li);
       });
-    }).catch(function () { if (sec) sec.hidden = true; });
+      if (stamp) stamp.textContent = 'Updated ' + new Date(d.updated || Date.now()).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }) + '.';
+    }).catch(function () { box.innerHTML = ''; box.appendChild(el('li', 'wire-empty', 'Headlines couldn’t load right now.')); });
   });
 
   /* ---- Instagram ---- */

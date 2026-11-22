@@ -4,9 +4,69 @@
   <title>NMX Labs Blog</title>
   <link>https://labsnmx.com/blog/</link>
   <atom:link href="https://labsnmx.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
-  <description>Branding, Meta ads and design notes from NMX Labs, Gurugram. New posts every Thursday.</description>
+  <description>Branding, Meta ads and design notes from NMX Labs, Gurugram. New posts every Tuesday and Thursday.</description>
   <language>en-IN</language>
-  <lastBuildDate>Sat, 21 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <lastBuildDate>Sun, 22 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <item>
+    <title>Swiggy vs Zomato: the push-notification copy war, and why brand voice beats discounts</title>
+    <link>https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg" length="51074" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/</guid>
+    <category>Brand stories</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Any food app can match a coupon by lunchtime. Nobody can copy a voice. Here’s how India’s two delivery apps turned the most ignored channel on your phone into a brand asset, where rivals got it badly wrong, and a copy test we ran on real notifications.</description>
+  </item>
+  <item>
+    <title>Campa Cola’s comeback: how Reliance restarted the cola war on price</title>
+    <link>https://labsnmx.com/blog/campa-cola-comeback-price-war/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg" length="47013" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/campa-cola-comeback-price-war/</guid>
+    <category>Brand stories</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Reliance bought a 1970s cola for about ₹22 crore, put it in a 200 ml bottle at ₹10 and made Coca-Cola and PepsiCo cut prices. The interesting part isn’t the discount. It’s how a price point became the brand.</description>
+  </item>
+  <item>
+    <title>10-minute food: Zepto Cafe vs Swiggy Bolt vs Blinkit Bistro, and why only one model is still growing</title>
+    <link>https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg" length="47112" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/</guid>
+    <category>Brand stories</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>In December 2024 every quick-commerce app wanted to deliver hot food in ten minutes. Two years later, kitchens have closed, apps have been shut and one model is quietly growing. The difference wasn’t speed. It was who had to cook.</description>
+  </item>
+  <item>
+    <title>Generative video for D2C ads in 2026: what Veo and Firefly are actually good for, and what Sora’s shutdown teaches</title>
+    <link>https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg" length="47154" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/</guid>
+    <category>AI design</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>A year ago the question was which AI video model looks best. In 2026 the better questions are which one will still exist next quarter, which one your lawyer is comfortable with, and which shots it should never be trusted with.</description>
+  </item>
+  <item>
+    <title>Cadbury’s “Not Just a Cadbury Ad”: the AI personalisation campaign that came too early</title>
+    <link>https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg" length="48946" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/</guid>
+    <category>AI design</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Years before every app could clone a voice, Cadbury made Shah Rukh Khan say the names of thousands of neighbourhood shops. It won India’s first Titanium Lion. Taken apart, it’s still the best brief for AI personalisation an Indian brand has written.</description>
+  </item>
+  <item>
+    <title>Custom brand typefaces in India: why apps commission their own fonts</title>
+    <link>https://labsnmx.com/blog/custom-brand-typefaces-india/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg" length="42470" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Anisha)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/custom-brand-typefaces-india/</guid>
+    <category>Branding</category>
+    <pubDate>Sun, 22 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Your font is the voice your brand uses on every screen, price tag and ad. In India it also has to speak several scripts and print a rupee sign. We tested ten popular fonts to see how many can, and the answer explains why big brands commission their own.</description>
+  </item>
   <item>
     <title>Why Zomato renamed itself Eternal: the house-of-brands bet behind India’s best-known food app</title>
     <link>https://labsnmx.com/blog/zomato-to-eternal-house-of-brands/</link>

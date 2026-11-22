@@ -5,12 +5,18 @@
 
   /* ===== config ===== */
   var CFG = {
-    // Apps Script web-app URL (ends in /exec) from Code-Blog.gs. Powers Subscribe + Google AI summary.
+    // OPTIONAL. Apps Script web-app URL (ends in /exec) from Code-Blog.gs. When set, subscribers go to your
+    // Google Sheet and get a welcome email. When empty or unreachable, the form falls back to FALLBACK_INBOX.
     BACKEND_URL: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE',
-    BACKEND_VERSION: 'v1'
+    BACKEND_VERSION: 'v2',
+    // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
+    // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
+    FALLBACK_INBOX: 'nmxprojects@gmail.com'
   };
-  // Checks the URL's shape, not a placeholder string, so a find-and-replace can't break it.
-  function backendReady() { return /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(String(CFG.BACKEND_URL).trim()); }
+  window.NMX_CFG = CFG;
+  // Checks the URL's shape (personal or Workspace Apps Script URLs), not a placeholder string.
+  function backendReady() { return /^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+|macros)\/s\/[A-Za-z0-9_-]+\/exec$/.test(String(CFG.BACKEND_URL).trim()); }
+  window.NMX_backendReady = backendReady;
 
   var doc = document, root = doc.documentElement, path = location.pathname;
   function $(s, c) { return (c || doc).querySelector(s); }
@@ -60,7 +66,7 @@
   doc.addEventListener('click', function (e) {
     var el = e.target.closest && e.target.closest('a,button');
     if (!el || el.hasAttribute('data-no-track')) return;
-    var zoneEl = el.closest('nav,header,footer,aside,.rail,.cats,.filters,.subscribe,.tools,.prose,.post-list,.feature,.author-box,.ai-dialog');
+    var zoneEl = el.closest('nav,header,footer,aside,.rail,.cats,.filters,.subscribe,.tools,.prose,.post-list,.feature,.author-box');
     var p = {
       page_path: path,
       page_type: page.type,
@@ -137,104 +143,92 @@
   syncTheme();
 
   /* ===== subscribe ===== */
+  // Two routes: (1) your Apps Script backend (Sheet + welcome email), (2) FormSubmit to your inbox.
+  // Route 2 needs one activation click the first time: FormSubmit emails FALLBACK_INBOX an "Activate Form" link.
   function markSubscribed(already) {
     $$('.subscribe').forEach(function (b) {
       b.classList.add('done');
       var n = $('.sub-note', b);
-      if (n) n.textContent = already ? 'You’re already subscribed. The Thursday post will keep landing in your inbox.' : 'You’re subscribed. Check your inbox for a welcome email.';
+      if (n) n.textContent = already ? 'You’re already on the list. New posts will keep landing in your inbox.' : 'You’re subscribed. Thanks for reading.';
     });
   }
   if (read('nmx-subscribed') === '1') markSubscribed(true);
+  if (/[?&]subscribed=1/.test(location.search)) { store('nmx-subscribed', '1'); markSubscribed(false); }
+  function viaBackend(email) {
+    return fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'subscribe', email: email, source: path, v: CFG.BACKEND_VERSION }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (!d || !d.ok) throw new Error((d && d.error) || 'backend'); return d; });
+  }
+  function viaInbox(email) {
+    return fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CFG.FALLBACK_INBOX), {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email: email, page: location.href, _subject: 'New NMX Labs blog subscriber', _template: 'table' })
+    }).then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || String(d.success) !== 'true') {
+          if (d && /activat/i.test(d.message || '')) console.warn('[NMX] FormSubmit needs a one-time activation: check ' + CFG.FALLBACK_INBOX + ' for the "Activate Form" email.');
+          throw new Error('inbox');
+        }
+        return { ok: true, already: false };
+      });
+  }
   $$('form.sub-form').forEach(function (f) {
     f.addEventListener('submit', function (e) {
       e.preventDefault();
       var note = $('.sub-note', f.parentNode), btn = $('button', f), email = (f.email.value || '').trim();
-      if (f.website && f.website.value) return; // bot trap
+      if (f._honey && f._honey.value) return; // bot trap
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { note.textContent = 'Enter a valid email address, like name@example.com.'; f.email.focus(); return; }
-      if (!backendReady()) { note.textContent = 'Subscriptions open soon. Meanwhile, follow the RSS feed.'; console.warn('[NMX] Set BACKEND_URL in /assets/nmx.js'); return; }
       btn.disabled = true; note.textContent = 'Subscribing…';
-      fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'subscribe', email: email, source: path, v: CFG.BACKEND_VERSION }) })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (!d || !d.ok) throw new Error((d && d.error) || 'Subscription failed');
+      var run = backendReady() ? viaBackend(email).catch(function () { return viaInbox(email); }) : viaInbox(email);
+      run.then(function (d) {
           store('nmx-subscribed', '1'); markSubscribed(d.already);
           track('Lead', { content_name: 'Blog newsletter', content_category: 'subscribe' }, true);
-          track('BlogSubscribe', { source: path, page_type: page.type, returning: !!d.already });
+          track('BlogSubscribe', { source: path, page_type: page.type, returning: !!d.already, route: backendReady() ? 'sheet' : 'inbox' });
         })
-        .catch(function (err) { note.textContent = 'That didn’t go through (' + err.message + '). Try again in a minute.'; })
+        .catch(function () { note.textContent = 'That didn’t go through. Try again in a minute, or follow the RSS feed meanwhile.'; track('SubscribeError', { source: path }); })
         .then(function () { btn.disabled = false; });
     });
   });
 
-  /* ===== Google AI summary, shown on the page ===== */
-  var aiBtns = $$('[data-ai-summary]');
-  if (page.type === 'post' && aiBtns.length) {
-    var dlg = doc.createElement('dialog');
-    dlg.className = 'ai-dialog';
-    dlg.setAttribute('aria-labelledby', 'aiTitle');
-    dlg.innerHTML =
-      '<div class="ai-in">' +
-        '<div class="ai-top"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="aiG" x1="0" x2="1"><stop offset="0" stop-color="#4285F4"/><stop offset=".55" stop-color="#9B72CB"/><stop offset="1" stop-color="#D96570"/></linearGradient></defs><path fill="url(#aiG)" d="M12 2c.4 4.6 2.9 7.3 8 8-5.1.7-7.6 3.4-8 8-.4-4.6-2.9-7.3-8-8 5.1-.7 7.6-3.4 8-8z"/></svg>' +
-        '<h2 id="aiTitle">AI summary</h2><button type="button" class="ai-close" aria-label="Close summary" data-track="AISummaryClose">✕</button></div>' +
-        '<p class="ai-src"></p><div class="ai-body" aria-live="polite"></div>' +
-        '<div class="ai-ask" hidden><form><label class="sr-only" for="aiQ">Ask a question about this article</label>' +
-        '<input id="aiQ" maxlength="300" autocomplete="off" placeholder="Ask about this article"><button type="submit" class="btn" data-track="AIAsk">Ask</button></form>' +
-        '<div class="ai-answer" aria-live="polite"></div></div>' +
-      '</div>';
-    doc.body.appendChild(dlg);
-    var src = $('.ai-src', dlg), body = $('.ai-body', dlg), askBox = $('.ai-ask', dlg);
-    var cacheKey = 'nmx-ai-' + page.slug;
+  /* ===== Google AI summary: opens Google AI Mode in a new tab ===== */
+  // The links are plain <a target="_blank"> built into each page (works without JS and on AMP).
+  // The prompt only asks Google to summarise the article; it never asks Google to "remember" or rank this site.
+  $$('[data-ai-summary]').forEach(function (a) {
+    a.addEventListener('click', function () { track('AISummaryOpen', { slug: page.slug || '', destination: 'google_ai_mode' }); });
+  });
 
-    function articleText() {
-      var c = $('.prose', article).cloneNode(true);
-      $$('.video,.source-quote footer', c).forEach(function (n) { n.remove(); });
-      return (page.title + '\n\n' + c.textContent).replace(/\s+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim().slice(0, 15000);
+  /* ===== reading aids on posts: progress bar, table of contents ===== */
+  if (page.type === 'post') {
+    var prose = $('.prose', article);
+    var bar = doc.createElement('div'); bar.className = 'read-progress'; bar.setAttribute('aria-hidden', 'true'); bar.innerHTML = '<span></span>';
+    doc.body.appendChild(bar);
+    var fill = bar.firstChild, pt = false;
+    function prog() {
+      pt = false; if (!prose) return;
+      var r = prose.getBoundingClientRect(), total = prose.offsetHeight - innerHeight * 0.5;
+      fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / (total > 0 ? total : 1))) + ')';
     }
-    function showEditor(note) {
-      src.textContent = note || 'Editor’s summary';
-      var ul = $('#quickSummary ul');
-      body.innerHTML = ul ? '<ul>' + ul.innerHTML + '</ul>' : '<p>Summary unavailable.</p>';
+    addEventListener('scroll', function () { if (!pt) { pt = true; requestAnimationFrame(prog); } }, { passive: true });
+    prog();
+    // Older posts get a table of contents built from their headings; new posts ship one in the HTML.
+    if (prose && !$('.toc', article)) {
+      var hs = $$('h2', prose).filter(function (h) { return !/^(sources|notes)/.test(h.id || ''); });
+      if (hs.length >= 3) {
+        var items = hs.map(function (h) { if (!h.id) h.id = slugify(h.textContent).slice(0, 60); return '<li><a href="#' + h.id + '">' + esc(h.textContent) + '</a></li>'; }).join('');
+        var nav = doc.createElement('nav'); nav.className = 'toc'; nav.setAttribute('aria-label', 'In this article');
+        nav.innerHTML = '<details open><summary>In this article</summary><ol>' + items + '</ol></details>';
+        prose.parentNode.insertBefore(nav, prose);
+      }
     }
-    function showAI(d) {
-      src.textContent = 'Generated by Google Gemini from this article. AI can make mistakes; the article is the source of truth.';
-      body.innerHTML = (d.tldr ? '<p class="ai-tldr">' + esc(d.tldr) + '</p>' : '') +
-        '<ul>' + (d.bullets || []).map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul>';
-      askBox.hidden = false;
-    }
-    function openSummary() {
-      if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
-      track('AISummaryOpen', { slug: page.slug });
-      var cached = null; try { cached = JSON.parse(sessionStorage.getItem(cacheKey)); } catch (e) {}
-      if (cached) { showAI(cached); return; }
-      if (!backendReady()) { showEditor(); return; }
-      src.textContent = 'Asking Google Gemini…';
-      body.innerHTML = '<div class="skel"></div><div class="skel" style="width:84%"></div><div class="skel" style="width:90%"></div><div class="skel" style="width:62%"></div>';
-      fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'summary', slug: page.slug, title: page.title, text: articleText(), v: CFG.BACKEND_VERSION }) })
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (!d || !d.ok || !(d.bullets && d.bullets.length)) throw new Error(d && d.error);
-          try { sessionStorage.setItem(cacheKey, JSON.stringify(d)); } catch (e) {}
-          showAI(d); track('AISummaryShown', { slug: page.slug, source: d.cached ? 'cache' : 'gemini' });
-        })
-        .catch(function () { showEditor('Editor’s summary (Google AI is busy right now)'); });
-    }
-    aiBtns.forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); openSummary(); }); });
-    $('.ai-close', dlg).addEventListener('click', function () { dlg.close(); });
-    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
-    $('form', askBox).addEventListener('submit', function (e) {
-      e.preventDefault();
-      var q = $('#aiQ').value.trim(), out = $('.ai-answer', askBox);
-      if (q.length < 3) return;
-      out.textContent = 'Thinking…';
-      track('AIQuestion', { slug: page.slug });
-      fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'ask', slug: page.slug, question: q, text: articleText(), v: CFG.BACKEND_VERSION }) })
-        .then(function (r) { return r.json(); })
-        .then(function (d) { if (!d || !d.ok) throw new Error(); out.textContent = d.answer; })
-        .catch(function () { out.textContent = 'Google AI couldn’t answer right now. Try again in a minute.'; });
-    });
-    // AMP pages link here with #ai-summary so readers stay on the site.
-    if (location.hash === '#ai-summary') setTimeout(openSummary, 300);
+    $$('.toc a').forEach(function (a) { a.addEventListener('click', function () { track('TocClick', { slug: page.slug, target: a.getAttribute('href') }); }); });
   }
+
+  /* ===== web images with a local fallback (brand logos) =====
+     Each <img data-fallback> loads from its web source first. If it errors (handled inline) or hasn't
+     loaded after 5 seconds, the local copy is used and its credit line in "Image credits" is updated. */
+  $$('img[data-fallback]').forEach(function (img) {
+    setTimeout(function () { if ((!img.complete || !img.naturalWidth) && typeof img.onerror === 'function') img.onerror(); }, 5000);
+  });
 
   /* ===== blog filters: month, category, author, search ===== */
   var list = $('#postList');
