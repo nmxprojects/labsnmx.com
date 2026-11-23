@@ -1,0 +1,71 @@
+# Publishes scheduled blog posts on their date and rebuilds every listing, the feed and the sitemaps.
+# Runs daily at 00:05 IST, whenever content/posts.json or _scheduled/ changes, and on demand (Actions tab > Run workflow).
+#
+# One-time setup in GitHub: Settings > Actions > General > Workflow permissions > "Read and write permissions".
+# Hosting:
+#  - GitHub Pages, Netlify, Vercel or Cloudflare Pages connected to this repo: nothing else to do; the commit below redeploys.
+#  - Hostinger/cPanel or any FTP host: add repository secrets FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+#    (and optionally FTP_DIR, e.g. public_html/). The last step then uploads the changed files.
+name: Publish scheduled posts
+
+on:
+  schedule:
+    - cron: '35 18 * * *'        # 18:35 UTC = 00:05 IST
+  push:
+    branches: [main, master]
+    paths: ['content/posts.json', '_scheduled/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check the schedule (max 2 posts a day, files present)
+        run: python scripts/build.py --check
+
+      - name: Publish posts due today and rebuild listings
+        run: python scripts/build.py
+
+      - name: Commit and push changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "nmx-publisher"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Publish scheduled posts ($(TZ=Asia/Kolkata date +%F))"
+            git push
+          else
+            echo "Nothing due today."
+          fi
+
+      - name: Upload to host over FTP (only if FTP secrets are set)
+        if: ${{ env.FTP_SERVER != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_DIR || './' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            scripts/**
+            content/**
+            _scheduled/**
+            **/*.md
