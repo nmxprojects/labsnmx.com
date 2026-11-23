@@ -8,11 +8,11 @@
   var CFG = {
     // OPTIONAL. Apps Script web-app URL (ends in /exec) from Code-Blog.gs. When set, subscribers go to your
     // Google Sheet and get a welcome email. When empty or unreachable, the form falls back to FALLBACK_INBOX.
-    BACKEND_URL: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE',
+    BACKEND_URL: 'https://script.google.com/macros/s/AKfycbyYTYcTqs6n_QhlNHhGYyjB_G1P4mqzAb0B1fURwsxkSEqJNQv5_p6UXCLPbcLWQkE/exec',
     BACKEND_VERSION: 'v4',
     // Browser notifications: the PUBLIC key from labsnmx.com/tools/push-keys/ (about 87 characters, starts with B).
     // Safe to publish. The private key goes only into GitHub secrets. Leave as is to keep the bell hidden.
-    VAPID_PUBLIC_KEY: 'PASTE_YOUR_VAPID_PUBLIC_KEY_HERE',
+    VAPID_PUBLIC_KEY: 'BIDuMPyHUBcx1Hy4f2QBK4KrhUBfiQQYhu3kgjuJaigcAOMCMtmVx_ZmwRBairgUSHEGNQOLKAB6M8j7p4-XZ6w',
     // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
     // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
     FALLBACK_INBOX: 'nmxprojects@gmail.com'
