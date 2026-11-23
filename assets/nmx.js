@@ -12,7 +12,7 @@
     BACKEND_VERSION: 'v4',
     // Browser notifications: the PUBLIC key from labsnmx.com/tools/push-keys/ (about 87 characters, starts with B).
     // Safe to publish. The private key goes only into GitHub secrets. Leave as is to keep the bell hidden.
-    VAPID_PUBLIC_KEY: 'BIDuMPyHUBcx1Hy4f2QBK4KrhUBfiQQYhu3kgjuJaigcAOMCMtmVx_ZmwRBairgUSHEGNQOLKAB6M8j7p4-XZ6w',
+    VAPID_PUBLIC_KEY: 'BJc1hPFGg5ZiyuEQSqNl4VmIrU7Wn3PkhkI3M8EnCCrmMXLkAIDY5gYhGebEWDdw5jF-m_YGQRva3R45-Hy3O_A',
     // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
     // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
     FALLBACK_INBOX: 'nmxprojects@gmail.com'
