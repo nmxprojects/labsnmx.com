@@ -1,4 +1,5 @@
 /* NMX Labs: analytics events, light/dark theme, blog subscribe + unsubscribe, comments, Google AI summary link, blog filters.
+   v4: also loads /assets/engage.js (browser notifications, Ask NMX Labs assistant, saved posts, installable app, visitor stats).
    Loaded with `defer` on every page. Events go to the Meta Pixel (both pixel IDs on the page) and to GA4. */
 (function () {
   'use strict';
@@ -7,8 +8,11 @@
   var CFG = {
     // OPTIONAL. Apps Script web-app URL (ends in /exec) from Code-Blog.gs. When set, subscribers go to your
     // Google Sheet and get a welcome email. When empty or unreachable, the form falls back to FALLBACK_INBOX.
-    BACKEND_URL: 'https://script.google.com/macros/s/AKfycbxVuSfZQlFUtDuEWFDoiLzlTj5QByc18fC4sgV6kMneDw7NbVFWLXayL5EWpiW6Cz1m/exec',
-    BACKEND_VERSION: 'v3',
+    BACKEND_URL: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE',
+    BACKEND_VERSION: 'v4',
+    // Browser notifications: the PUBLIC key from labsnmx.com/tools/push-keys/ (about 87 characters, starts with B).
+    // Safe to publish. The private key goes only into GitHub secrets. Leave as is to keep the bell hidden.
+    VAPID_PUBLIC_KEY: 'PASTE_YOUR_VAPID_PUBLIC_KEY_HERE',
     // Works with no setup beyond one activation click: FormSubmit emails each sign-up to this inbox.
     // After activation, FormSubmit gives you a random alias; you can paste it here instead of the address.
     FALLBACK_INBOX: 'nmxprojects@gmail.com'
@@ -25,6 +29,13 @@
   function read(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function slugify(s) { return String(s).toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  /* ===== v4: installable app + notifications, assistant, saved posts (engage.js) ===== */
+  if (!$('link[rel="manifest"]')) {
+    var mf = doc.createElement('link'); mf.rel = 'manifest'; mf.href = '/manifest.webmanifest'; doc.head.appendChild(mf);
+  }
+  if (!window.NMX_NO_ENGAGE && !/\/amp\/?$/.test(path)) {
+    var ej = doc.createElement('script'); ej.src = '/assets/engage.js?v=4'; ej.defer = true; doc.head.appendChild(ej);
+  }
 
   /* ===== analytics ===== */
   function snake(s) { return String(s).replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase(); }
@@ -366,4 +377,5 @@
     $('#fEmptyClear').addEventListener('click', clearAll);
     apply();
   }
+
 })();
