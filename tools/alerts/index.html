@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notifications dashboard | NMX Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta name="theme-color" content="#faf9f6">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script>(function(){try{var t=localStorage.getItem('nmx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.NMX_NO_ENGAGE=true;</script>
+<script defer src="/assets/nmx.js"></script>
+<style>
+  .ad{padding:40px 0 96px}
+  .ad-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+  .ad-top h1{font-family:var(--font-display);font-size:clamp(40px,6vw,72px);line-height:.95;letter-spacing:-.03em}
+  .ad-top p{color:var(--muted);font-size:14px;margin-top:8px}
+  .ad-acts{display:flex;gap:8px;flex-wrap:wrap}
+  .ad-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 16px;font:600 13px/1 var(--font-body);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .ad-btn:hover{border-color:var(--ink)}
+  .ad-btn--go{background:var(--orange);border-color:var(--orange);color:#fff}
+  .ad-btn--go:hover{filter:brightness(.94);border-color:var(--orange)}
+  .ad-btn:disabled{opacity:.55;cursor:progress}
+  .ad-card{border:1px solid var(--line);background:var(--surface);border-radius:22px;padding:clamp(18px,3vw,26px)}
+  .ad-card h2{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+  .ad-card .ad-sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .ad-grid{display:grid;gap:16px;margin-top:16px}
+  .ad-g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ad-g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width:900px){.ad-g2,.ad-g3{grid-template-columns:1fr}}
+  .ad-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:24px;border:1px solid var(--line);border-radius:22px;background:var(--surface);overflow:hidden}
+  .ad-kpi{padding:20px 22px;border-left:1px solid var(--line)}
+  .ad-kpi:first-child{border-left:0;background:var(--yellow);color:#111110}
+  .ad-kpi b{display:block;font-family:var(--font-display);font-size:44px;line-height:1;letter-spacing:-.02em}
+  .ad-kpi span{display:block;font-size:13px;font-weight:600;margin-top:8px}
+  .ad-kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .ad-kpi:first-child small{color:#4a4840}
+  @media (max-width:900px){.ad-kpis{grid-template-columns:1fr 1fr}.ad-kpi{border-left:0;border-top:1px solid var(--line)}.ad-kpi:first-child{grid-column:1/-1;border-top:0}}
+  .ad-chart svg{width:100%;height:auto;display:block}
+  .ad-legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px}
+  .ad-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .ad-bars{list-style:none;display:grid;gap:8px}
+  .ad-bars li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:13.5px}
+  .ad-bars li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ad-bars li em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
+  .ad-bars li i{grid-column:1/-1;height:6px;border-radius:6px;background:var(--cream)}
+  .ad-bars li i b{display:block;height:100%;border-radius:6px;background:var(--ink)}
+  .ad-empty{color:var(--muted);font-size:13.5px}
+  .ad-form{display:grid;gap:12px}
+  .ad-form label{display:grid;gap:6px;font-size:13px;font-weight:600}
+  .ad-form label small{font-weight:500;color:var(--muted)}
+  .ad-form input,.ad-form textarea,.ad-form select{font:500 15px/1.4 var(--font-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px;width:100%}
+  .ad-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .ad-status{font-size:13.5px;font-weight:600;min-height:1.3em}
+  .ad-preview{border-radius:16px;background:#2b2a27;color:#f1eee7;padding:14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;font-size:13px;line-height:1.35}
+  .ad-preview img.ic{width:40px;height:40px;border-radius:10px;grid-row:span 2}
+  .ad-preview b{font-size:14px}
+  .ad-preview .host{color:#a7a49c;font-size:12px;grid-column:2}
+  .ad-preview img.big{grid-column:1/-1;width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:10px;margin-top:8px}
+  .ad-table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .ad-table th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ad-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .ad-table td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ad-table th.n{text-align:right}
+  .ad-scroll{overflow-x:auto}
+  .ad-pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--cream);white-space:nowrap}
+  .ad-pill.ok{background:#e3eedb;color:#2f5a1e}.ad-pill.bad{background:#ffe0d6;color:#9c2b0a}
+  :root[data-theme="dark"] .ad-pill.ok{background:#25331d;color:#a5c493}:root[data-theme="dark"] .ad-pill.bad{background:#3a1d14;color:#ff8a65}
+  .ad-checks{list-style:none;display:grid;gap:8px;font-size:14px}
+  .ad-checks li::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;background:var(--orange)}
+  .ad-checks li.ok::before{background:#5d8a3f}
+  .ad-login{max-width:480px;margin:40px 0}
+  .ad-note{font-size:13px;color:var(--muted);margin-top:12px}
+  .ad-note code,.ad-checks code{font-size:12.5px;background:var(--cream);padding:1px 6px;border-radius:6px}
+  .ad-funnel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+  .ad-funnel div{border-radius:14px;background:var(--cream);padding:14px 8px}
+  .ad-funnel b{display:block;font-family:var(--font-display);font-size:32px;line-height:1}
+  .ad-funnel span{font-size:12px;color:var(--muted)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Main">
+  <a href="/" class="nav-logo"><img src="/assets/logo.png" alt="NMX Labs" width="102" height="19"></a>
+  <div class="nav-links"><a href="/blog/">Blog</a><a href="/tools/backend-check/">Setup check</a><a href="/tools/push-keys/">Notification keys</a></div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" aria-pressed="false"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+</nav>
+<main class="wrap ad">
+
+<section id="login" class="ad-login" hidden>
+  <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,64px);line-height:.95;letter-spacing:-.03em">Notifications dashboard</h1>
+  <p style="color:var(--muted);margin:12px 0 20px">For the site owner. Sign in with the <code>ADMIN_KEY</code> from your Apps Script log (run <code>checkPushSetup()</code> to see it).</p>
+  <form id="loginForm" class="ad-form">
+    <label>Admin key<input id="key" type="password" autocomplete="current-password" required></label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input id="remember" type="checkbox" style="width:auto"> Keep me signed in on this device</label>
+    <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Sign in</button></div>
+    <p class="ad-status" id="loginStatus" role="status"></p>
+  </form>
+</section>
+
+<section id="noBackend" class="ad-login" hidden>
+  <h1 style="font-family:var(--font-display);font-size:48px;line-height:1">Connect the backend first</h1>
+  <p style="color:var(--muted);margin-top:12px">Paste your Apps Script <code>/exec</code> URL into <code>BACKEND_URL</code> in <code>/assets/nmx.js</code>, upload it, and reload this page.</p>
+</section>
+
+<section id="dash" hidden>
+  <div class="ad-top">
+    <div><h1>Notifications dashboard</h1><p id="updated">Loading…</p></div>
+    <div class="ad-acts">
+      <button class="ad-btn" id="refresh" type="button">Refresh</button>
+      <a class="ad-btn" id="sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
+      <button class="ad-btn" id="signout" type="button">Sign out</button>
+    </div>
+  </div>
+
+  <div class="ad-card" id="setup" style="margin-top:24px" hidden>
+    <h2>Finish setting up</h2><p class="ad-sub">Each item is explained in the setup doc. This list disappears once everything is connected.</p>
+    <ul class="ad-checks" id="checks"></ul>
+  </div>
+
+  <div class="ad-kpis" id="kpis"></div>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card ad-chart"><h2>Push subscribers, last 30 days</h2><p class="ad-sub" id="growthSub"></p><div id="growth"></div>
+      <div class="ad-legend"><span><i style="background:var(--ink)"></i>New</span><span><i style="background:var(--orange)"></i>Lost (unsubscribed, blocked or expired)</span></div></div>
+    <div class="ad-card ad-chart"><h2>Visitors per day, last 30 days</h2><p class="ad-sub" id="visitSub"></p><div id="visits"></div></div>
+  </div>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card">
+      <h2>Send a notification</h2><p class="ad-sub">New blog posts and YouTube videos go out by themselves. Use this for anything else.</p>
+      <form class="ad-form" id="send">
+        <label>Title <small><span id="tc">0</span>/90</small><input name="title" maxlength="90" required placeholder="Our Diwali offer is live"></label>
+        <label>Message <small>optional, <span id="mc">0</span>/200</small><textarea name="message" rows="2" maxlength="200" placeholder="One line that makes people tap."></textarea></label>
+        <label>Link that opens<input name="url" type="url" value="https://labsnmx.com/blog/" required></label>
+        <label>Image <small>optional, https address of a wide image (2:1 works best)</small><input name="image" type="url" placeholder="https://labsnmx.com/assets/blog/….jpg"></label>
+        <label>Who gets it<select name="audience"><option value="all">Everyone subscribed</option><option value="blog">Blog post subscribers</option><option value="youtube">YouTube video subscribers</option></select></label>
+        <div class="ad-preview" aria-label="Preview"><img class="ic" src="/assets/pwa/icon-192.png" alt=""><b id="pvT">Title</b><span id="pvM"></span><span class="host">labsnmx.com</span><img class="big" id="pvI" alt="" hidden></div>
+        <div class="ad-row"><button class="ad-btn" type="button" id="test">Send a test to this browser</button><button class="ad-btn ad-btn--go" type="submit" id="go">Send to subscribers</button></div>
+        <p class="ad-status" id="sendStatus" role="status"></p>
+      </form>
+    </div>
+    <div class="ad-card">
+      <h2>How people subscribe</h2><p class="ad-sub">Last 30 days. The prompt opens once a reader is halfway through a post.</p>
+      <div class="ad-funnel" id="funnel"></div>
+      <div class="ad-grid ad-g2" style="margin-top:18px"><div><h2 style="font-size:14px">Topics</h2><ul class="ad-bars" id="topics"></ul></div><div><h2 style="font-size:14px">Signed up on</h2><ul class="ad-bars" id="pages"></ul></div></div>
+    </div>
+  </div>
+
+  <div class="ad-card" style="margin-top:16px"><h2>Campaigns</h2><p class="ad-sub">Click-through = readers who tapped ÷ notifications delivered. GitHub runs usually finish within a minute or two.</p>
+    <div class="ad-scroll"><table class="ad-table"><thead><tr><th>Sent</th><th>Type</th><th>Title</th><th>To</th><th>Status</th><th class="n">Delivered</th><th class="n">Clicks</th><th class="n">Click-through</th><th></th></tr></thead><tbody id="camps"></tbody></table></div>
+  </div>
+
+  <h2 style="margin:40px 0 0;font-family:var(--font-display);font-size:34px;letter-spacing:-.02em">Subscribers</h2>
+  <div class="ad-grid ad-g3">
+    <div class="ad-card"><h2>Browsers</h2><ul class="ad-bars" id="pBrowser"></ul></div>
+    <div class="ad-card"><h2>Devices and systems</h2><ul class="ad-bars" id="pDevice"></ul></div>
+    <div class="ad-card"><h2>Countries</h2><ul class="ad-bars" id="pCountry"></ul></div>
+  </div>
+  <div class="ad-card" style="margin-top:16px"><h2>Newest subscribers</h2><p class="ad-sub" id="recentSub"></p>
+    <div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Status</th><th>Topics</th><th>Browser</th><th>Device</th><th>Country</th><th>Signed up on</th><th>Came from</th><th>Email</th><th class="n">Received</th></tr></thead><tbody id="recent"></tbody></table></div>
+  </div>
+
+  <h2 style="margin:40px 0 0;font-family:var(--font-display);font-size:34px;letter-spacing:-.02em">Visitors</h2>
+  <div class="ad-grid ad-g3">
+    <div class="ad-card"><h2>Top pages</h2><ul class="ad-bars" id="vPages"></ul></div>
+    <div class="ad-card"><h2>Where they came from</h2><ul class="ad-bars" id="vRefs"></ul><h2 style="margin-top:18px">Campaigns (UTM)</h2><ul class="ad-bars" id="vUtm"></ul></div>
+    <div class="ad-card"><h2>Devices</h2><ul class="ad-bars" id="vDevice"></ul><h2 style="margin-top:18px">Countries</h2><ul class="ad-bars" id="vCountry"></ul></div>
+  </div>
+  <p class="ad-note">Visitor numbers come from your own site script and skip people with Do Not Track on, so Google Analytics will show somewhat more. Use GA4 for full traffic reporting; this view puts traffic, subscribers and clicks in one place.</p>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card"><h2>Leads from the site assistant</h2><p class="ad-sub">Each one was also emailed to you.</p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Message</th></tr></thead><tbody id="leads"></tbody></table></div></div>
+    <div class="ad-card"><h2>What visitors ask the assistant</h2><p class="ad-sub" id="askSub"></p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Question</th><th>Page</th></tr></thead><tbody id="asks"></tbody></table></div></div>
+  </div>
+</section>
+</main>
+<script>
+(function () {
+  'use strict';
+  var CFG, KEY = '', DATA = null;
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function num(n) { return Number(n || 0).toLocaleString('en-IN'); }
+  function pct(a, b) { return b ? (Math.round(a / b * 1000) / 10) + '%' : '–'; }
+  function when(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); }
+  function getKey() { try { return sessionStorage.getItem('nmx-admin') || localStorage.getItem('nmx-admin') || ''; } catch (e) { return ''; } }
+  function setKey(k, remember) { try { sessionStorage.setItem('nmx-admin', k); if (remember) localStorage.setItem('nmx-admin', k); } catch (e) {} }
+  function clearKey() { try { sessionStorage.removeItem('nmx-admin'); localStorage.removeItem('nmx-admin'); } catch (e) {} }
+  function api(params) {
+    params.action = 'admin'; params.key = KEY;
+    return fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams(params) }).then(function (r) { return r.json(); });
+  }
+  function show(id) { ['login', 'noBackend', 'dash'].forEach(function (x) { $(x).hidden = x !== id; }); }
+
+  function bars(id, rows, total) {
+    var el = $(id); if (!rows || !rows.length) { el.innerHTML = '<li class="ad-empty">No data yet.</li>'; return; }
+    var max = total || Math.max.apply(null, rows.map(function (r) { return r[1]; }));
+    el.innerHTML = rows.map(function (r) {
+      return '<li><span title="' + esc(r[0]) + '">' + esc(r[0]) + '</span><em>' + num(r[1]) + '</em><i><b style="width:' + Math.max(2, Math.round(r[1] / max * 100)) + '%"></b></i></li>';
+    }).join('');
+  }
+  // 30 bars; optional negative series drawn below the axis.
+  function chart(id, days, up, down) {
+    var W = 640, H = 200, padL = 34, padB = 26, top = 12, n = days.length, bw = (W - padL - 8) / n;
+    var maxUp = Math.max(1, Math.max.apply(null, up)), maxDown = down ? Math.max(0, Math.max.apply(null, down)) : 0;
+    var span = maxUp + maxDown, plot = H - padB - top, zero = top + plot * (maxUp / span);
+    var step = Math.max(1, Math.ceil(maxUp / 4)), grid = '';
+    for (var v = 0; v <= maxUp; v += step) { var y = zero - plot * (v / span); grid += '<line x1="' + padL + '" x2="' + W + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)"/><text x="' + (padL - 6) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="var(--muted)">' + v + '</text>'; }
+    var b = '';
+    for (var i = 0; i < n; i++) {
+      var x = padL + i * bw + bw * 0.15, w = bw * 0.7, hu = plot * (up[i] / span);
+      if (up[i]) b += '<rect x="' + x + '" y="' + (zero - hu) + '" width="' + w + '" height="' + hu + '" rx="2" fill="var(--ink)"><title>' + days[i] + ': ' + up[i] + '</title></rect>';
+      if (down && down[i]) { var hd = plot * (down[i] / span); b += '<rect x="' + x + '" y="' + zero + '" width="' + w + '" height="' + hd + '" rx="2" fill="var(--orange)"><title>' + days[i] + ': −' + down[i] + '</title></rect>'; }
+      if (i % 7 === 0 || i === n - 1) { var d = new Date(days[i] + 'T00:00:00'); b += '<text x="' + (x + w / 2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="var(--muted)">' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + '</text>'; }
+    }
+    $(id).innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Daily chart, last 30 days">' + grid + '<line x1="' + padL + '" x2="' + W + '" y1="' + zero + '" y2="' + zero + '" stroke="var(--muted)"/>' + b + '</svg>';
+  }
+
+  function render(d) {
+    DATA = d; show('dash');
+    $('updated').textContent = 'Updated ' + when(d.updated) + ' · backend ' + d.version;
+    $('sheet').href = d.setup.sheet;
+    var vapid = /^[A-Za-z0-9_-]{80,100}$/.test(String(CFG.VAPID_PUBLIC_KEY || ''));
+    var checks = [
+      [d.version === 'v4', 'Apps Script backend is <code>v4</code> (paste Code-Blog.gs v4, deploy a new version)'],
+      [vapid, 'Public VAPID key pasted into <code>VAPID_PUBLIC_KEY</code> in /assets/nmx.js (the bell stays hidden until then)'],
+      [d.setup.github, 'GitHub connected: <code>GITHUB_REPO</code> and <code>GITHUB_TOKEN</code> in Script properties' + (d.setup.repo ? ' (' + esc(d.setup.repo) + ')' : '')],
+      [!!d.setup.youtube, 'YouTube channel for new-video notifications: <code>YOUTUBE_CHANNEL_ID</code> (optional)'],
+      [d.setup.gemini, 'Gemini key for open questions in the assistant: <code>GEMINI_API_KEY</code> (optional)']
+    ];
+    $('setup').hidden = checks.every(function (c) { return c[0]; });
+    $('checks').innerHTML = checks.map(function (c) { return '<li class="' + (c[0] ? 'ok' : '') + '">' + c[1] + '</li>'; }).join('');
+
+    var p = d.push, v = d.visitors, t = d.totals, f = v.funnel;
+    $('kpis').innerHTML = [
+      [num(p.active), 'Push subscribers', '+' + num(p.new7) + ' this week'],
+      [num(d.email.active), 'Email subscribers', '+' + num(d.email.new30) + ' in 30 days'],
+      [num(v.visitors), 'Visitors, 30 days', num(v.pageviews) + ' page views'],
+      [num(t.clicks30), 'Notification taps, 30 days', pct(t.clicks30, t.delivered30) + ' of ' + num(t.delivered30) + ' delivered'],
+      [pct(f.push_subscribe, f.prompt_shown), 'Prompt opt-in rate', num(f.push_subscribe) + ' of ' + num(f.prompt_shown) + ' prompts']
+    ].map(function (k) { return '<div class="ad-kpi"><b>' + k[0] + '</b><span>' + k[1] + '</span><small>' + k[2] + '</small></div>'; }).join('');
+
+    var gained = p.gained.reduce(function (a, b) { return a + b; }, 0), lost = p.lost.reduce(function (a, b) { return a + b; }, 0);
+    $('growthSub').textContent = '+' + gained + ' new, −' + lost + ' lost. ' + p.unsubscribed + ' unsubscribed, ' + p.blocked + ' blocked, ' + p.expired + ' expired in total.';
+    chart('growth', d.days, p.gained, p.lost);
+    $('visitSub').textContent = num(v.visitors) + ' people (' + num(v.newVisitors) + ' new), ' + num(v.sessions) + ' visits, ' + num(v.pageviews) + ' page views.';
+    chart('visits', d.days, v.people);
+
+    $('funnel').innerHTML = '<div><b>' + num(f.prompt_shown) + '</b><span>saw the prompt</span></div><div><b>' + num(f.prompt_yes) + '</b><span>tapped Turn on</span></div><div><b>' + num(f.push_subscribe) + '</b><span>subscribed</span></div>';
+    bars('topics', [['Blog posts', p.topics.blog], ['YouTube videos', p.topics.youtube]], p.active || 1);
+    bars('pages', p.page);
+
+    $('camps').innerHTML = d.campaigns.length ? d.campaigns.map(function (c) {
+      var ok = c.status === 'Sent', bad = /fail|Waiting/.test(c.status), retry = /Dispatch failed|Waiting/.test(c.status);
+      return '<tr><td>' + when(c.at) + '</td><td>' + esc(c.type) + '</td><td><a href="' + esc(c.url) + '" target="_blank" rel="noopener">' + esc(c.title) + '</a>' + (c.note ? '<br><small style="color:var(--muted)">' + esc(c.note) + '</small>' : '') + '</td>' +
+        '<td>' + esc(String(c.audience).replace(/^id:.*/, 'test')) + '</td><td><span class="ad-pill ' + (ok ? 'ok' : bad ? 'bad' : '') + '">' + esc(c.status) + '</span></td>' +
+        '<td class="n">' + (c.delivered === '' ? '–' : num(c.delivered)) + (c.expired ? '<br><small style="color:var(--muted)">' + num(c.expired) + ' expired</small>' : '') + '</td><td class="n">' + num(c.clicks) + '</td><td class="n">' + pct(c.clicks, Number(c.delivered || 0)) + '</td>' +
+        '<td>' + (retry ? '<button class="ad-btn" data-retry="' + esc(c.id) + '">Retry</button>' : '') + '</td></tr>';
+    }).join('') : '<tr><td colspan="9" class="ad-empty">No campaigns yet. The first one goes out with your next blog post, or send one above.</td></tr>';
+
+    bars('pBrowser', p.browser); bars('pDevice', p.device.concat(p.os)); bars('pCountry', p.country);
+    $('recentSub').textContent = num(p.withEmail) + ' of ' + num(p.active) + ' active subscribers are also on the email list; ' + num(p.installed) + ' installed the app.';
+    $('recent').innerHTML = p.recent.length ? p.recent.map(function (r) {
+      return '<tr><td>' + when(r.at) + '</td><td>' + esc(r.status) + '</td><td>' + esc(r.topics) + '</td><td>' + esc(r.browser) + '</td><td>' + esc(r.device) + ' · ' + esc(r.os) + '</td><td>' + esc(r.country) + '</td><td>' + esc(r.page) + '</td><td>' + esc(r.source) + '</td><td>' + esc(r.email) + '</td><td class="n">' + num(r.received) + '</td></tr>';
+    }).join('') : '<tr><td colspan="10" class="ad-empty">No subscribers yet. Open any post, tap the bell and turn on notifications to be the first.</td></tr>';
+
+    bars('vPages', v.pages); bars('vRefs', v.refs); bars('vUtm', v.utm); bars('vDevice', v.device); bars('vCountry', v.country);
+    $('leads').innerHTML = d.leads.length ? d.leads.map(function (l) { return '<tr><td>' + when(l.at) + '</td><td>' + esc(l.name) + '</td><td>' + esc(l.contact) + '</td><td>' + esc(l.message) + '</td></tr>'; }).join('') : '<tr><td colspan="4" class="ad-empty">No leads yet.</td></tr>';
+    $('askSub').textContent = num(v.other.ask) + ' questions in 30 days; the AI-answered ones are listed here, the rest are in the Visitors tab.';
+    $('asks').innerHTML = d.asks.length ? d.asks.map(function (a) { return '<tr><td>' + when(a.at) + '</td><td>' + esc(a.q) + '</td><td>' + esc(a.page) + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="ad-empty">No questions yet.</td></tr>';
+  }
+
+  function load(fresh) {
+    $('updated').textContent = 'Loading…';
+    return api({ op: 'stats', fresh: fresh ? '1' : '' }).then(function (d) {
+      if (!d || !d.ok) { clearKey(); show('login'); $('loginStatus').textContent = (d && d.error) || 'Couldn’t load the dashboard.'; return; }
+      render(d);
+    }).catch(function () { show('login'); $('loginStatus').textContent = 'The backend didn’t answer. Check BACKEND_URL in /assets/nmx.js and that the deployment allows Anyone.'; });
+  }
+
+  // composer
+  var form = $('send');
+  function preview() {
+    $('pvT').textContent = form.title.value || 'Title'; $('pvM').textContent = form.message.value;
+    $('tc').textContent = form.title.value.length; $('mc').textContent = form.message.value.length;
+    var img = form.image.value.trim(); $('pvI').hidden = !/^https:\/\//.test(img); if (/^https:\/\//.test(img)) $('pvI').src = img;
+  }
+  ['input', 'change'].forEach(function (ev) { form.addEventListener(ev, preview); });
+  function send(audience) {
+    var st = $('sendStatus');
+    if (form.title.value.trim().length < 3) { st.textContent = 'Add a title first.'; form.title.focus(); return; }
+    var btns = [$('go'), $('test')]; btns.forEach(function (b) { b.disabled = true; }); st.textContent = 'Starting the send on GitHub…';
+    api({ op: 'send', title: form.title.value.trim(), message: form.message.value.trim(), url: form.url.value.trim(), image: form.image.value.trim(), audience: audience })
+      .then(function (r) {
+        st.textContent = r.ok ? (/^id:/.test(audience) ? 'Test queued. It should pop up within a minute or two.' : 'Queued. Delivery numbers show up here in a minute or two; press Refresh.') : (r.error || 'That didn’t work.');
+        if (r.ok) setTimeout(function () { load(true); }, 1500);
+      }).catch(function () { st.textContent = 'The backend didn’t answer. Try again.'; })
+      .then(function () { btns.forEach(function (b) { b.disabled = false; }); });
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var a = form.audience.value, n = a === 'all' ? DATA.push.active : DATA.push.topics[a];
+    if (confirm('Send “' + form.title.value.trim() + '” to ' + n + ' subscriber' + (n === 1 ? '' : 's') + '?')) send(a);
+  });
+  $('test').addEventListener('click', function () {
+    var me = null; try { me = JSON.parse(localStorage.getItem('nmx-push') || 'null'); } catch (e) {}
+    if (!me || !me.id) { $('sendStatus').textContent = 'This browser isn’t subscribed. Open labsnmx.com in this browser, tap the bell, turn on notifications, then come back.'; return; }
+    send('id:' + me.id);
+  });
+  $('camps').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-retry]'); if (!b) return;
+    b.disabled = true; b.textContent = 'Retrying…';
+    api({ op: 'retry', id: b.getAttribute('data-retry') }).then(function (r) { if (!r.ok) alert(r.error || 'Retry failed'); load(true); });
+  });
+
+  $('refresh').addEventListener('click', function () { load(true); });
+  $('signout').addEventListener('click', function () { clearKey(); KEY = ''; show('login'); });
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault(); KEY = $('key').value.trim(); $('loginStatus').textContent = 'Checking…';
+    api({ op: 'stats' }).then(function (d) {
+      if (!d || !d.ok) { $('loginStatus').textContent = (d && d.error) || 'That key didn’t work.'; return; }
+      setKey(KEY, $('remember').checked); render(d);
+    }).catch(function () { $('loginStatus').textContent = 'The backend didn’t answer. Check BACKEND_URL and the deployment.'; });
+  });
+
+  window.addEventListener('load', function () {
+    CFG = window.NMX_CFG || {};
+    if (!window.NMX_backendReady || !window.NMX_backendReady()) { show('noBackend'); return; }
+    KEY = getKey(); preview();
+    if (KEY) load(false); else show('login');
+  });
+})();
+</script>
+</body>
+</html>

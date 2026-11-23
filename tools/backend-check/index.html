@@ -10,6 +10,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
 <meta name="theme-color" content="#faf9f6">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="NMX Labs">
+<meta name="mobile-web-app-capable" content="yes">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NMX Labs">
 <meta property="og:title" content="Setup check | NMX Labs">
@@ -39,6 +42,7 @@ fbq('init', '730249939578083');
 fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel Code -->
+<script>window.NMX_NO_ENGAGE=true;</script>
 <script defer src="/assets/nmx.js"></script>
 </head>
 <body>
@@ -66,6 +70,11 @@ window.addEventListener('load', function () {
   var C = window.NMX_CFG || {}, ready = window.NMX_backendReady ? window.NMX_backendReady() : false;
   line(!!window.NMX_CFG, 'Site script /assets/nmx.js loaded');
   line(true, 'Subscribe fallback inbox: ' + (C.FALLBACK_INBOX || 'not set') + ' (first submission sends FormSubmit an activation email)');
+  line(/^[A-Za-z0-9_-]{80,100}$/.test(String(C.VAPID_PUBLIC_KEY || '')), 'Notifications: VAPID public key in /assets/nmx.js ' + (/^[A-Za-z0-9_-]{80,100}$/.test(String(C.VAPID_PUBLIC_KEY || '')) ? 'looks right' : 'not set yet (make one at /tools/push-keys/)'));
+  line('serviceWorker' in navigator && 'PushManager' in window ? true : null, 'This browser ' + ('PushManager' in window ? 'supports' : 'does not support') + ' web push');
+  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration('/').then(function (r) { line(!!r, 'Service worker /sw.js ' + (r ? 'is registered (scope ' + r.scope + ')' : 'not registered yet: open any page once, then reload this one')); });
+  fetch('/manifest.webmanifest').then(function (r) { return r.json(); }).then(function (m) { line(!!m.name, 'App manifest found: ' + m.name); }).catch(function () { line(false, 'App manifest /manifest.webmanifest missing'); });
+  if (ready) fetch(C.BACKEND_URL + '?action=push_status').then(function (r) { return r.json(); }).then(function (d) { line(d.version === 'v4', 'Backend version ' + d.version + (d.version === 'v4' ? '' : ': paste Code-Blog.gs v4 and deploy a new version')); line(!!d.push, d.push ? 'GitHub is connected for sending' : 'GitHub not connected yet: add GITHUB_REPO and GITHUB_TOKEN in Script properties'); }).catch(function () {});
   if (!ready) { line(null, 'Apps Script backend not configured (optional). Subscriptions go to the fallback inbox.'); }
   else fetch(C.BACKEND_URL).then(function (r) { return r.json(); }).then(function (d) { line(!!(d && d.ok), 'Apps Script backend responds, version ' + (d && d.version)); })
     .catch(function () { line(false, 'Apps Script URL is set but did not respond. Check the deployment is "Anyone" and the URL ends in /exec.'); });
@@ -81,7 +90,7 @@ window.addEventListener('load', function () {
     <div class="footer-col"><h4>Services</h4><ul><li><a href="/#services">Branding &amp; Identity</a></li><li><a href="/#services">Social Media Creative</a></li><li><a href="/#services">Campaign Creative</a></li><li><a href="/#services">Meta Ads Management</a></li><li><a href="/#services">Creative + Meta Ads Bundle</a></li><li><a href="/#services">Brand &amp; Marketing Design</a></li></ul></div>
     <div class="footer-col"><h4>Blog</h4><ul><li><a href="/blog/">All posts</a></li><li><a href="/blog/category/design-news/">Design news</a></li><li><a href="/blog/category/ai-design/">AI design</a></li><li><a href="/blog/category/adobe/">Adobe</a></li><li><a href="/blog/category/meta-ads/">Meta ads</a></li><li><a href="/blog/category/branding/">Branding</a></li><li><a href="/blog/category/brand-stories/">Brand stories</a></li></ul></div>
     <div class="footer-col"><h4>Popular reads</h4><ul><!--POPULAR--><li><a href="/blog/canva-figma-adobe-ai-design-war/">Canva vs Figma vs Adobe</a></li><li><a href="/blog/quick-commerce-brand-war-blinkit-zepto-instamart/">Blinkit vs Zepto vs Instamart</a></li><li><a href="/blog/meta-ads-budget-guide-india/">Meta ads budget guide for startups</a></li><li><a href="/blog/logo-design-cost-india/">What a logo costs in India</a></li><li><a href="/blog/startup-branding-checklist/">Startup branding checklist</a></li><!--/POPULAR--></ul></div>
-    <div class="footer-col"><h4>Studio</h4><ul><li><a href="/about/">About</a></li><li><a href="/editorial-standards/">Editorial standards</a></li><li><a href="/clients">Clients</a></li><li><a href="/videos/">Videos</a></li><li><a href="/news/">News</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/contact/">Contact</a></li><li><a href="/blog/author/neeraj/">Neeraj (author)</a></li><li><a href="/blog/author/anisha/">Anisha (author)</a></li></ul></div>
+    <div class="footer-col"><h4>Studio</h4><ul><li><a href="/about/">About</a></li><li><a href="/editorial-standards/">Editorial standards</a></li><li><a href="/clients">Clients</a></li><li><a href="/videos/">Videos</a></li><li><a href="/news/">News</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/contact/">Contact</a></li><li><a href="/blog/author/neeraj/">Neeraj (author)</a></li><li><a href="/blog/author/anisha/">Anisha (author)</a></li><li><a href="/saved/">Saved posts</a></li></ul></div>
     <div class="footer-col"><h4>Get in touch</h4><ul><li><a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a></li><li><a href="tel:+918810438717">+91 88104 38717</a></li><li><a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li></ul></div>
   </div>
   <div class="footer-bottom">
