@@ -86,7 +86,7 @@
   </url>
   <url>
     <loc>https://labsnmx.com/blog/category/branding/</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -110,7 +110,7 @@
   </url>
   <url>
     <loc>https://labsnmx.com/blog/author/anisha/</loc>
-    <lastmod>2026-11-22</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -120,6 +120,13 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image><image:loc>https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://labsnmx.com/blog/asia-cup-2026-cricket-sponsorship-brands/</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image><image:loc>https://labsnmx.com/assets/blog/asia-cup-2026-cricket-sponsorship-brands.jpg</image:loc></image:image>
   </url>
   <url>
     <loc>https://labsnmx.com/blog/custom-brand-typefaces-india/</loc>
