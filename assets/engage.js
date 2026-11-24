@@ -1,11 +1,16 @@
-/* NMX Labs engage layer (v4, 23 Nov 2026). Loaded by /assets/nmx.js on every page.
+/* NMX Labs engage layer (v5, 23 Nov 2026). Loaded by /assets/nmx.js on every page.
    - Browser notifications (standard Web Push with your own VAPID key, LaraPush-style, self-hosted, free)
+     v5: "Follow" button instead of a bare bell, a small prompt once a reader is a few lines into a post, an
+     end-of-post card, instant confirmation (the slow parts finish in the background), a test notification to
+     confirm delivery, and step-by-step fixes when the phone or browser is blocking notifications.
    - "Ask NMX Labs" assistant: instant answers from the studio facts below, Google Gemini (free tier) through your
      Apps Script backend for anything else, and a hand-off to a person (lead form or WhatsApp)
    - Saved posts (stored in the reader's browser, readable offline), installable app (PWA)
    - First-party visitor statistics sent to your Google Sheet (respects Do Not Track / Global Privacy Control)
-   Needs BACKEND_URL and VAPID_PUBLIC_KEY in /assets/nmx.js. Without them the bell stays hidden and the assistant
-   answers from the studio facts only, so uploading this before setup breaks nothing. */
+   - v5: "Learn" and "Play" links in the menu (until scripts/build.py writes them into every page)
+   Reads BACKEND_URL and VAPID_PUBLIC_KEY from /assets/nmx.js (window.NMX_CFG). This file holds no keys, so it can be
+   replaced without touching your settings. Without them the Follow button stays hidden and the assistant answers from
+   the studio facts only. */
 (function () {
   'use strict';
   if (window.NMX_ENGAGE_LOADED) return; window.NMX_ENGAGE_LOADED = true;
@@ -16,6 +21,7 @@
   var VAPID = String(CFG.VAPID_PUBLIC_KEY || '').trim();
   var VAPID_OK = /^[A-Za-z0-9_-]{80,100}$/.test(VAPID);
   var WHATSAPP = '918810438717', EMAIL = 'nmxprojects@gmail.com';
+  var REDUCED = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   function $(s, c) { return (c || doc).querySelector(s); }
   function $$(s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); }
@@ -28,6 +34,8 @@
   function ssSet(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
   function today() { return new Date().toISOString().slice(0, 10); }
   function track(name, params) { try { if (window.nmxTrack) window.nmxTrack(name, params || {}); } catch (e) {} }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function withTimeout(p, ms, label) { return Promise.race([p, wait(ms).then(function () { throw new Error(label || 'timeout'); })]); }
   function post(params) {
     return fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams(params) })
       .then(function (r) { return r.json(); })
@@ -40,7 +48,7 @@
   var U = (function () {
     var br = 'Other', os = 'Other', dev = 'Desktop';
     if (/FBAN|FBAV|Instagram|Line\/|; wv\)/.test(UAS)) br = 'In-app browser';
-    else if (/Edg\//.test(UAS)) br = 'Edge'; else if (/OPR\/|Opera/.test(UAS)) br = 'Opera';
+    else if (/Edg\/|EdgA\//.test(UAS)) br = 'Edge'; else if (/OPR\/|Opera/.test(UAS)) br = 'Opera';
     else if (/SamsungBrowser/.test(UAS)) br = 'Samsung Internet'; else if (/Firefox\/|FxiOS/.test(UAS)) br = 'Firefox';
     else if (/CriOS|Chrome\//.test(UAS)) br = 'Chrome'; else if (/Safari\//.test(UAS)) br = 'Safari';
     if (/Android/.test(UAS)) os = 'Android'; else if (/iPhone|iPad|iPod/.test(UAS) || IPADOS) os = 'iOS';
@@ -95,16 +103,38 @@
   if (doc.readyState === 'complete') setTimeout(function () { logEvent('pageview'); }, 600);
   else addEventListener('load', function () { setTimeout(function () { logEvent('pageview'); }, 600); });
 
+  /* =========================================================== "Learn" and "Play" in the menu */
+  // scripts/build.py writes these links into every page on its next run; until then (and on any page it skips) add them here.
+  (function addSchoolLinks() {
+    function inject(box, cls) {
+      if (!box || box.querySelector('a[href="/learn/"]')) return;
+      var after = box.querySelector('a[href="/videos/"]');
+      var frag = doc.createDocumentFragment();
+      [['/learn/', 'Learn'], ['/play/', 'Play']].forEach(function (l) {
+        var a = doc.createElement('a'); a.href = l[0]; a.textContent = l[1]; if (cls) a.className = cls;
+        if (path.indexOf(l[0]) === 0) a.setAttribute('aria-current', 'page');
+        frag.appendChild(a);
+      });
+      if (after && after.parentNode === box) box.insertBefore(frag, after.nextSibling); else box.appendChild(frag);
+    }
+    inject($('.site-nav .nav-links'));
+    inject($('#mobileMenu .mobile-menu-links') || $('#mobileMenu'));
+    var nl = $('.site-nav .nav-links'); if (nl) nl.classList.add('nx-nav-plus');
+  })();
+
   /* =========================================================== service worker (notifications + offline) */
   var SW = 'serviceWorker' in navigator && window.isSecureContext;
-  var swReady = SW ? new Promise(function (resolve) {
+  // v5: registered as soon as the browser is idle (v4 waited for every image and ad to finish loading, which is
+  // what made "Turn on" feel slow on phones). Same URL and scope as v4, so existing subscribers are untouched.
+  var swReady = SW ? new Promise(function (resolve, reject) {
     function reg() {
       navigator.serviceWorker.register('/sw.js' + (READY ? '?b=' + encodeURIComponent(CFG.BACKEND_URL) : ''), { scope: '/' })
         .then(function () { return navigator.serviceWorker.ready; }).then(resolve)
-        .catch(function (e) { console.warn('[NMX] Service worker not registered:', e); });
+        .catch(function (e) { console.warn('[NMX] Service worker not registered:', e); reject(e); });
     }
-    doc.readyState === 'complete' ? reg() : addEventListener('load', reg);
+    if (window.requestIdleCallback) requestIdleCallback(reg, { timeout: 1200 }); else setTimeout(reg, 300);
   }) : null;
+  if (swReady) swReady.catch(function () {});
 
   var STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   var IOS = U.os === 'iOS';
@@ -112,30 +142,57 @@
   var PUSH_ON = READY && VAPID_OK;
   // iPhone/iPad: Safari only allows web push for sites added to the Home Screen (iOS 16.4+).
   var IOS_NEEDS_INSTALL = PUSH_ON && IOS && !STANDALONE && U.br !== 'In-app browser';
-  var SHOW_BELL = PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL);
+  var INAPP = U.br === 'In-app browser';
+  var SHOW_FOLLOW = PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL || INAPP);
+
+  // Phone brand, for brand-specific fixes (Chrome on Android tells pages the model when asked).
+  var BRAND = '';
+  (function () {
+    function brandOf(m) {
+      m = String(m || '');
+      if (/^SM-|Galaxy|Samsung/i.test(m) || /SamsungBrowser/.test(UAS)) return 'samsung';
+      if (/Redmi|POCO|Xiaomi|^M\d{4}[A-Z]|^2\d{3}[0-9A-Z]{3,}|^2[0-9]\d{6}/i.test(m)) return 'xiaomi';
+      if (/vivo|iQOO|^V\d{4}|^I\d{4}/i.test(m)) return 'vivo';
+      if (/OPPO|^CPH\d{4}|realme|^RMX\d{4}|OnePlus|^NE2\d{3}|^LE2\d{3}|^KB2\d{3}|^IN20\d{2}/i.test(m)) return 'oppo';
+      if (/moto/i.test(m)) return 'motorola';
+      if (/Pixel/i.test(m)) return 'pixel';
+      return '';
+    }
+    BRAND = brandOf((UAS.match(/Android [\d.]+; ([^;)]+)/) || [])[1]);
+    try {
+      if (U.os === 'Android' && navigator.userAgentData && navigator.userAgentData.getHighEntropyValues)
+        navigator.userAgentData.getHighEntropyValues(['model']).then(function (h) { BRAND = brandOf(h.model) || BRAND; }).catch(function () {});
+    } catch (e) {}
+  })();
 
   /* =========================================================== UI shell */
   if (!$('link[href^="/assets/engage.css"]')) {
-    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=4'; doc.head.appendChild(css);
+    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=5'; doc.head.appendChild(css);
   }
   var I = {
     bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
+    bellOff: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 9.2-5.1M18 10.5v6l1.5 2H8"/><path d="M10 20.5a2 2 0 0 0 4 0M4 4l16 16"/></svg>',
     chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 18.5 5.6 15A7.5 7.5 0 1 1 9 18.2z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg>',
     x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
     send: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>',
-    mark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.6-5 3.6z"/></svg>'
+    mark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.6-5 3.6z"/></svg>',
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>'
   };
   var rootEl = doc.createElement('div');
   rootEl.className = 'nx-root'; rootEl.setAttribute('data-nx', '');
   rootEl.innerHTML =
     '<div class="nx-panel" id="nxPanel" role="dialog" aria-modal="false" aria-labelledby="nxTitle" hidden></div>' +
+    '<div class="nx-sheet" id="nxSheet" role="dialog" aria-modal="false" aria-labelledby="nxSheetT" hidden></div>' +
+    '<div class="nx-pill" role="status" aria-live="polite" hidden></div>' +
     '<div class="nx-toast" role="status" aria-live="polite" hidden></div>' +
     '<div class="nx-dock">' +
-      (SHOW_BELL ? '<button class="nx-bell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="nxPanel" data-no-track>' + I.bell + '<span class="nx-dot" aria-hidden="true"></span></button><span class="nx-sep" aria-hidden="true"></span>' : '') +
+      (SHOW_FOLLOW ? '<button class="nx-bell" type="button" aria-expanded="false" aria-controls="nxPanel" data-no-track>' + I.bell + '<span class="nx-bell-label">Follow</span><span class="nx-dot" aria-hidden="true"></span></button><span class="nx-sep" aria-hidden="true"></span>' : '') +
       '<button class="nx-ask" type="button" aria-expanded="false" aria-controls="nxPanel" data-no-track>' + I.chat + '<span>Ask NMX Labs</span></button>' +
     '</div>';
   doc.body.appendChild(rootEl);
-  var panel = $('#nxPanel', rootEl), toastEl = $('.nx-toast', rootEl), bellBtn = $('.nx-bell', rootEl), askBtn = $('.nx-ask', rootEl);
+  var panel = $('#nxPanel', rootEl), sheet = $('#nxSheet', rootEl), pill = $('.nx-pill', rootEl), toastEl = $('.nx-toast', rootEl),
+    bellBtn = $('.nx-bell', rootEl), askBtn = $('.nx-ask', rootEl);
   var openKind = null;
 
   // Match the page's light/dark look (the home page is light-only, blog pages follow the theme toggle).
@@ -161,25 +218,33 @@
     .observe(doc.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-anchor-status', 'data-anchor-shown', 'style'] });
 
   function setExpanded() {
-    if (bellBtn) bellBtn.setAttribute('aria-expanded', String(openKind === 'alerts'));
+    if (bellBtn) bellBtn.setAttribute('aria-expanded', String(openKind === 'alerts' || openKind === 'guide'));
     askBtn.setAttribute('aria-expanded', String(openKind === 'ask'));
   }
-  function closePanel(silent) {
+  function closePanel() {
     if (!openKind) return;
-    if (openKind === 'alerts' && panel.getAttribute('data-auto') === '1' && !silent) snooze(7);
-    openKind = null; panel.hidden = true; panel.innerHTML = ''; panel.removeAttribute('data-auto'); setExpanded();
+    openKind = null; panel.hidden = true; panel.innerHTML = ''; setExpanded();
   }
-  function openPanel(kind, auto) {
+  function openPanel(kind, arg) {
+    hideSheet();
     openKind = kind; panel.hidden = false; panel.setAttribute('data-kind', kind);
-    if (auto) panel.setAttribute('data-auto', '1'); else panel.removeAttribute('data-auto');
     setExpanded();
-    if (kind === 'alerts') renderAlerts(); else renderAsk();
-    if (!auto) { var f = $('[data-nx-focus]', panel) || $('button, input, textarea', panel); if (f) setTimeout(function () { f.focus(); }, 30); }
+    if (kind === 'alerts') renderAlerts(); else if (kind === 'guide') renderGuide(arg); else renderAsk();
+    var f = $('[data-nx-focus]', panel) || $('button, input, textarea', panel); if (f) setTimeout(function () { f.focus(); }, 30);
   }
-  if (bellBtn) bellBtn.addEventListener('click', function () { if (openKind === 'alerts') closePanel(); else { openPanel('alerts'); track('NotificationPanelOpen', { page_path: path }); } });
+  if (bellBtn) bellBtn.addEventListener('click', function () {
+    if (openKind === 'alerts' || openKind === 'guide') { closePanel(); return; }
+    var blocked = PUSH_API && permission() === 'denied';
+    openPanel(blocked || INAPP ? 'guide' : 'alerts', blocked ? 'denied' : INAPP ? 'inapp' : '');
+    track('NotificationPanelOpen', { page_path: path }); logEvent('follow_open', blocked ? 'blocked' : '');
+  });
   askBtn.addEventListener('click', function () { if (openKind === 'ask') closePanel(); else { openPanel('ask'); track('AssistantOpen', { page_path: path }); logEvent('assistant_open'); } });
-  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openKind) { var k = openKind; closePanel(); (k === 'alerts' ? bellBtn : askBtn).focus(); } });
-  doc.addEventListener('pointerdown', function (e) { if (openKind && !rootEl.contains(e.target) && panel.getAttribute('data-auto') !== '1') closePanel(); });
+  doc.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (openKind) { var k = openKind; closePanel(); (k === 'ask' ? askBtn : bellBtn || askBtn).focus(); }
+    else if (!sheet.hidden) dismissSheet();
+  });
+  doc.addEventListener('pointerdown', function (e) { if (openKind && !rootEl.contains(e.target) && !(e.target.closest && e.target.closest('.nx-endcard'))) closePanel(); });
 
   function toast(html, ms) {
     toastEl.innerHTML = html; toastEl.hidden = false;
@@ -189,70 +254,218 @@
     return '<div class="nx-head' + (yellow ? ' nx-head--yellow' : '') + '"><h2 id="nxTitle">' + title + '</h2>' +
       '<button class="nx-x" type="button" aria-label="Close" data-nx-close data-no-track>' + I.x + '</button></div>';
   }
-  panel.addEventListener('click', function (e) { if (e.target.closest('[data-nx-close]')) { var k = openKind; closePanel(); (k === 'alerts' ? bellBtn : askBtn).focus(); } });
+  panel.addEventListener('click', function (e) { if (e.target.closest('[data-nx-close]')) { var k = openKind; closePanel(); (k === 'ask' ? askBtn : bellBtn || askBtn).focus(); } });
 
-  /* =========================================================== notifications (web push) */
+  /* =========================================================== notifications: state */
   function pushState() { return readJSON('nmx-push', null); }
   function setPushState(s) { store('nmx-push', s ? JSON.stringify(s) : null); paintBell(); }
-  function snooze(days) { store('nmx-push-snooze', String(Date.now() + days * 864e5)); }
-  function snoozed() { return Date.now() < Number(read('nmx-push-snooze') || 0); }
   function permission() { return 'Notification' in window ? Notification.permission : 'default'; }
+  function isOn() { return !!pushState() && permission() === 'granted'; }
+  // "Not now" waits longer each time: 3 days, then 10, then 30.
+  function snooze() {
+    var n = Number(read('nmx-push-nope') || 0) + 1; store('nmx-push-nope', String(n));
+    store('nmx-push-snooze', String(Date.now() + [3, 10, 30][Math.min(n, 3) - 1] * 864e5));
+  }
+  function snoozed() { return Date.now() < Number(read('nmx-push-snooze') || 0); }
   function paintBell() {
     if (!bellBtn) return;
-    var on = !!pushState() && permission() === 'granted';
+    var on = isOn(), blocked = PUSH_API && permission() === 'denied';
     bellBtn.classList.toggle('is-on', on);
-    bellBtn.setAttribute('aria-label', on ? 'Notifications are on' : 'Turn on notifications');
+    bellBtn.classList.toggle('is-blocked', blocked);
+    bellBtn.classList.toggle('has-label', !on && !blocked);
+    bellBtn.innerHTML = (blocked ? I.bellOff : I.bell) + '<span class="nx-bell-label">Follow</span><span class="nx-dot" aria-hidden="true"></span>';
+    bellBtn.setAttribute('aria-label', on ? 'Notifications are on' : blocked ? 'Notifications are blocked: see how to fix it' : 'Follow: get new posts as notifications');
+    $$('.nx-endcard').forEach(function (c) { if (on) c.remove(); });
   }
   function b64u(s) {
     var p = '='.repeat((4 - s.length % 4) % 4), raw = atob((s + p).replace(/-/g, '+').replace(/_/g, '/'));
     var out = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i); return out;
   }
-  function saveSub(sub, topics, oldEndpoint) {
+  // The backend's subscriber ID is the first 16 hex characters of SHA-256(endpoint), so the page can know it at once.
+  function idFor(endpoint) {
+    try {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(endpoint)).then(function (buf) {
+        return 'p' + Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('').slice(0, 16);
+      }).catch(function () { return ''; });
+    } catch (e) { return Promise.resolve(''); }
+  }
+  function subParams(sub, topics, oldEndpoint) {
     var j = sub.toJSON(), k = j.keys || {};
-    return post({ action: 'push_subscribe', endpoint: j.endpoint, p256dh: k.p256dh || '', auth: k.auth || '', topics: topics,
+    return { action: 'push_subscribe', endpoint: j.endpoint, p256dh: k.p256dh || '', auth: k.auth || '', topics: topics,
       old_endpoint: oldEndpoint || '', br: U.br, os: U.os, dev: U.dev, co: COUNTRY, tz: TZ, lang: navigator.language || '',
       page: path, ref: FIRST.ref || SES.ref || '', us: FIRST.us || SES.us || '', um: FIRST.um || SES.um || '', uc: FIRST.uc || SES.uc || '',
-      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '' })
-      .then(function (d) { setPushState({ id: d.id, endpoint: j.endpoint, topics: d.topics || topics, seen: today() }); return d; });
+      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '' };
   }
-  function turnOn(topics) {
-    var perm = Notification.requestPermission();                       // must run straight from the click
-    return Promise.resolve(perm).then(function (p) {
-      if (p !== 'granted') { var err = new Error(p); err.perm = p; throw err; }
-      return swReady;
-    }).then(function (reg) {
-      return reg.pushManager.getSubscription().then(function (old) {
-        return old || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID) });
-      });
-    }).then(function (sub) { return saveSub(sub, topics); });
+  // Saving to the Google Sheet can take a few seconds (Apps Script), so it runs in the background with retries.
+  // If the reader leaves first, the browser still delivers it (sendBeacon), and the next page view retries anyway.
+  function queueSave(params) {
+    store('nmx-push-pending', JSON.stringify(params));
+    var tries = 0;
+    (function attempt() {
+      tries++;
+      post(params).then(function (d) {
+        var st = pushState() || {};
+        st.id = d.id || st.id; st.topics = d.topics || params.topics; st.endpoint = params.endpoint; st.seen = today(); delete st.pending;
+        setPushState(st); store('nmx-push-pending', null);
+      }).catch(function () { if (tries < 3) setTimeout(attempt, tries === 1 ? 4000 : 15000); });
+    })();
   }
-  function turnOff() {
-    var st = pushState();
-    return swReady.then(function (reg) { return reg.pushManager.getSubscription(); })
-      .then(function (sub) { return sub ? sub.unsubscribe() : true; })
-      .then(function () { if (st) return post({ action: 'push_unsubscribe', id: st.id, endpoint: st.endpoint }).catch(function () {}); })
-      .then(function () { setPushState(null); });
-  }
+  addEventListener('pagehide', function () {
+    var p = read('nmx-push-pending');
+    if (p && READY && navigator.sendBeacon) { try { navigator.sendBeacon(CFG.BACKEND_URL, new URLSearchParams(JSON.parse(p))); } catch (e) {} }
+  });
+
   function syncPush() {
     if (!PUSH_ON || !PUSH_API || !swReady) return;
     swReady.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
-      var st = pushState();
+      var st = pushState(), pending = readJSON('nmx-push-pending', null);
       if (sub && permission() === 'granted') {
-        if (!st || st.endpoint !== sub.endpoint) saveSub(sub, (st && st.topics) || 'blog,youtube', st && st.endpoint).catch(function () {});
-        else if (st.seen !== today()) { st.seen = today(); setPushState(st); post({ action: 'push_seen', id: st.id, endpoint: st.endpoint }).catch(function () {}); }
-      } else if (st && !sub) {
+        if (pending && pending.endpoint === sub.endpoint) queueSave(pending);
+        else if (!st || st.endpoint !== sub.endpoint) {
+          idFor(sub.endpoint).then(function (id) {
+            setPushState({ id: id || (st && st.id) || '', endpoint: sub.endpoint, topics: (st && st.topics) || 'blog,youtube', seen: today(), pending: true, verified: st && st.verified });
+            queueSave(subParams(sub, (st && st.topics) || 'blog,youtube', st && st.endpoint));
+          });
+        } else if (st.seen !== today()) { st.seen = today(); setPushState(st); post({ action: 'push_seen', id: st.id, endpoint: st.endpoint }).catch(function () {}); }
+      } else if (st && st.endpoint && !sub) {
         post({ action: 'push_unsubscribe', id: st.id, endpoint: st.endpoint, reason: permission() }).catch(function () {});
-        setPushState(null);
-      }
+        setPushState(null); store('nmx-push-pending', null);
+      } else if (st && permission() !== 'granted') setPushState(null);
       paintBell();
-    });
+    }).catch(function () {});
   }
   syncPush(); paintBell();
 
+  /* =========================================================== notifications: the small status pill */
+  // Everything after "Allow" is shown here, small and next to the Follow button, instead of in a panel.
+  var Pill = {
+    show: function (kind, html, ms) {
+      clearTimeout(Pill.t); pill.className = 'nx-pill nx-pill--' + kind; pill.innerHTML = html; pill.hidden = false;
+      if (ms) Pill.t = setTimeout(Pill.hide, ms);
+    },
+    hide: function () {
+      clearTimeout(Pill.t);
+      if (pill.hidden) return;
+      if (REDUCED) { pill.hidden = true; return; }
+      pill.classList.add('nx-pill--out'); setTimeout(function () { pill.hidden = true; pill.classList.remove('nx-pill--out'); }, 260);
+    },
+    // "Done" shrinks into the Follow button, which then shows as on.
+    done: function (text) {
+      Pill.show('done', I.check + '<span>' + esc(text) + '</span>');
+      Pill.t = setTimeout(function () {
+        if (REDUCED) { pill.hidden = true; return; }
+        pill.classList.add('nx-pill--mini');
+        setTimeout(function () { pill.hidden = true; pill.classList.remove('nx-pill--mini'); if (bellBtn) { bellBtn.classList.add('nx-pop'); setTimeout(function () { bellBtn.classList.remove('nx-pop'); }, 600); } }, 420);
+      }, 1400);
+    }
+  };
+  pill.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-pill]'); if (!b) return;
+    var a = b.getAttribute('data-pill');
+    if (a === 'yes') { markVerified('answer'); Pill.show('done', I.check + '<span>Great, you’re all set.</span>', 2200); }
+    else if (a === 'no') { logEvent('push_check_no', BRAND || U.os); Pill.hide(); openPanel('guide', 'system'); }
+    else if (a === 'fix') { Pill.hide(); openPanel('guide', b.getAttribute('data-reason') || 'system'); }
+    else if (a === 'close') Pill.hide();
+  });
+  function markVerified(how) {
+    var st = pushState(); if (!st) return;
+    if (!st.verified) logEvent('push_check_yes', how);
+    st.verified = true; setPushState(st);
+  }
+  if (SW) navigator.serviceWorker.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'nmx-push-verified') { markVerified('tap'); if (!pill.hidden && pill.classList.contains('nx-pill--ask')) Pill.hide(); }
+  });
+
+  /* =========================================================== notifications: turning them on */
+  var busy = false;
+  // Called straight from a tap (the Follow panel, the reading prompt or the end-of-post card): browsers only show
+  // their permission prompt in response to a tap, and no website can grant itself permission.
+  function enable(topics, source) {
+    if (busy) return;
+    topics = topics || 'blog,youtube'; source = source || 'follow';
+    if (!PUSH_ON) { location.href = '/blog/#subHIdx'; return; }     // keys not set up: offer email instead
+    if (INAPP) { openPanel('guide', 'inapp'); return; }
+    if (IOS_NEEDS_INSTALL) { openPanel('alerts'); return; }
+    if (!PUSH_API) { openPanel('guide', 'unsupported'); return; }
+    logEvent('prompt_yes', source);
+    if (permission() === 'granted') { afterGranted(topics, source, Date.now()); return; }
+    if (permission() === 'denied') { openPanel('guide', 'denied'); return; }
+    busy = true; hideSheet(); closePanel();
+    var t0 = Date.now();
+    Pill.show('wait', '<span class="nx-spin" aria-hidden="true"></span><span>Tap <strong>Allow</strong> in your browser’s pop-up</span>');
+    var ask = new Promise(function (res) { var r = Notification.requestPermission(res); if (r && r.then) r.then(res); });
+    ask.then(function (perm) {
+      busy = false;
+      if (perm === 'granted') { afterGranted(topics, source, t0); return; }
+      if (perm === 'denied') { Pill.hide(); logEvent('push_denied', source); paintBell(); openPanel('guide', 'denied'); return; }
+      // "default": the reader closed the prompt, or the browser showed a small icon in the address bar instead of a pop-up.
+      var quiet = Date.now() - t0 < 900;
+      logEvent('prompt_dismissed', source + (quiet ? ':quiet' : ''));
+      Pill.show('info', quiet
+        ? '<span>Your browser put the request in the address bar. Tap the bell or ⓘ icon there and choose <strong>Allow</strong>.</span><button type="button" class="nx-pill-x" data-pill="close" aria-label="Close">' + I.x + '</button>'
+        : '<span>No problem. Tap <strong>Follow</strong> whenever you’re ready.</span>', quiet ? 12000 : 3500);
+    });
+  }
+  // The reader said yes: show it as done straight away and finish the subscription in the background.
+  function afterGranted(topics, source, t0) {
+    var st = pushState() || {};
+    st.topics = topics; st.pending = true; setPushState(st);
+    hideSheet(); if (openKind === 'alerts') closePanel();
+    Pill.done('Notifications on');
+    finishSubscribe(topics).then(function (reg) {
+      logEvent('push_subscribe', topics + '|' + source + '|' + Math.round((Date.now() - t0) / 100) / 10 + 's');
+      track('PushSubscribe', { topics: topics, page_path: path, prompt: source });
+      setTimeout(function () { deliveryCheck(reg); }, 1900);
+    }).catch(function (err) {
+      var s2 = pushState(); if (s2 && !s2.endpoint) setPushState(null);
+      console.warn('[NMX] Push subscribe failed:', err);
+      logEvent('push_error', String(err && (err.name + ': ' + err.message) || err).slice(0, 150));
+      Pill.show('error', '<span>Your browser couldn’t finish turning on notifications.</span><button type="button" class="nx-pill-btn" data-pill="fix" data-reason="error">Fix it</button>', 15000);
+    });
+  }
+  function finishSubscribe(topics) {
+    if (!swReady) return Promise.reject(new Error('No service worker'));
+    return withTimeout(swReady, 20000, 'Service worker took too long').then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (old) {
+        return old || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID) });
+      }).then(function (sub) {
+        return idFor(sub.endpoint).then(function (id) {
+          var st = pushState() || {};
+          st.endpoint = sub.endpoint; st.id = id || st.id || ''; st.topics = topics; st.seen = today(); st.pending = true;
+          setPushState(st);
+          queueSave(subParams(sub, topics));
+          return reg;
+        });
+      });
+    });
+  }
+  // A welcome notification doubles as a delivery test: if the phone hides it, the reader gets the fix right away.
+  function deliveryCheck(reg) {
+    var st = pushState(); if (!st || st.verified || !reg || !reg.showNotification) return;
+    reg.showNotification('You’re subscribed to NMX Labs', {
+      body: 'This is how new posts will look. Tap to see what’s new.', icon: '/assets/pwa/icon-192.png', badge: '/assets/pwa/badge-96.png',
+      tag: 'nmx-welcome', data: { url: '/blog/', check: 1, campaign: '', sid: st.id || '' }
+    }).then(function () {
+      Pill.show('ask', '<span>We just sent you a test notification. Did it show up?</span><span class="nx-pill-acts"><button type="button" class="nx-pill-btn" data-pill="yes">Yes</button><button type="button" class="nx-pill-btn nx-pill-btn--ghost" data-pill="no">No</button></span>', 20000);
+    }).catch(function (err) {
+      logEvent('push_check_fail', String(err && err.name || err).slice(0, 60) + '|' + (BRAND || U.os));
+      Pill.show('error', '<span>Notifications are on in your browser, but your device is blocking them.</span><button type="button" class="nx-pill-btn" data-pill="fix" data-reason="system">Fix it</button>', 20000);
+    });
+  }
+
+  function turnOff() {
+    var st = pushState();
+    return (swReady || Promise.reject()).then(function (reg) { return reg.pushManager.getSubscription(); })
+      .then(function (sub) { return sub ? sub.unsubscribe() : true; })
+      .then(function () { if (st && st.endpoint) return post({ action: 'push_unsubscribe', id: st.id, endpoint: st.endpoint }).catch(function () {}); })
+      .then(function () { setPushState(null); store('nmx-push-pending', null); });
+  }
+
+  /* =========================================================== notifications: the Follow panel */
   function topicsHtml(sel) {
     var on = String(sel || 'blog,youtube').split(',');
     return '<fieldset class="nx-topics"><legend>Notify me about</legend>' +
-      '<label><input type="checkbox" value="blog"' + (on.indexOf('blog') > -1 ? ' checked' : '') + '> New blog posts</label>' +
+      '<label><input type="checkbox" value="blog"' + (on.indexOf('blog') > -1 ? ' checked' : '') + '> New posts and lessons</label>' +
       '<label><input type="checkbox" value="youtube"' + (on.indexOf('youtube') > -1 ? ' checked' : '') + '> New YouTube videos</label></fieldset>';
   }
   function pickedTopics() { return $$('.nx-topics input:checked', panel).map(function (i) { return i.value; }).join(','); }
@@ -262,96 +475,185 @@
     if (installEvt && !STANDALONE) bits.push('<button type="button" class="nx-link" data-nx-install>Install the app</button>');
     return '<div class="nx-foot">' + bits.join('') + '</div>';
   }
-
+  function iosSteps() {
+    return '<ol class="nx-steps"><li>Tap the Share button in Safari.</li><li>Choose <strong>Add to Home Screen</strong>, then Add.</li><li>Open NMX Labs from your Home Screen and tap <strong>Follow</strong>.</li></ol>';
+  }
   function renderAlerts() {
     var perm = permission(), st = pushState(), html;
     if (IOS_NEEDS_INSTALL) {
       html = head('Add NMX Labs to your Home Screen', true) + '<div class="nx-body">' +
-        '<p>On iPhone and iPad, notifications work once the site is on your Home Screen.</p>' +
-        '<ol class="nx-steps"><li>Tap the Share button in Safari.</li><li>Choose <strong>Add to Home Screen</strong>, then Add.</li><li>Open NMX Labs from your Home Screen and tap the bell.</li></ol>' +
+        '<p>On iPhone and iPad, notifications work once the site is on your Home Screen.</p>' + iosSteps() +
         '<p class="nx-fine">Needs iOS 16.4 or later. Prefer email? <a href="/blog/#subHIdx">Get new posts by email</a>.</p></div>' + footHtml();
-    } else if (perm === 'denied') {
-      html = head('Notifications are blocked', false) + '<div class="nx-body">' +
-        '<p>Your browser is blocking notifications from labsnmx.com. Open the site settings (the icon to the left of the address), set Notifications to Allow, then reload this page.</p>' +
-        '<p class="nx-fine">Prefer email? <a href="/blog/#subHIdx">Get new posts by email</a>.</p></div>' + footHtml();
     } else if (st && perm === 'granted') {
       html = head('Notifications are on', false) + '<div class="nx-body">' +
         '<p>You’ll get one notification for each new post or video you picked below.</p>' + topicsHtml(st.topics) +
-        '<div class="nx-actions"><button type="button" class="nx-btn nx-btn--ghost" data-nx-off>Turn off notifications</button></div>' +
+        '<div class="nx-actions"><button type="button" class="nx-btn nx-btn--ghost" data-nx-off>Turn off notifications</button>' +
+        '<button type="button" class="nx-link" data-nx-guide>Not seeing them?</button></div>' +
         '<p class="nx-status" role="status"></p></div>' + footHtml();
     } else {
-      html = head('New posts, straight to your screen', true) + '<div class="nx-body">' +
-        '<p>A short notification when we publish a blog post or a YouTube video. No email needed, and you can switch it off in one tap.</p>' +
+      html = head('Follow NMX Labs', true) + '<div class="nx-body">' +
+        '<p>A short notification when we publish a post, a lesson or a YouTube video. No email needed, and you can switch it off in one tap.</p>' +
         topicsHtml('blog,youtube') +
-        '<div class="nx-actions"><button type="button" class="nx-btn" data-nx-on data-nx-focus>Turn on notifications</button>' +
-        '<button type="button" class="nx-link" data-nx-later>Not now</button></div>' +
+        '<div class="nx-actions"><button type="button" class="nx-btn" data-nx-on data-nx-focus>' + I.bell + 'Turn on notifications</button></div>' +
         '<p class="nx-status" role="status"></p></div>' + footHtml();
     }
     panel.innerHTML = html;
     var status = $('.nx-status', panel);
-    var on = $('[data-nx-on]', panel), off = $('[data-nx-off]', panel), later = $('[data-nx-later]', panel), inst = $('[data-nx-install]', panel);
+    var on = $('[data-nx-on]', panel), off = $('[data-nx-off]', panel), inst = $('[data-nx-install]', panel), gd = $('[data-nx-guide]', panel);
     if (on) on.addEventListener('click', function () {
       var topics = pickedTopics();
-      if (!topics) { status.textContent = 'Pick at least one: blog posts or YouTube videos.'; return; }
-      on.disabled = true; status.textContent = 'Waiting for your browser…';
-      var auto = panel.getAttribute('data-auto') === '1';
-      logEvent('prompt_yes', auto ? 'auto' : 'bell');
-      turnOn(topics).then(function () {
-        logEvent('push_subscribe', topics); track('PushSubscribe', { topics: topics, page_path: path, prompt: auto ? 'auto' : 'bell' });
-        panel.removeAttribute('data-auto'); renderAlerts();
-        $('.nx-status', panel).textContent = 'Done. You’ll hear from us when something new goes live.';
-      }).catch(function (err) {
-        on.disabled = false;
-        if (err && err.perm === 'denied') { logEvent('push_denied'); renderAlerts(); return; }
-        if (err && err.perm === 'default') { status.textContent = 'No problem. Tap the button again whenever you’re ready.'; return; }
-        status.textContent = 'That didn’t work in this browser. Try again, or get new posts by email instead.';
-        console.warn('[NMX] Push subscribe failed:', err);
-        logEvent('push_error', String(err && err.message || err).slice(0, 120));
-      });
+      if (!topics) { status.textContent = 'Pick at least one: posts or YouTube videos.'; return; }
+      enable(topics, 'follow');
     });
+    if (gd) gd.addEventListener('click', function () { openPanel('guide', 'system'); });
     if (off) off.addEventListener('click', function () {
       off.disabled = true; status.textContent = 'Turning off…';
-      turnOff().then(function () { logEvent('push_unsubscribe'); track('PushUnsubscribe', { page_path: path }); renderAlerts(); $('.nx-status', panel).textContent = 'Notifications are off. Turn them back on any time from the bell.'; })
+      turnOff().then(function () { logEvent('push_unsubscribe'); track('PushUnsubscribe', { page_path: path }); renderAlerts(); $('.nx-status', panel).textContent = 'Notifications are off. Turn them back on any time from Follow.'; })
         .catch(function () { off.disabled = false; status.textContent = 'That didn’t work. Reload the page and try again.'; });
     });
-    if (later) later.addEventListener('click', function () { snooze(7); logEvent('prompt_later'); closePanel(true); bellBtn.focus(); });
     if (st && perm === 'granted') $$('.nx-topics input', panel).forEach(function (box) {
       box.addEventListener('change', function () {
         var t = pickedTopics();
         if (!t) { box.checked = true; status.textContent = 'Keep at least one, or turn notifications off.'; return; }
-        status.textContent = 'Saving…';
-        post({ action: 'push_update', id: st.id, endpoint: st.endpoint, topics: t })
-          .then(function () { st.topics = t; setPushState(st); status.textContent = 'Saved.'; })
-          .catch(function () { status.textContent = 'Couldn’t save that. Try again in a minute.'; });
+        st.topics = t; setPushState(st); status.textContent = 'Saved.';
+        if (st.endpoint && st.id) post({ action: 'push_update', id: st.id, endpoint: st.endpoint, topics: t }).catch(function () { status.textContent = 'Couldn’t save that. Try again in a minute.'; });
       });
     });
     if (inst) inst.addEventListener('click', install);
   }
 
-  // The soft prompt: the bell opens by itself once a reader has shown interest, never on arrival.
-  var promptedThisPage = false;
-  function canAutoPrompt() {
-    return PUSH_ON && PUSH_API && !IOS_NEEDS_INSTALL && permission() === 'default' && !pushState() && !snoozed() && !promptedThisPage &&
-      !openKind && !ssGet('nmx-prompted') && !(doc.activeElement && /INPUT|TEXTAREA|SELECT/.test(doc.activeElement.tagName)) &&
-      !$('.player:not([hidden])');
+  /* =========================================================== notifications: fixing a block */
+  // No website can switch notifications on by itself: the browser and the phone both have to allow them, and only the
+  // reader can change those settings. This panel shows the exact steps for the reader's device.
+  function guideSteps(reason) {
+    var os = U.os, br = U.br, appName = br === 'Other' ? 'your browser' : br, steps = [], tips = [];
+    var siteStep = 'In ' + appName + ', tap the icon to the left of the address (ⓘ, the lock or the sliders) → <strong>Permissions</strong> or <strong>Site settings</strong> → <strong>Notifications</strong> → <strong>Allow</strong>.';
+    if (reason === 'inapp') return { title: 'Open this page in your browser', intro: 'Instagram, Facebook and other in-app browsers can’t show notifications. Open labsnmx.com in Chrome or Safari, then tap Follow there.',
+      steps: ['Tap the ⋯ or ⋮ menu at the top of this screen.', 'Choose <strong>Open in browser</strong> (or Open in Chrome / Safari).', 'Tap <strong>Follow</strong> on labsnmx.com.'], tips: [], copy: true };
+    if (reason === 'unsupported') return { title: 'This browser can’t do notifications', intro: 'Use Chrome, Edge, Firefox, Samsung Internet or Safari (on iPhone, from the Home Screen app), or get new posts by email instead.', steps: [], tips: [] };
+    if (os === 'iOS') {
+      if (!STANDALONE) return { title: 'Add NMX Labs to your Home Screen', intro: 'Apple only allows website notifications for sites added to the Home Screen (iOS 16.4 or later).',
+        steps: ['Tap the Share button in Safari.', 'Choose <strong>Add to Home Screen</strong>, then Add.', 'Open NMX Labs from your Home Screen and tap <strong>Follow</strong>.'], tips: [] };
+      steps = ['Open your iPhone’s <strong>Settings</strong> → <strong>Notifications</strong> → <strong>NMX Labs</strong>.', 'Turn on <strong>Allow Notifications</strong> and pick Banners.', 'Close NMX Labs completely, open it again from the Home Screen and tap <strong>Check again</strong>.'];
+      tips = ['A Focus mode (Do Not Disturb, Sleep, Work) hides notifications until it ends. Check Control Centre.'];
+    } else if (os === 'Android') {
+      var app = br === 'Samsung Internet' ? 'Samsung Internet' : br === 'Firefox' ? 'Firefox' : br === 'Edge' ? 'Edge' : br === 'Opera' ? 'Opera' : 'Chrome';
+      steps = ['Open your phone’s <strong>Settings</strong> → <strong>Apps</strong> → <strong>' + app + '</strong> → <strong>Notifications</strong>, and turn on <strong>Allow notifications</strong> (some phones say Show notifications).',
+        'On the same screen, open <strong>Sites</strong> (or find <strong>labsnmx.com</strong> in the list) and make sure it’s on.',
+        br === 'Samsung Internet' ? 'In Samsung Internet, tap ≡ → <strong>Settings</strong> → <strong>Sites and downloads</strong> → <strong>Notifications</strong>, and allow labsnmx.com.' : siteStep];
+      if (BRAND === 'xiaomi') tips.push('Xiaomi, Redmi and POCO: in Settings → Apps → Manage apps → ' + app + ', set <strong>Battery saver</strong> to <strong>No restrictions</strong> and turn on <strong>Autostart</strong>, or notifications arrive late or not at all.');
+      else if (BRAND === 'samsung') tips.push('Samsung: in Settings → Battery → <strong>Background usage limits</strong>, make sure ' + app + ' isn’t in Sleeping apps or Deep sleeping apps.');
+      else if (BRAND === 'vivo') tips.push('vivo and iQOO: in Settings → Battery → <strong>Background power consumption management</strong>, set ' + app + ' to Allow.');
+      else if (BRAND === 'oppo') tips.push('OPPO, realme and OnePlus: in Settings → Apps → ' + app + ' → <strong>Battery usage</strong>, turn on <strong>Allow background activity</strong>.');
+      else tips.push('If your phone has a battery saver for apps, set ' + app + ' to unrestricted, or notifications can arrive late.');
+      tips.push('Do Not Disturb hides notifications until you turn it off.');
+    } else if (os === 'Windows') {
+      steps = ['Open Windows <strong>Settings</strong> → <strong>System</strong> → <strong>Notifications</strong>. Turn on Notifications and the switch for ' + appName + '.', siteStep];
+      tips = ['Turn off <strong>Do not disturb</strong> (or Focus assist) in the same place.'];
+    } else if (os === 'macOS') {
+      steps = ['Open <strong>System Settings</strong> → <strong>Notifications</strong> → <strong>' + (br === 'Chrome' ? 'Google Chrome' : br === 'Edge' ? 'Microsoft Edge' : appName) + '</strong>, and turn on <strong>Allow notifications</strong> (Banners or Alerts).', siteStep];
+      tips = ['A Focus mode hides notifications until it ends. Check the Control Centre.'];
+    } else {
+      steps = [siteStep, 'Make sure your system allows notifications from ' + appName + ' and Do Not Disturb is off.'];
+    }
+    var intro = reason === 'denied' ? 'Notifications for labsnmx.com are blocked on this device. A website can’t switch them back on by itself; only you can, in about 20 seconds:'
+      : reason === 'error' ? 'Your browser couldn’t register for notifications. These settings are the usual cause:'
+      : 'Your browser has allowed notifications, but your device is hiding them. Here’s how to let them through:';
+    return { title: reason === 'denied' ? 'Notifications are blocked' : 'Let notifications through', intro: intro, steps: steps, tips: tips };
   }
-  function autoPrompt(reason) {
-    if (!canAutoPrompt()) return;
-    promptedThisPage = true; ssSet('nmx-prompted', '1');
-    openPanel('alerts', true); logEvent('prompt_shown', reason); track('PushPromptShown', { reason: reason, page_path: path });
+  function renderGuide(reason) {
+    var g = guideSteps(reason || 'system');
+    logEvent('push_guide', (reason || 'system') + '|' + (BRAND || U.os) + '|' + U.br);
+    panel.innerHTML = head(g.title, false) + '<div class="nx-body nx-guide">' +
+      '<p>' + g.intro + '</p>' +
+      (g.steps.length ? '<ol class="nx-steps">' + g.steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>' : '') +
+      (g.tips.length ? '<ul class="nx-tips">' + g.tips.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>' : '') +
+      '<div class="nx-actions">' +
+        (g.copy ? '<button type="button" class="nx-btn" data-nx-copy data-nx-focus>Copy the link</button>' : '') +
+        (!g.copy && PUSH_API && !(IOS && !STANDALONE) ? '<button type="button" class="nx-btn" data-nx-recheck data-nx-focus>Check again</button>' : '') +
+        '<a class="nx-link" href="/blog/#subHIdx" data-no-track>Get posts by email instead</a></div>' +
+      '<p class="nx-status" role="status"></p></div>';
+    var st = $('.nx-status', panel), re = $('[data-nx-recheck]', panel), cp = $('[data-nx-copy]', panel);
+    if (cp) cp.addEventListener('click', function () {
+      var url = location.href.split('#')[0];
+      (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { st.textContent = 'Copied. Paste it into Chrome or Safari.'; })
+        .catch(function () { st.textContent = url; });
+    });
+    if (re) re.addEventListener('click', function () {
+      var perm = permission();
+      if (perm === 'denied') { st.innerHTML = 'Still blocked. After changing the setting, <a href="' + esc(location.pathname) + '">reload this page</a> and tap Follow.'; return; }
+      re.disabled = true; st.textContent = 'Checking…';
+      var go = perm === 'granted' ? Promise.resolve() : new Promise(function (res) { var r = Notification.requestPermission(res); if (r && r.then) r.then(res); }).then(function (p) { if (p !== 'granted') throw new Error(p); });
+      go.then(function () { var s = pushState() || {}; s.verified = false; s.topics = s.topics || 'blog,youtube'; s.pending = true; setPushState(s); return finishSubscribe(s.topics); })
+        .then(function (reg) { closePanel(); deliveryCheck(reg); })
+        .catch(function (e) { re.disabled = false; st.textContent = /denied/.test(String(e && e.message)) ? 'Still blocked. Follow the steps above, then try again.' : 'Not yet. Follow the steps above, then tap Check again.'; });
+    });
   }
-  if (PUSH_ON && PUSH_API) {
-    var prose = $('#article .prose');
-    if (prose) {
-      var onScroll = function () {
-        var r = prose.getBoundingClientRect();
-        if (-r.top > prose.offsetHeight * 0.45) { removeEventListener('scroll', onScroll); autoPrompt('read_45'); }
-      };
-      addEventListener('scroll', onScroll, { passive: true });
-      setTimeout(function () { autoPrompt('time_40s'); }, 40000);
-    } else if (views >= 2) setTimeout(function () { autoPrompt('second_page'); }, 20000);
+
+  /* =========================================================== notifications: asking at the right moment */
+  // The reading prompt: a small card once a reader is a few lines into a post or lesson and scrolling on. It never opens
+  // on arrival, never twice in a visit, and "Not now" keeps it away for 3, then 10, then 30 days.
+  function canPrompt() {
+    return PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL) && !INAPP && permission() === 'default' && !pushState() && !snoozed() &&
+      !ssGet('nmx-prompted') && !openKind && sheet.hidden && !(doc.activeElement && /INPUT|TEXTAREA|SELECT/.test(doc.activeElement.tagName)) &&
+      !$('.player:not([hidden])') && !doc.querySelector('[data-game-active]');
   }
-  if (bellBtn && !pushState() && views <= 3 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+  function lesson() { return /^\/learn\/[^/]+\//.test(path); }
+  function showSheet(reason) {
+    if (!canPrompt()) return;
+    ssSet('nmx-prompted', '1');
+    var ios = IOS_NEEDS_INSTALL;
+    sheet.innerHTML = '<button class="nx-x" type="button" aria-label="Close" data-sheet="no" data-no-track>' + I.x + '</button>' +
+      '<div class="nx-sheet-ic" aria-hidden="true">' + (ios ? I.phone : I.bell) + '</div>' +
+      '<div class="nx-sheet-txt"><h2 id="nxSheetT">' + (ios ? 'Get new ' + (lesson() ? 'lessons' : 'posts') + ' on your iPhone' : 'Want the next ' + (lesson() ? 'lesson' : 'post') + ' on your phone?') + '</h2>' +
+      '<p>' + (ios ? 'Add NMX Labs to your Home Screen, then tap Follow. iPhone only allows notifications that way.' : 'One notification when it goes live. No email, no spam, off in one tap.') + '</p></div>' +
+      '<div class="nx-sheet-acts">' + (ios ? '<button type="button" class="nx-btn" data-sheet="ios">Show me how</button>' : '<button type="button" class="nx-btn" data-sheet="yes">Allow notifications</button>') +
+      '<button type="button" class="nx-link" data-sheet="no">Not now</button></div>';
+    sheet.hidden = false; sheet.setAttribute('data-reason', reason);
+    logEvent('prompt_shown', reason); track('PushPromptShown', { reason: reason, page_path: path });
+  }
+  function hideSheet() { if (!sheet.hidden) { sheet.hidden = true; sheet.innerHTML = ''; } }
+  function dismissSheet() { snooze(); logEvent('prompt_later', sheet.getAttribute('data-reason') || ''); hideSheet(); }
+  sheet.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-sheet]'); if (!b) return;
+    var a = b.getAttribute('data-sheet');
+    if (a === 'yes') enable('blog,youtube', 'read_prompt');
+    else if (a === 'ios') { hideSheet(); openPanel('alerts'); }
+    else dismissSheet();
+  });
+  (function watchReading() {
+    if (!(PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL)) || INAPP) return;
+    var prose = $('#article .prose'); if (!prose) return;
+    var first = $('p', prose) || prose;
+    var lh = parseFloat(getComputedStyle(first).lineHeight) || 28, t0 = Date.now(), startY = scrollY, moved = 0, lastY = scrollY, timer;
+    function check() {
+      var y = scrollY; if (y > lastY) moved += y - lastY; lastY = y;
+      var fourth = first.getBoundingClientRect().top + lh * 4;                 // where the 4th line of the post sits now
+      var read = fourth < innerHeight * 0.55;                                  // ...it has reached the reading zone
+      if (read && moved > 80 && y > startY && Date.now() - t0 > 4000) { removeEventListener('scroll', onScroll); clearTimeout(timer); setTimeout(function () { showSheet(lesson() ? 'read_lesson' : 'read_4_lines'); }, 600); }
+    }
+    function onScroll() { clearTimeout(timer); timer = setTimeout(check, 120); }
+    addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // The end-of-post card: a quiet, inline offer where a reader finishes, instead of a pop-up.
+  (function endCard() {
+    if (!PUSH_ON || INAPP || !(PUSH_API || IOS_NEEDS_INSTALL)) return;
+    var prose = $('#article .prose'); if (!prose || isOn() || (PUSH_API && permission() === 'denied')) return;
+    var noun = lesson() ? 'lesson' : 'post';
+    var c = doc.createElement('aside'); c.className = 'nx-endcard'; c.setAttribute('aria-label', 'Get notifications');
+    c.innerHTML = '<span class="nx-endcard-ic" aria-hidden="true">' + I.bell + '</span><div><h2>Get the next ' + noun + ' as a notification</h2>' +
+      '<p>' + (IOS_NEEDS_INSTALL ? 'On iPhone, add NMX Labs to your Home Screen first, then tap Follow.' : 'One tap. No email, nothing else. Switch it off whenever you like.') + '</p></div>' +
+      '<button type="button" class="nx-btn" data-nx-end>' + (IOS_NEEDS_INSTALL ? 'Show me how' : 'Turn on') + '</button>';
+    prose.parentNode.insertBefore(c, prose.nextSibling);
+    var seen = false;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (en, ob) { if (en[0].isIntersecting && !seen) { seen = true; ob.disconnect(); logEvent('endcard_seen', noun); } }, { threshold: 0.6 }).observe(c);
+    $('[data-nx-end]', c).addEventListener('click', function () { if (IOS_NEEDS_INSTALL) openPanel('alerts'); else enable('blog,youtube', 'end_card'); });
+  })();
+  window.nmxFollow = function (source) { enable('blog,youtube', source || 'custom'); };
+
+  // A short ring on the Follow button for new readers, once, a little after they arrive.
+  if (bellBtn && !pushState() && views <= 3 && !REDUCED && permission() !== 'denied') {
     setTimeout(function () { bellBtn.classList.add('nx-ring'); setTimeout(function () { bellBtn.classList.remove('nx-ring'); }, 1300); }, 9000);
   }
 
@@ -376,7 +678,7 @@
     where: function () { return 'We’re based in Gurugram, Haryana (D3B, Shyam Kunj) and work with clients worldwide, mostly over WhatsApp, Slack and video calls.'; },
     clients: function () { return 'We work with D2C brands, EV and energy, SaaS, hospitality and creator-led businesses, from pre-launch to post-Series A. Some of the brands are on the home page: https://labsnmx.com/#clients'; },
     who: function () { return 'NMX Labs is a creative and performance marketing studio in Gurugram: brand identity, social and campaign creative, and Meta Ads management, done by one small senior team with no account layer.'; },
-    alerts: function () { return 'Two free ways to hear about new posts: browser notifications (tap the bell next to this chat) or email (the subscribe box on the blog: https://labsnmx.com/blog/). Both are one tap to switch off.'; },
+    alerts: function () { return 'Two free ways to hear about new posts: browser notifications (tap Follow next to this chat) or email (the subscribe box on the blog: https://labsnmx.com/blog/). Both are one tap to switch off.'; },
     blog: null
   };
   var INTENTS = [
@@ -506,9 +808,11 @@
   var article = $('#article');
   var tools = article && $('.tools[aria-label="Article tools"]', article);
   if (tools) {
-    var slug = path.replace(/^\/blog\/|\/(amp\/)?(index\.html)?$/g, '');
+    // v5: works for blog posts and Learn lessons alike
+    var pageUrl = path.replace(/(amp\/)?(index\.html)?$/, '');
+    var slug = pageUrl.replace(/^\/blog\//, '').replace(/^\//, '').replace(/\/$/, '');
     var hero = $('.post-hero img', article), crumbs = $$('.article-head .crumbs a', article);
-    var me = { slug: slug, url: '/blog/' + slug + '/', title: ($('.article-head h1', article) || {}).textContent || doc.title,
+    var me = { slug: slug, url: pageUrl, title: ($('.article-head h1', article) || {}).textContent || doc.title,
       img: hero ? hero.getAttribute('src') : '', cat: crumbs.length > 1 ? crumbs[crumbs.length - 1].textContent.trim() : 'Blog',
       min: ((($('.byline', article) || {}).textContent || '').match(/(\d+)\s*min/) || [])[1] || '' };
     var saveBtn = doc.createElement('button');
@@ -549,8 +853,9 @@
     drawSaved();
     savedBox.addEventListener('click', function (e) {
       var b = e.target.closest('[data-slug]'); if (!b) return;
-      var s = b.getAttribute('data-slug'), list = savedList().filter(function (x) { return x.slug !== s; });
-      setSaved(list); swCache('uncache', ['/blog/' + s + '/']); drawSaved(); logEvent('unsave', s);
+      var s = b.getAttribute('data-slug'), gone = savedList().filter(function (x) { return x.slug === s; })[0];
+      var list = savedList().filter(function (x) { return x.slug !== s; });
+      setSaved(list); swCache('uncache', [gone && gone.url ? gone.url : '/blog/' + s + '/']); drawSaved(); logEvent('unsave', s);
     });
   }
 
@@ -566,5 +871,5 @@
   $$('[data-install-app]').forEach(function (b) { b.addEventListener('click', install); });
   if (STANDALONE && !ssGet('nmx-app-open')) { ssSet('nmx-app-open', '1'); logEvent('app_open'); }
 
-  window.NMX_ENGAGE = { open: openPanel, close: closePanel, pushState: pushState, ready: READY, pushOn: PUSH_ON };
+  window.NMX_ENGAGE = { open: openPanel, close: closePanel, pushState: pushState, ready: READY, pushOn: PUSH_ON, follow: enable, fix: function (r) { openPanel('guide', r || 'system'); }, version: 'v5' };
 })();

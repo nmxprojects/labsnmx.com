@@ -17,9 +17,17 @@ Regenerated on every run: blog index (feature, list, JSON-LD), category pages (a
 first time it has a post), author pages, every post's date + "Keep reading" rail, the home page blog section,
 footer "Popular reads", blog/feed.xml, sitemap.xml, the HTML sitemap at /sitemap/ and blog/posts.json
 (the Apps Script email automation reads blog/posts.json to send new-post emails).
+v5: also builds Learn (Creator school) and Play through scripts/build_learn.py (content/lessons.json), adds them to
+both sitemaps, and makes sure every page's menu and footer link to /learn/ and /play/.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import build_learn  # v5: Learn and Play. If it's missing or broken, blog publishing still runs.
+except Exception as _e:
+    build_learn = None
+    print('Learn/Play skipped: ' + str(_e))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://labsnmx.com'
@@ -266,7 +274,9 @@ def build_footers(published):
             if not f.endswith('.html'): continue
             p = os.path.normpath(os.path.join(rel, f))
             s = rd(p)
-            if '<!--POPULAR-->' in s: wr(p, between(s, '<!--POPULAR-->', '<!--/POPULAR-->', inner))
+            if '<!--POPULAR-->' in s: s = between(s, '<!--POPULAR-->', '<!--/POPULAR-->', inner)
+            if build_learn and not rel.replace('\\', '/').startswith('tools'): s = build_learn.add_school_links(s)   # v5: Learn and Play in menus and footer
+            wr(p, s)
 
 def build_feed(published):
     items = []
@@ -312,6 +322,8 @@ def build_sitemap(published, live_cats):
         if mine: url(f'/blog/author/{a}/', max(mine), 'weekly', '0.5')
     for p in published:
         url(f'/blog/{p["slug"]}/', p['modified'], 'monthly', '0.8', [f'{SITE}/assets/blog/{p["image"]}.jpg'])
+    for loc, lastmod in (build_learn.urls(TODAY) if build_learn else []):                       # v5: Learn hub, lessons and Play
+        url(loc, lastmod, 'weekly' if loc in ('/learn/', '/play/') else 'monthly', '0.8' if loc == '/learn/' else '0.7')
     wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
        + '\n'.join(urls) + '\n</urlset>\n')
 
@@ -330,6 +342,8 @@ def build_html_sitemap(published, live_cats):
         + ''.join(f'<li><a href="/blog/category/{c}/">{CATEGORIES[c][0]}</a></li>' for c in CATEGORIES if c in live_cats)
         + ''.join(f'<li><a href="/blog/author/{a}/">Posts by {n}</a></li>' for a, n in AUTHORS.items())
         + '<li><a href="/blog/feed.xml">RSS feed</a></li></ul>'
+        + '<h2>Creator school</h2><ul><li><a href="/learn/">All lessons</a></li>'
+        + ''.join(f'<li><a href="{u}">{esc(t)}</a></li>' for u, t in LESSON_LINKS) + '<li><a href="/play/">Play: quizzes and games</a></li></ul>'
         '<h2>Policies</h2><ul><li><a href="/editorial-standards/">Editorial standards</a></li><li><a href="/privacy-policy.html">Privacy policy</a></li><li><a href="/terms/">Terms</a></li></ul></div>')
     by_cat = collections.OrderedDict((c, [p for p in published if p['category'] == c]) for c in CATEGORIES if c in live_cats)
     groups = list(by_cat.items()); half = (len(groups) + 1) // 2
@@ -351,7 +365,11 @@ def build_public_json(published):
     wr('blog/posts.json', json.dumps(out, ensure_ascii=False, indent=1) + '\n')
 
 # ------------------------------------------------------------------ main
+TODAY = None
+LESSON_LINKS = []
+
 def main():
+    global TODAY, LESSON_LINKS
     ap = argparse.ArgumentParser()
     ap.add_argument('--today', help='YYYY-MM-DD (default: today in India)')
     ap.add_argument('--check', action='store_true')
@@ -365,6 +383,7 @@ def main():
             ok = os.path.exists(os.path.join(SCHEDULED_DIR, p['slug'], 'index.html'))
             print(f'  {p["date"]}  {p["slug"]}  {"ready" if ok else "MISSING _scheduled/" + p["slug"] + "/index.html"}')
         return
+    TODAY = today
     publish_due(posts, today)
     order = {p['slug']: i for i, p in enumerate(posts)}
     published = [p for p in posts if p['status'] == 'published' and p['date'] <= today
@@ -377,6 +396,11 @@ def main():
     for a_ in AUTHORS: build_author(a_, [p for p in published if p['author'] == a_])
     for p in published: build_post(p, published)
     build_home(published, today)
+    lessons = []
+    if build_learn:                                                    # v5: before the footer pass, so new pages get it too
+        try: lessons = build_learn.build(today); CHANGED.extend(build_learn.WRITTEN)
+        except SystemExit: print('Learn/Play not rebuilt: fix content/lessons.json (see the message above).')
+    LESSON_LINKS = [(f"/learn/{x['slug']}/", x['title']) for x in lessons]
     build_footers(published)
     build_feed(published)
     build_sitemap(published, live_cats)

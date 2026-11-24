@@ -1,0 +1,552 @@
+[
+ {
+  "slug": "you-dont-need-an-iphone",
+  "status": "published",
+  "date": "2026-09-01",
+  "modified": "2026-09-01",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "title": "You don’t need an iPhone: shoot your first video on the phone you already have",
+  "short": "You don’t need an iPhone",
+  "dek": "Most first videos fail on light, sound and nerves, not on the camera. Here’s how to get a clean, watchable first video out of a ₹12,000 Android phone, plus the three cheap things worth buying later.",
+  "read_min": 6,
+  "image": "learn-you-dont-need-an-iphone",
+  "glyph": "phone",
+  "takeaways": [
+   "Any phone from the last few years records 1080p video that is good enough for YouTube.",
+   "Use the back camera, lock focus and exposure, and face a window.",
+   "Sound matters more than picture: get the phone or a mic close to your mouth.",
+   "Spend money in this order: a ₹300–700 tripod, then a mic, then light. A new phone comes last."
+  ],
+  "quiz": [
+   {
+    "q": "Which camera on your phone usually records the best video?",
+    "o": [
+     "The front (selfie) camera",
+     "The back (main) camera",
+     "They are always identical",
+     "Whichever has the flash"
+    ],
+    "a": 1,
+    "why": "The main back camera almost always has the bigger sensor and better lens. Flip the phone, frame once using the front camera, then switch."
+   },
+   {
+    "q": "What should you fix first if viewers leave in the first minute?",
+    "o": [
+     "Buy a 4K camera",
+     "Your sound and your opening lines",
+     "Add more transitions",
+     "Upload at midnight"
+    ],
+    "a": 1,
+    "why": "People forgive soft video. They leave quickly when they can’t hear you clearly or the start drags."
+   },
+   {
+    "q": "Where should the window be when you film yourself indoors?",
+    "o": [
+     "Behind you",
+     "In front of you or to one side",
+     "Directly above you",
+     "It doesn’t matter"
+    ],
+    "a": 1,
+    "why": "Facing a window lights your face. A window behind you turns you into a silhouette."
+   }
+  ]
+ },
+ {
+  "slug": "recipe-for-a-good-video",
+  "status": "published",
+  "date": "2026-09-08",
+  "modified": "2026-09-08",
+  "author": "neeraj",
+  "author_name": "Neeraj",
+  "title": "The recipe for a good video: hook, promise, payoff",
+  "short": "Hook, promise, payoff",
+  "dek": "Good YouTube videos look different on the surface and follow the same recipe underneath. Here’s the three-part structure we use for every script, with a worked example you can copy.",
+  "read_min": 6,
+  "image": "learn-recipe-for-a-good-video",
+  "glyph": "spark",
+  "takeaways": [
+   "Open with the hook: the problem or result, in the first few seconds, before any intro.",
+   "Say the promise out loud: what the viewer will be able to do by the end.",
+   "Deliver the payoff fully, then point to one next video instead of saying goodbye.",
+   "Write the one-sentence promise before you write anything else."
+  ],
+  "quiz": [
+   {
+    "q": "What should the first 10 seconds of a tutorial do?",
+    "o": [
+     "Show your channel intro and logo",
+     "Ask people to subscribe",
+     "State the problem or the result the viewer will get",
+     "Explain your background in detail"
+    ],
+    "a": 2,
+    "why": "Viewers decide fast. Lead with why they should stay; intros and subscribe requests can wait."
+   },
+   {
+    "q": "In this recipe, what is the “promise”?",
+    "o": [
+     "A giveaway",
+     "What the viewer will be able to do by the end",
+     "Your upload schedule",
+     "A discount code"
+    ],
+    "a": 1,
+    "why": "The promise tells the viewer what they’ll walk away with. The rest of the video has to deliver it."
+   },
+   {
+    "q": "What’s a better ending than “bye guys, see you next time”?",
+    "o": [
+     "A long recap of every point",
+     "Pointing to one specific next video",
+     "Ending abruptly mid-sentence",
+     "Playing music for 30 seconds"
+    ],
+    "a": 1,
+    "why": "An end that hands viewers one next video keeps them watching your channel instead of leaving YouTube."
+   }
+  ]
+ },
+ {
+  "slug": "youtube-rules-to-follow",
+  "status": "published",
+  "date": "2026-09-15",
+  "modified": "2026-09-15",
+  "author": "neeraj",
+  "author_name": "Neeraj",
+  "title": "The rules to follow on YouTube: guidelines, copyright, AI and paid promotions",
+  "short": "The rules to follow",
+  "dek": "Most channels that get into trouble didn’t mean to break anything. Here are the rules that catch new creators in India most often, explained in plain language, and what to do instead.",
+  "read_min": 7,
+  "image": "learn-youtube-rules-to-follow",
+  "glyph": "shield",
+  "takeaways": [
+   "Community Guidelines strikes expire after 90 days; three active strikes end a channel.",
+   "A Content ID claim and a copyright strike are different things. Use music you have the rights to.",
+   "Reused or mass-produced content can’t earn money, even if it’s allowed to stay up.",
+   "Disclose realistic AI-made content and paid promotions, both on YouTube and under Indian advertising rules."
+  ],
+  "quiz": [
+   {
+    "q": "How many active Community Guidelines strikes lead to a channel being terminated?",
+    "o": [
+     "One",
+     "Two",
+     "Three within 90 days",
+     "Ten in a year"
+    ],
+    "a": 2,
+    "why": "YouTube usually starts with a warning; strikes then expire after 90 days, and three active strikes at once terminate the channel."
+   },
+   {
+    "q": "You used a popular film song in the background. What’s most likely to happen?",
+    "o": [
+     "Nothing, because it’s only 20 seconds",
+     "A Content ID claim, so the rights owner can earn from or block the video",
+     "YouTube pays you extra for using a hit",
+     "Your channel gets verified"
+    ],
+    "a": 1,
+    "why": "Short clips aren’t automatically allowed. Content ID matches the song and the owner decides what happens. Use YouTube’s Audio Library or licensed music instead."
+   },
+   {
+    "q": "When does YouTube ask you to disclose AI use?",
+    "o": [
+     "Whenever you used any AI tool at all",
+     "When realistic content was generated or meaningfully altered with AI",
+     "Only for cartoons",
+     "Never"
+    ],
+    "a": 1,
+    "why": "Disclosure is for realistic content that viewers could mistake for real people, places or events. AI help with scripts or obvious animation doesn’t need it."
+   }
+  ]
+ },
+ {
+  "slug": "light-and-sound-on-a-budget",
+  "status": "published",
+  "date": "2026-09-22",
+  "modified": "2026-09-22",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "title": "Light and sound on a budget: what to fix before you buy a camera",
+  "short": "Light and sound on a budget",
+  "dek": "A ₹40,000 camera can’t rescue a dark face and an echoing room. A bedsheet, a window and switching off the ceiling fan often can. Here’s our budget playbook for both.",
+  "read_min": 6,
+  "image": "learn-light-and-sound-on-a-budget",
+  "glyph": "bulb",
+  "takeaways": [
+   "Big, soft light flatters faces: a window or a white wall bouncing light beats a bare bulb.",
+   "Don’t mix daylight with yellow or white tube light on your face.",
+   "Echo comes from hard surfaces. Cloth, curtains and cupboards full of clothes soak it up.",
+   "Switch off fans and coolers, record 10 seconds of silence, and always check with headphones."
+  ],
+  "quiz": [
+   {
+    "q": "What makes light look soft and flattering on a face?",
+    "o": [
+     "A small, bright bulb close by",
+     "A large light source, like a window or a bounced wall",
+     "Light from directly above",
+     "A coloured LED strip"
+    ],
+    "a": 1,
+    "why": "The bigger the light source compared with your face, the softer the shadows. Windows and white walls are big, free light sources."
+   },
+   {
+    "q": "Your voice sounds hollow and echoey. What helps most, for free?",
+    "o": [
+     "Recording in the bathroom",
+     "Moving to a room with curtains, a bed or soft furniture",
+     "Speaking louder",
+     "Turning up the bass in editing"
+    ],
+    "a": 1,
+    "why": "Hard, bare surfaces bounce sound around. Soft furnishings absorb it."
+   },
+   {
+    "q": "Why record 10 seconds of silence in your room before you start?",
+    "o": [
+     "YouTube requires it",
+     "It gives your editor a clean sample of the room’s background noise",
+     "It warms up the microphone",
+     "It improves video quality"
+    ],
+    "a": 1,
+    "why": "That “room tone” lets noise-reduction tools learn what to remove, and fills gaps between cuts so they don’t sound dead."
+   }
+  ]
+ },
+ {
+  "slug": "shooting-educational-videos",
+  "status": "published",
+  "date": "2026-09-29",
+  "modified": "2026-09-29",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "title": "How to shoot educational videos people actually finish",
+  "short": "Educational videos people finish",
+  "dek": "Teaching on camera is a different skill from teaching in a room. The four formats that work for explainers, how to choose one, and the small production habits that keep learners watching to the end.",
+  "read_min": 6,
+  "image": "learn-shooting-educational-videos",
+  "glyph": "board",
+  "takeaways": [
+   "Teach one idea per video and say what the viewer will be able to do by the end.",
+   "Match the format to the subject: talking head, screen recording, hands-on or whiteboard.",
+   "Show every example on screen; don’t just describe it.",
+   "Add chapters: a 00:00 timestamp plus at least two more in the description."
+  ],
+  "quiz": [
+   {
+    "q": "What’s the best format for teaching how to use a piece of software?",
+    "o": [
+     "A talking head with no visuals",
+     "A screen recording with your voice, plus your face briefly",
+     "A podcast",
+     "A static image"
+    ],
+    "a": 1,
+    "why": "Learners need to see the clicks. Free tools like OBS Studio, or your phone’s built-in screen recorder, are enough."
+   },
+   {
+    "q": "What do YouTube chapters need to work?",
+    "o": [
+     "A paid subscription",
+     "Timestamps in the description starting at 00:00, with at least three chapters",
+     "At least 10,000 subscribers",
+     "A video longer than 2 hours"
+    ],
+    "a": 1,
+    "why": "Add timestamps in the description starting at 00:00, with at least three chapters, each at least 10 seconds long."
+   },
+   {
+    "q": "An educational video covers five big topics. What usually works better?",
+    "o": [
+     "One long video covering all five quickly",
+     "One video per idea, linked together as a series or playlist",
+     "Removing the examples to save time",
+     "Talking faster"
+    ],
+    "a": 1,
+    "why": "One idea per video is easier to finish, easier to title, and easier for search to match to the right question."
+   }
+  ]
+ },
+ {
+  "slug": "first-edit-free-editors",
+  "status": "published",
+  "date": "2026-10-06",
+  "modified": "2026-10-06",
+  "author": "neeraj",
+  "author_name": "Neeraj",
+  "title": "Your first edit: free editors that work in India, and cuts that keep people watching",
+  "short": "Your first edit",
+  "dek": "CapCut has been blocked in India since 2020, so here’s what to use instead on phones and computers, plus the five edits that matter more than any effect.",
+  "read_min": 6,
+  "image": "learn-first-edit-free-editors",
+  "glyph": "cut",
+  "takeaways": [
+   "CapCut is banned in India. VN, DaVinci Resolve, Clipchamp and iMovie are good free options.",
+   "Cut silences, false starts and slow intros: that’s most of what “editing” means.",
+   "Add captions and on-screen text; many people watch with the sound off.",
+   "Keep music well below your voice, and export at the resolution you shot in."
+  ],
+  "quiz": [
+   {
+    "q": "Which free editor is a full professional desktop editor?",
+    "o": [
+     "DaVinci Resolve",
+     "Notepad",
+     "WhatsApp",
+     "Google Maps"
+    ],
+    "a": 0,
+    "why": "DaVinci Resolve’s free version handles editing, colour and audio. It needs a reasonably powerful computer."
+   },
+   {
+    "q": "What’s usually the most important edit in a beginner’s video?",
+    "o": [
+     "Adding transitions between every clip",
+     "Cutting pauses, mistakes and the slow start",
+     "Adding a 20-second intro",
+     "Making the music louder"
+    ],
+    "a": 1,
+    "why": "Tight pacing keeps viewers. Effects don’t fix a slow video; cuts do."
+   },
+   {
+    "q": "Why add captions or on-screen text?",
+    "o": [
+     "They’re required for upload",
+     "Many people watch without sound, and captions help non-native listeners",
+     "They make the file smaller",
+     "They stop copyright claims"
+    ],
+    "a": 1,
+    "why": "Muted viewing is common, especially on Shorts and in public places. Text keeps those viewers with you."
+   }
+  ]
+ },
+ {
+  "slug": "titles-and-thumbnails",
+  "status": "published",
+  "date": "2026-10-13",
+  "modified": "2026-10-13",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "title": "Titles and thumbnails that earn the click without lying",
+  "short": "Titles and thumbnails",
+  "dek": "Your title and thumbnail decide whether anyone presses play. How to make them specific, readable on a phone and honest, plus how to test them without guessing.",
+  "read_min": 6,
+  "image": "learn-titles-and-thumbnails",
+  "glyph": "frame",
+  "takeaways": [
+   "Plan the title and thumbnail before you film; they’re the promise.",
+   "Put the most important words at the start of the title; phones cut long titles.",
+   "Thumbnails need one clear subject, few words and strong contrast at a tiny size.",
+   "Never promise what the video doesn’t deliver; it costs you viewers and can break policy."
+  ],
+  "quiz": [
+   {
+    "q": "What size should a YouTube thumbnail be?",
+    "o": [
+     "500 × 500 pixels",
+     "1280 × 720 pixels (16:9)",
+     "1080 × 1920 pixels",
+     "Any size"
+    ],
+    "a": 1,
+    "why": "YouTube recommends 1280 × 720, a 16:9 shape, under 2 MB, as a JPG, PNG or GIF."
+   },
+   {
+    "q": "Where should the key words in a title go?",
+    "o": [
+     "At the very end",
+     "At the start, because long titles get cut off on phones",
+     "In capital letters only",
+     "In the description instead"
+    ],
+    "a": 1,
+    "why": "Mobile screens truncate long titles. Lead with what the video is about."
+   },
+   {
+    "q": "What’s the problem with a clickbait thumbnail that the video doesn’t deliver?",
+    "o": [
+     "Nothing, clicks are clicks",
+     "Viewers leave early, which hurts the video, and misleading thumbnails can be removed",
+     "It makes the file bigger",
+     "It only matters for Shorts"
+    ],
+    "a": 1,
+    "why": "Early exits tell YouTube the video disappointed people, and deceptive thumbnails can break the spam rules."
+   }
+  ]
+ },
+ {
+  "slug": "shorts-and-long-form",
+  "status": "published",
+  "date": "2026-10-20",
+  "modified": "2026-10-20",
+  "author": "neeraj",
+  "author_name": "Neeraj",
+  "title": "Shorts and long videos: how to make them help each other",
+  "short": "Shorts and long videos",
+  "dek": "Shorts bring new people; long videos keep them. How the two formats differ, how to connect them, and a simple weekly mix for a small channel.",
+  "read_min": 5,
+  "image": "learn-shorts-and-long-form",
+  "glyph": "stack",
+  "takeaways": [
+   "Shorts are vertical and can be up to 3 minutes; they’re for discovery.",
+   "Long videos build watch hours, trust and most of a channel’s income.",
+   "Shorts watch time doesn’t count towards the long-form watch-hours goal for monetisation.",
+   "Link each Short to a related long video, and remake ideas for the format instead of chopping clips."
+  ],
+  "quiz": [
+   {
+    "q": "How long can a YouTube Short be?",
+    "o": [
+     "15 seconds",
+     "60 seconds",
+     "Up to 3 minutes",
+     "Up to 10 minutes"
+    ],
+    "a": 2,
+    "why": "Since October 2024, vertical or square videos up to 3 minutes can be uploaded as Shorts."
+   },
+   {
+    "q": "Does watch time from the Shorts feed count towards the long-form watch-hours requirement for the Partner Programme?",
+    "o": [
+     "Yes, fully",
+     "No, it doesn’t count",
+     "Only on weekends",
+     "Only for music channels"
+    ],
+    "a": 1,
+    "why": "Shorts have their own route (Shorts views in 90 days). Long-form watch hours come from public long videos."
+   },
+   {
+    "q": "What’s a good way to turn a long video into Shorts?",
+    "o": [
+     "Cut random 60-second chunks",
+     "Pick one strong moment and reframe it vertically with its own hook",
+     "Upload the full video vertically",
+     "Use the same thumbnail"
+    ],
+    "a": 1,
+    "why": "Shorts need their own hook in the first second and a vertical frame. A random chunk usually starts mid-thought."
+   }
+  ]
+ },
+ {
+  "slug": "youtube-monetisation-basics",
+  "status": "published",
+  "date": "2026-10-27",
+  "modified": "2026-10-27",
+  "author": "neeraj",
+  "author_name": "Neeraj",
+  "title": "How YouTube creators get paid, and what changes on 1 February 2027",
+  "short": "How creators get paid",
+  "dek": "The YouTube Partner Programme’s entry bar for ad earnings doubles for new applicants on 1 February 2027. Here’s what the requirements are, what’s changing, and the income that doesn’t depend on them.",
+  "read_min": 6,
+  "image": "learn-youtube-monetisation-basics",
+  "glyph": "coin",
+  "takeaways": [
+   "Fan funding (memberships, Super Thanks and more) starts at 500 subscribers.",
+   "Ad revenue needs 1,000 subscribers plus 4,000 watch hours or 10 million Shorts views, until 31 January 2027.",
+   "From 1 February 2027, new applicants need 8,000 watch hours or 20 million Shorts views; channels already in are not affected.",
+   "Brand deals, affiliates and your own products often pay more than ads for small channels."
+  ],
+  "quiz": [
+   {
+    "q": "From 1 February 2027, how many qualified watch hours will new channels need for ad revenue?",
+    "o": [
+     "4,000",
+     "8,000",
+     "1,000",
+     "20,000"
+    ],
+    "a": 1,
+    "why": "YouTube announced in August 2026 that new applicants will need 8,000 qualified watch hours in 12 months, or 20 million qualified Shorts views in 90 days. The 1,000-subscriber requirement stays."
+   },
+   {
+    "q": "Which of these counts as a qualified watch hour?",
+    "o": [
+     "Watch time on an unlisted video",
+     "Watch time on a public long video",
+     "Views from your own ad campaign",
+     "Watch time on a deleted video"
+    ],
+    "a": 1,
+    "why": "Only public long-form videos (and archived live streams) count. Private, unlisted and deleted videos, ad views and Shorts watch time don’t."
+   },
+   {
+    "q": "Do channels already in the Partner Programme have to meet the new 2027 thresholds?",
+    "o": [
+     "Yes, everyone reapplies",
+     "No, the new entry bar applies to new applicants",
+     "Only Indian channels",
+     "Only Shorts channels"
+    ],
+    "a": 1,
+    "why": "Existing members aren’t affected by the new entry requirements, though everyone has to keep following the monetisation policies."
+   }
+  ]
+ },
+ {
+  "slug": "youtube-analytics-weekly-routine",
+  "status": "published",
+  "date": "2026-11-03",
+  "modified": "2026-11-03",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "title": "Reading YouTube Analytics: five numbers and a 30-minute weekly routine",
+  "short": "Five numbers and a weekly routine",
+  "dek": "YouTube Studio shows you dozens of charts. Five of them answer almost every question a small channel has. Here they are, what “good” looks like, and the weekly routine that turns them into decisions.",
+  "read_min": 6,
+  "image": "learn-youtube-analytics-weekly-routine",
+  "glyph": "chart",
+  "takeaways": [
+   "Impressions click-through rate tells you whether the title and thumbnail work.",
+   "Average view duration and the retention graph tell you whether the video works.",
+   "Traffic sources tell you how people found you; returning viewers tell you whether they came back.",
+   "Compare each video with your own recent videos, not with other channels, and change one thing at a time."
+  ],
+  "quiz": [
+   {
+    "q": "Which number tells you whether your title and thumbnail are working?",
+    "o": [
+     "Subscribers",
+     "Impressions click-through rate",
+     "Total views",
+     "Number of comments"
+    ],
+    "a": 1,
+    "why": "Click-through rate is the share of people who saw your thumbnail and clicked. It’s mostly about packaging."
+   },
+   {
+    "q": "Your retention graph drops sharply in the first 30 seconds. What should you look at?",
+    "o": [
+     "The end screen",
+     "Your opening: the hook and how fast you get to the point",
+     "The upload time",
+     "The video description"
+    ],
+    "a": 1,
+    "why": "An early drop means the start didn’t match what people expected, or took too long to get going."
+   },
+   {
+    "q": "What’s the fairest comparison for a new video’s numbers?",
+    "o": [
+     "A famous creator’s numbers",
+     "Your own recent videos at the same age",
+     "Last year’s viral video",
+     "The YouTube average"
+    ],
+    "a": 1,
+    "why": "Channels differ hugely. Compare with your own videos after the same number of days."
+   }
+  ]
+ }
+]

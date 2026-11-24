@@ -29,3 +29,17 @@ Commands (Python 3, no packages needed):
 
 The GitHub Action in `.github/workflows/publish-scheduled.yml` runs the build every night at 00:05 IST.
 If you upload by hand instead, run `python scripts/build.py` before each upload.
+
+## Learn (Creator school) and Play (v5)
+
+`content/lessons.json` lists the lessons; each lesson's text lives in `content/learn/<slug>.html` (plain `<p>`, `<h2>`,
+`<h3>`, `<ul>`, `<ol>`). Each entry: `slug`, `status`, `date`, `author` (neeraj or anisha), `title`, `short` (a short
+title for cards), `dek`, `read_min`, `takeaways` (the Quick summary), `quiz` (3 questions: `q`, `o` = four options,
+`a` = index of the right one, `why`). Picture: `assets/learn/learn-<slug>.jpg`, `.webp` and `-640.webp` (1200 x 675),
+like blog images. A lesson dated in the future stays hidden until its date; max 2 lessons per date.
+
+`content/quiz-extra.json` holds the Branding and Meta ads questions for /play/.
+
+- `python scripts/build_learn.py` rebuilds /learn/, every lesson page, /play/ and `assets/quiz-bank.js`.
+- `python scripts/build.py` now runs that too, adds Learn and Play to the sitemaps, and adds the Learn / Play links to
+  every page's menu and footer. The nightly GitHub Action does all of this; changing the lesson files also triggers it.

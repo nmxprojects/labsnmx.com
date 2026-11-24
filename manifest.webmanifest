@@ -9,15 +9,81 @@
   "display": "standalone",
   "background_color": "#faf9f6",
   "theme_color": "#faf9f6",
-  "categories": ["business", "news", "productivity"],
+  "categories": [
+    "business",
+    "news",
+    "productivity"
+  ],
   "icons": [
-    { "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/assets/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/assets/pwa/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/assets/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Blog", "url": "/blog/?utm_source=pwa&utm_medium=shortcut", "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Saved posts", "url": "/saved/?utm_source=pwa&utm_medium=shortcut", "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Videos", "url": "/videos/?utm_source=pwa&utm_medium=shortcut", "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Blog",
+      "url": "/blog/?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Learn",
+      "url": "/learn/?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Play",
+      "url": "/play/?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Saved posts",
+      "url": "/saved/?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Videos",
+      "url": "/videos/?utm_source=pwa&utm_medium=shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

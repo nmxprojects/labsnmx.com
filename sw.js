@@ -1,10 +1,12 @@
-/* NMX Labs service worker (v4)
+/* NMX Labs service worker (v5)
+   v5: tapping the welcome notification (the delivery test sent right after someone subscribes) tells the open page
+   that notifications really arrive. Everything else is as in v4.
    - Shows browser notifications sent by .github/workflows/send-push.yml (standard Web Push + VAPID, no third party)
    - Opens the right page when a notification is clicked and reports the click to your Apps Script backend
    - Keeps recently read pages and saved posts readable offline; shows /offline/ when there's no connection
    Registered by /assets/engage.js as /sw.js?b=<your Apps Script /exec URL>. Must stay at the site root. */
 'use strict';
-var VERSION = 'nmx-v4.0';
+var VERSION = 'nmx-v5.0';
 var CORE = 'nmx-core-' + VERSION, PAGES = 'nmx-pages', ASSETS = 'nmx-assets', SAVED = 'nmx-saved';
 var BACKEND = new URL(self.location.href).searchParams.get('b') || '';
 var CORE_FILES = ['/offline/', '/assets/site.css', '/assets/logo.png', '/assets/pwa/icon-192.png', '/assets/pwa/badge-96.png'];
@@ -101,6 +103,11 @@ self.addEventListener('push', function (e) {
 self.addEventListener('notificationclick', function (e) {
   e.notification.close();
   var data = e.notification.data || {};
+  if (data.check) {                                                    // the welcome / delivery-test notification
+    e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+      list.forEach(function (c) { c.postMessage({ type: 'nmx-push-verified' }); });
+    }));
+  }
   var target = new URL(data.url || '/', self.location.origin);
   if (target.origin === self.location.origin) {
     target.searchParams.set('utm_source', 'push');

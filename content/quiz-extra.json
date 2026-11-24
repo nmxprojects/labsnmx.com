@@ -1,0 +1,182 @@
+{
+ "branding": [
+  {
+   "q": "Which file format keeps a logo sharp at any size, from a favicon to a billboard?",
+   "o": [
+    "JPG",
+    "PNG",
+    "SVG (vector)",
+    "GIF"
+   ],
+   "a": 2,
+   "why": "Vector formats like SVG store shapes, not pixels, so they scale without blurring. Keep PNG and JPG exports for everyday use."
+  },
+  {
+   "q": "Which colour format is meant for printing?",
+   "o": [
+    "HEX",
+    "RGB",
+    "CMYK",
+    "sRGB"
+   ],
+   "a": 2,
+   "why": "CMYK describes ink. HEX and RGB describe light on screens. Good brand guidelines list both, plus a Pantone reference if you print a lot."
+  },
+  {
+   "q": "In India, how long does a trademark registration last before it needs renewing?",
+   "o": [
+    "1 year",
+    "5 years",
+    "10 years",
+    "Forever"
+   ],
+   "a": 2,
+   "why": "A registered trademark in India is valid for 10 years and can be renewed every 10 years."
+  },
+  {
+   "q": "When can a brand in India use the ® symbol?",
+   "o": [
+    "Any time it likes",
+    "Only after the trademark is registered",
+    "As soon as it applies",
+    "Only on packaging"
+   ],
+   "a": 1,
+   "why": "® signals a registered mark. Use ™ while the application is pending; using ® on an unregistered mark can get you into legal trouble."
+  },
+  {
+   "q": "Which of these belongs in brand guidelines?",
+   "o": [
+    "Last quarter’s revenue",
+    "Logo use, colours, typefaces and tone of voice",
+    "The founder’s CV",
+    "The office Wi-Fi password"
+   ],
+   "a": 1,
+   "why": "Guidelines tell anyone making something for the brand how it should look and sound."
+  },
+  {
+   "q": "What’s a good test for a new logo?",
+   "o": [
+    "Does it look good at full screen only?",
+    "Does it still work small and in one colour?",
+    "Does it use at least five colours?",
+    "Is it animated?"
+   ],
+   "a": 1,
+   "why": "Logos live on favicons, stamps and WhatsApp profile pictures. If it fails small or in one colour, simplify it."
+  },
+  {
+   "q": "How many typefaces does a small brand usually need?",
+   "o": [
+    "One or two",
+    "At least five",
+    "A new one for every post",
+    "None"
+   ],
+   "a": 0,
+   "why": "One or two well-chosen typefaces, used consistently, make a brand recognisable. More usually looks messy."
+  },
+  {
+   "q": "What does “tone of voice” describe?",
+   "o": [
+    "How loud the brand’s ads are",
+    "How the brand sounds in words: formal, playful, direct",
+    "The music in the brand’s videos",
+    "The founder’s accent"
+   ],
+   "a": 1,
+   "why": "Tone of voice is the personality of the brand’s writing, from website copy to push notifications."
+  }
+ ],
+ "metaads": [
+  {
+   "q": "What size is a 4:5 image for the Facebook and Instagram feed?",
+   "o": [
+    "1080 × 1080",
+    "1080 × 1350",
+    "1920 × 1080",
+    "1200 × 628"
+   ],
+   "a": 1,
+   "why": "4:5 at 1080 × 1350 takes more screen height on a phone than a square, which is why it’s the feed favourite."
+  },
+  {
+   "q": "What size suits Stories and Reels ads?",
+   "o": [
+    "1080 × 1920 (9:16)",
+    "1080 × 1350 (4:5)",
+    "1280 × 720 (16:9)",
+    "800 × 800"
+   ],
+   "a": 0,
+   "why": "Full-screen vertical, 9:16, at 1080 × 1920."
+  },
+  {
+   "q": "Why keep text and logos away from the top and bottom of a 9:16 ad?",
+   "o": [
+    "It looks old-fashioned",
+    "Profile names, captions and buttons cover those areas",
+    "Meta charges more for it",
+    "It slows the ad down"
+   ],
+   "a": 1,
+   "why": "Check every export against Meta’s current safe-zone overlay; the interface covers the edges."
+  },
+  {
+   "q": "Roughly how many optimisation events does an ad set need in a week to leave the learning phase?",
+   "o": [
+    "5",
+    "About 50",
+    "500",
+    "5,000"
+   ],
+   "a": 1,
+   "why": "Meta’s guidance is about 50 optimisation events in a 7-day period. Budgets too small to reach that stay in learning longer."
+  },
+  {
+   "q": "In an ad named Price_Question_Static_4x5_v1, what is “Price”?",
+   "o": [
+    "The budget",
+    "The angle: the reason to buy",
+    "The bid strategy",
+    "The audience"
+   ],
+   "a": 1,
+   "why": "Naming every ad Angle_Hook_Format_Size_Version lets reports show which angles win, not just which ad."
+  },
+  {
+   "q": "Which signs together suggest an ad is tiring?",
+   "o": [
+    "Rising frequency, falling click-through rate, rising cost per result",
+    "More comments",
+    "A higher budget",
+    "A new campaign name"
+   ],
+   "a": 0,
+   "why": "When the same people see an ad too often, they stop clicking and each result gets more expensive."
+  },
+  {
+   "q": "How many new concepts is a sensible test set for a brand spending steadily?",
+   "o": [
+    "One",
+    "Three to five, each a different angle",
+    "Fifty",
+    "As many as you can make"
+   ],
+   "a": 1,
+   "why": "A small set of genuinely different angles answers a real question. Testing everything at once teaches nothing repeatable."
+  },
+  {
+   "q": "What happens when someone taps a Click-to-WhatsApp ad?",
+   "o": [
+    "They see a website",
+    "A WhatsApp chat with the business opens",
+    "They call the business",
+    "They download an app"
+   ],
+   "a": 1,
+   "why": "The ad opens a WhatsApp conversation, often with a pre-filled message, which suits Indian buyers who prefer chatting before buying."
+  }
+ ]
+}
