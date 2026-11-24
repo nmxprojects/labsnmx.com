@@ -86,7 +86,7 @@
   /* ---------------- Learn hub ---------------- */
   var list = $('.lesson-list');
   if (list) {
-    var done = readJSON('nmx-learn-done', {}), items = $$('li[data-slug]', list), n = 0, next = null;
+    var done = readJSON('nmx-learn-done', {}), items = $$('.lesson-list li[data-slug]'), n = 0, next = null;   // v6: every course on the page
     items.forEach(function (li) {
       var s = li.getAttribute('data-slug');
       if (done[s]) { li.classList.add('done'); n++; } else if (!next) next = li;
@@ -96,8 +96,8 @@
     if (card) {
       $('.big', card).innerHTML = '<span class="num">' + n + '</span><span> of ' + items.length + ' lessons done</span>';
       var go = $('.btn', card), meta = $('.meta', card);
-      if (next) { go.href = $('a', next).getAttribute('href'); go.textContent = n ? 'Continue: lesson ' + next.getAttribute('data-n') : 'Start with lesson 1'; meta.textContent = $('h3', next).textContent; }
-      else { go.href = '/play/#quiz-youtube'; go.textContent = 'Test yourself'; meta.textContent = 'You’ve finished every lesson. New ones arrive most weeks.'; }
+      if (next) { go.href = $('a', next).getAttribute('href'); go.textContent = n ? 'Continue: ' + (next.getAttribute('data-label') || 'lesson ' + next.getAttribute('data-n')) : 'Start with lesson 1'; meta.textContent = $('h3', next).textContent; }
+      else { go.href = '/play/#wheel'; go.textContent = 'Test yourself'; meta.textContent = 'You’ve finished every lesson. New ones arrive most weeks.'; }
       setTimeout(function () { $('.bar i', card).style.width = (items.length ? n / items.length * 100 : 0) + '%'; }, 120);
     }
   }

@@ -1,6 +1,7 @@
-/* NMX Labs engage layer (v5, 23 Nov 2026). Loaded by /assets/nmx.js on every page.
+/* NMX Labs engage layer (v6, 24 Nov 2026). Loaded by /assets/nmx.js on every page.
+   v6: the reading prompt is a half-screen sheet with a ringing bell and a rotating, slightly cheeky line.
    - Browser notifications (standard Web Push with your own VAPID key, LaraPush-style, self-hosted, free)
-     v5: "Follow" button instead of a bare bell, a small prompt once a reader is a few lines into a post, an
+     v5/v6: "Follow" button instead of a bare bell, a small prompt once a reader is a few lines into a post, an
      end-of-post card, instant confirmation (the slow parts finish in the background), a test notification to
      confirm delivery, and step-by-step fixes when the phone or browser is blocking notifications.
    - "Ask NMX Labs" assistant: instant answers from the studio facts below, Google Gemini (free tier) through your
@@ -599,25 +600,55 @@
       !$('.player:not([hidden])') && !doc.querySelector('[data-game-active]');
   }
   function lesson() { return /^\/learn\/[^/]+\//.test(path); }
+  // v6: a half-screen sheet (50% of the screen) with an animated bell. The headline rotates, so regulars don't see the
+  // same joke twice in a row. It still only opens after ~4 lines of reading and a scroll, and only once per visit.
+  var QUIPS = [
+    ['You read four whole lines. In 2026 that’s basically a commitment.', 'So let’s make it official. We publish 3–4 new articles a week, and your browser can give you one quiet ping when each goes live.'],
+    ['Liking this? Imagine not having to remember us.', 'One ping when a new {noun} drops. No inbox, no “URGENT”, no guilt trips. We post 3–4 times a week.'],
+    ['Psst. There’s more where this came from.', 'Three or four new articles a week on design, AI and marketing, written by actual humans. Want a tap on the shoulder when the next one lands?'],
+    ['Good taste detected. Want the next one first?', 'Notifications beat refreshing our homepage like it owes you money. One ping per new {noun}, off in one tap.'],
+    ['We’d rather ring a bell than chase you on LinkedIn.', 'Allow notifications and the next {noun} finds you. We post 3–4 times a week and never send anything else.']
+  ];
+  var BELL = '<svg class="nx-hb-svg" viewBox="0 0 120 120" aria-hidden="true">' +
+    '<g class="nx-hb-waves" fill="none" stroke-linecap="round"><path d="M24 44a40 40 0 0 0 0 32"/><path d="M14 38a52 52 0 0 0 0 44"/><path d="M96 44a40 40 0 0 1 0 32"/><path d="M106 38a52 52 0 0 1 0 44"/></g>' +
+    '<g class="nx-hb-bell"><path class="nx-hb-body" d="M60 22c-14 0-24 11-24 26v16l-7 11h62l-7-11V48c0-15-10-26-24-26z"/><path class="nx-hb-lip" d="M27 75h66a3 3 0 0 1 0 6H27a3 3 0 0 1 0-6z"/>' +
+    '<circle class="nx-hb-knob" cx="60" cy="19" r="5"/><path class="nx-hb-shine" d="M46 50c0-8 4-14 10-16" fill="none" stroke-linecap="round"/></g>' +
+    '<circle class="nx-hb-clap" cx="60" cy="88" r="7"/>' +
+    '<g class="nx-hb-spark"><path d="M98 18l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/><path d="M20 96l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/></g></svg>';
   function showSheet(reason) {
     if (!canPrompt()) return;
     ssSet('nmx-prompted', '1');
-    var ios = IOS_NEEDS_INSTALL;
+    var ios = IOS_NEEDS_INSTALL, noun = lesson() ? 'lesson' : 'post';
+    var n = (Number(read('nmx-quip') || -1) + 1) % QUIPS.length; store('nmx-quip', String(n));
+    var q = QUIPS[n], body = q[1].replace(/\{noun\}/g, noun);
+    sheet.classList.add('nx-sheet--half');
     sheet.innerHTML = '<button class="nx-x" type="button" aria-label="Close" data-sheet="no" data-no-track>' + I.x + '</button>' +
-      '<div class="nx-sheet-ic" aria-hidden="true">' + (ios ? I.phone : I.bell) + '</div>' +
-      '<div class="nx-sheet-txt"><h2 id="nxSheetT">' + (ios ? 'Get new ' + (lesson() ? 'lessons' : 'posts') + ' on your iPhone' : 'Want the next ' + (lesson() ? 'lesson' : 'post') + ' on your phone?') + '</h2>' +
-      '<p>' + (ios ? 'Add NMX Labs to your Home Screen, then tap Follow. iPhone only allows notifications that way.' : 'One notification when it goes live. No email, no spam, off in one tap.') + '</p></div>' +
-      '<div class="nx-sheet-acts">' + (ios ? '<button type="button" class="nx-btn" data-sheet="ios">Show me how</button>' : '<button type="button" class="nx-btn" data-sheet="yes">Allow notifications</button>') +
-      '<button type="button" class="nx-link" data-sheet="no">Not now</button></div>';
+      '<div class="nx-hs-in">' +
+        '<div class="nx-hs-art" aria-hidden="true">' + (ios ? '<span class="nx-hs-phone">' + I.phone + '</span>' : BELL) + '<span class="nx-hs-badge">3–4 new a week</span></div>' +
+        '<div class="nx-hs-txt"><p class="nx-hs-kick">' + (ios ? 'iPhone readers, one quick step' : 'Enjoying this ' + noun + '?') + '</p>' +
+          '<h2 id="nxSheetT">' + (ios ? 'Get new ' + noun + 's on your iPhone' : esc(q[0])) + '</h2>' +
+          '<p>' + (ios ? 'Add NMX Labs to your Home Screen, then tap Follow. Apple only allows website notifications that way. Takes ten seconds, promise.' : esc(body)) + '</p>' +
+          (ios ? '' : '<ul class="nx-hs-pts"><li>One ping per new ' + noun + '</li><li>No email, no account</li><li>Off in one tap</li></ul>') +
+          '<div class="nx-sheet-acts">' + (ios ? '<button type="button" class="nx-btn" data-sheet="ios">Show me how</button>' : '<button type="button" class="nx-btn nx-btn--big" data-sheet="yes">' + I.bell + '<span>Ring me when there’s more</span></button>') +
+          '<button type="button" class="nx-link" data-sheet="no">I’ll risk missing out</button></div>' +
+        '</div>' +
+      '</div>';
     sheet.hidden = false; sheet.setAttribute('data-reason', reason);
-    logEvent('prompt_shown', reason); track('PushPromptShown', { reason: reason, page_path: path });
+    if (!REDUCED) { sheet.classList.remove('nx-ringing'); void sheet.offsetWidth; sheet.classList.add('nx-ringing'); }
+    logEvent('prompt_shown', reason + ':q' + n); track('PushPromptShown', { reason: reason, page_path: path, quip: n });
   }
-  function hideSheet() { if (!sheet.hidden) { sheet.hidden = true; sheet.innerHTML = ''; } }
+  function hideSheet() {
+    if (sheet.hidden) return;
+    if (REDUCED || !sheet.classList.contains('nx-sheet--half')) { sheet.hidden = true; sheet.innerHTML = ''; return; }
+    sheet.classList.add('nx-sheet--out');
+    setTimeout(function () { sheet.hidden = true; sheet.innerHTML = ''; sheet.classList.remove('nx-sheet--out', 'nx-ringing'); }, 260);
+  }
   function dismissSheet() { snooze(); logEvent('prompt_later', sheet.getAttribute('data-reason') || ''); hideSheet(); }
+  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) dismissSheet(); });
   sheet.addEventListener('click', function (e) {
     var b = e.target.closest('[data-sheet]'); if (!b) return;
     var a = b.getAttribute('data-sheet');
-    if (a === 'yes') enable('blog,youtube', 'read_prompt');
+    if (a === 'yes') { hideSheet(); enable('blog,youtube', 'read_prompt'); }
     else if (a === 'ios') { hideSheet(); openPanel('alerts'); }
     else dismissSheet();
   });
