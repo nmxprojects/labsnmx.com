@@ -7,6 +7,14 @@ Source (edit this, never the generated parts):  content/news.json
               "title": "...", "summary": "...", "take": "...", "source": "Publisher", "url": "https://...",
               "deep": "/blog/<slug>/ (optional)", "trending": true (optional)}]}
 
+v7, optional:
+  - "image": "/assets/home/<file>.webp" (+ "image_alt") on a news item shows a picture at the top of its homepage card.
+  - content/home-carousel.json adds graphic slides to the homepage carousel (made with Content Blog Creator.html):
+    {"slides": [{"id": "diwali-offer", "image": "/assets/home/diwali-offer.webp", "width": 600, "height": 900,
+                 "alt": "...", "kicker": "Offer", "title": "...", "link": "/#services", "position": 2,
+                 "size": "tall|wide|xl|", "start": "2026-11-24", "end": "2026-12-31", "active": true}]}
+    A slide shows from its start date to its end date (India time), at its position (1 = first card).
+
 Builds:
   - news/index.html     the front page (lead story + bento), "Latest in Design / AI / Marketing" sections, JSON-LD
   - the homepage "The wire" bento carousel (between <!--HOME-NEWS--> markers in index.html)
@@ -87,19 +95,47 @@ def add_bar(s, bar, rel):
     return s[:m.end()] + '<!--WIRE-BAR-->' + bar + '<!--/WIRE-BAR-->\n' + s[m.end():]
 
 # ------------------------------------------------------------------ homepage: "The wire" bento carousel
-def home_news_html(items, posts, bar):
+def load_slides(today):
+    """v7: graphic slides for the homepage carousel (content/home-carousel.json), live between their start and end dates."""
+    p = os.path.join(ROOT, 'content', 'home-carousel.json')
+    if not os.path.exists(p): return []
+    try: slides = json.load(open(p, encoding='utf-8')).get('slides', [])
+    except Exception as e: print('home-carousel.json not read: ' + str(e)); return []
+    ok = []
+    for x in slides:
+        if not x.get('image') or x.get('active') is False: continue
+        if x.get('start') and x['start'] > today: continue
+        if x.get('end') and x['end'] < today: continue
+        ok.append(x)
+    return sorted(ok, key=lambda x: int(x.get('position') or 99))
+
+def slide_html(x):
+    size = x.get('size') if x.get('size') in ('tall', 'wide', 'xl') else ''
+    link = x.get('link') or '/'
+    ext = re.match(r'^https?://', link) and not re.match(r'^https?://(www\.)?labsnmx\.com', link)
+    cap = ''
+    if x.get('title') or x.get('kicker'):
+        cap = f'<span class="hn-gcap">{"<b>" + esc(x["kicker"]) + "</b>" if x.get("kicker") else ""}{esc(x.get("title") or "")}</span>'
+    return (f'<a class="hn-card hn-card--graphic{" hn-card--" + size if size else ""}" href="{esc(link)}"{" target=\"_blank\" rel=\"noopener\"" if ext else ""}>'
+            f'<img src="{esc(x["image"])}" alt="{esc(x.get("alt") or x.get("title") or "")}" width="{int(x.get("width") or 600)}" height="{int(x.get("height") or 430)}" loading="lazy" decoding="async">{cap}</a>')
+
+def home_news_html(items, posts, bar, today=None):
     shapes = ['xl', 'tall', '', '', 'wide', '', '', 'tall', '', 'wide', '', '']
     cards = []
     for i, x in enumerate(items[:12]):
         sh = shapes[i] if i < len(shapes) else ''
         big = sh in ('xl', 'tall', 'wide')
+        img = (f'<span class="hn-img"><img src="{esc(x["image"])}" alt="{esc(x.get("image_alt") or "")}" width="640" height="400" loading="lazy" decoding="async"></span>'
+               if x.get('image') else '')
         cards.append(
-            f'<a class="hn-card hn-card--{TONE[x["topic"]]}{" hn-card--" + sh if sh else ""}" href="/news/#{esc(x["id"])}">'
+            f'<a class="hn-card hn-card--{TONE[x["topic"]]}{" hn-card--" + sh if sh else ""}{" hn-card--pic" if img else ""}" href="/news/#{esc(x["id"])}">{img}'
             f'<span class="hn-meta"><b>{esc(x["topic"])}</b>{esc(x.get("region") or "")} · <time datetime="{x["date"]}">{short(x["date"])}</time></span>'
             f'<span class="hn-title">{esc(x["title"])}</span>'
             + (f'<span class="hn-sum">{esc(x["summary"])}</span>' if sh == 'xl' else '')
             + (f'<span class="hn-take"><em>NMX take</em>{esc(x["take"])}</span>' if big else '')
             + f'<span class="hn-src">via {esc(x["source"])}</span></a>')
+    for x in load_slides(today or (items[0]['date'] if items else '9999-12-31')):    # v7: graphic slides at their positions
+        cards.insert(max(0, min(len(cards), int(x.get('position') or 99) - 1)), slide_html(x))
     upd = human(items[0]['date']) if items else ''
     return (f'\n<section class="hn" id="latest" aria-labelledby="hn-h">\n  <div class="hn-in">\n'
             f'    <div class="hn-top"><div><p class="hn-kick"><i aria-hidden="true"></i>The wire · updated {upd}</p>'
@@ -166,4 +202,4 @@ def build(today, posts):
     bar = bar_html(items, posts) if items else ''
     if os.path.exists(os.path.join(ROOT, 'news', 'index.html')): wr('news/index.html', news_page(items, posts))
     wr('news/latest.json', latest_json(items, posts))
-    return items, bar, home_news_html(items, posts, bar) if items else ''
+    return items, bar, home_news_html(items, posts, bar, today) if items else ''

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site check | NMX Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta name="theme-color" content="#faf9f6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script>(function(){try{var t=localStorage.getItem('nmx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.NMX_NO_ENGAGE=true;</script>
+<style>
+  /* v7: finds pages and images that answer 404 on the live site (the cause of "URL is not available to Google"). */
+  .sc{padding:40px 0 96px;max-width:980px}
+  .sc h1{font-family:var(--font-display);font-size:clamp(40px,6vw,68px);line-height:.95;letter-spacing:-.03em}
+  .sc-lead{color:var(--muted);max-width:62ch;margin:14px 0 22px}
+  .sc-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .sc-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:11px 18px;font:600 14px/1 var(--font-body)}
+  .sc-btn--go{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .sc-btn:disabled{opacity:.5;cursor:progress}
+  .sc-bar{height:8px;border-radius:8px;background:var(--cream);overflow:hidden;margin:18px 0 6px}
+  .sc-bar b{display:block;height:100%;width:0;background:var(--orange);transition:width .2s}
+  .sc-sum{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+  .sc-sum span{padding:10px 14px;border-radius:14px;background:var(--cream);font-size:13px}
+  .sc-sum b{font-size:20px;display:block;font-variant-numeric:tabular-nums}
+  .sc-sum .bad{background:#ffe0d6;color:#9c2b0a}
+  .sc-sum .ok{background:#e3eedb;color:#2f5a1e}
+  .sc table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+  .sc th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--line)}
+  .sc td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-all}
+  .sc td code{font-size:12.5px;background:var(--cream);padding:1px 6px;border-radius:6px}
+  .sc-pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#ffe0d6;color:#9c2b0a;white-space:nowrap}
+  .sc-pill.ok{background:#e3eedb;color:#2f5a1e}
+  .sc-note{font-size:13px;color:var(--muted);margin-top:14px;max-width:70ch}
+  .sc textarea{width:100%;min-height:120px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);color:var(--ink);margin-top:10px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Main">
+  <a href="/" class="nav-logo"><img src="/assets/logo.png" alt="NMX Labs" width="102" height="19"></a>
+  <div class="nav-links"><a href="/dashboard/">Dashboard</a><a href="/tools/backend-check/">Setup check</a><a href="/blog/">Blog</a></div>
+</nav>
+<main class="wrap sc">
+  <h1>Site check</h1>
+  <p class="sc-lead">Checks every address in your sitemap, every published post in <code>content/posts.json</code> and each post’s three cover images on the live site. Anything that answers 404 is listed with the exact file to upload to GitHub.</p>
+  <div class="sc-row"><button class="sc-btn sc-btn--go" id="go" type="button">Check the live site</button><label class="sc-row" style="gap:6px;font-size:13px"><input type="checkbox" id="imgs" checked> Include cover images</label></div>
+  <div class="sc-bar" hidden id="barBox"><b id="bar"></b></div>
+  <p class="sc-note" id="status" role="status"></p>
+  <div class="sc-sum" id="sum" hidden></div>
+  <div id="probBox" hidden>
+    <h2 style="font-size:20px;margin-top:22px">Needs fixing</h2>
+    <table><thead><tr><th>Address</th><th>Answer</th><th>Upload this file to GitHub</th></tr></thead><tbody id="probs"></tbody></table>
+    <p class="sc-note">Upload the listed files (fewer than 100 per upload: GitHub’s web uploader refuses more), wait a minute for GitHub Pages, then run this check again. In Search Console, open the address, press <b>Test live URL</b>, then <b>Request indexing</b>.</p>
+    <button class="sc-btn" id="copy" type="button" style="margin-top:8px">Copy the file list</button>
+    <textarea id="list" readonly aria-label="Files to upload"></textarea>
+  </div>
+  <p class="sc-note" id="okMsg" hidden></p>
+</main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function todayIST() { return new Date(Date.now() + 19800000).toISOString().slice(0, 10); }
+  function repoPath(u) {
+    var p = new URL(u, location.origin).pathname;
+    if (/\/$/.test(p)) p += 'index.html';
+    return decodeURIComponent(p.replace(/^\//, ''));
+  }
+  function check(url) {
+    return fetch(url, { method: 'HEAD', cache: 'no-store', redirect: 'follow' }).then(function (r) {
+      if (r.status === 405 || r.status === 501) return fetch(url, { cache: 'no-store' }).then(function (g) { return g.status; });
+      return r.status;
+    }).catch(function () { return 0; });
+  }
+  function getText(u) { return fetch(u + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(u + ' answered ' + r.status); return r.text(); }); }
+
+  $('go').addEventListener('click', function () {
+    if (!/^https?:$/.test(location.protocol)) { $('status').textContent = 'Open this page on labsnmx.com (it checks the live site).'; return; }
+    var btn = this; btn.disabled = true; $('probBox').hidden = true; $('okMsg').hidden = true; $('sum').hidden = true;
+    $('status').textContent = 'Reading sitemap.xml and content/posts.json…';
+    var urls = {}, notes = {}, notInSitemap = [];
+    function add(u, why) { u = new URL(u, location.origin).href; if (!(u in urls)) { urls[u] = why; } }
+    Promise.all([getText('/sitemap.xml'), getText('/content/posts.json').catch(function () { return '[]'; })]).then(function (res) {
+      var xml = res[0], posts = []; try { posts = JSON.parse(res[1]); } catch (e) {}
+      var locs = (xml.match(/<loc>[^<]+<\/loc>/g) || []).map(function (x) { return x.replace(/<\/?loc>/g, '').trim(); });
+      locs.forEach(function (l) { add(l.replace(/^https?:\/\/(www\.)?labsnmx\.com/, location.origin), 'In sitemap.xml'); });
+      var inMap = {}; locs.forEach(function (l) { inMap[new URL(l).pathname] = 1; });
+      var today = todayIST();
+      posts.filter(function (p) { return p.status === 'published' && p.date <= today; }).forEach(function (p) {
+        var path = '/blog/' + p.slug + '/';
+        add(path, 'Published post'); if (!inMap[path]) { notInSitemap.push(p); notes[new URL(path, location.origin).href] = 'Not in the sitemap either: the nightly build leaves a post out when its page file is missing from the repo.'; }
+        if ($('imgs').checked) { var im = p.image || p.slug; ['.jpg', '.webp', '-640.webp'].forEach(function (x) { add('/assets/blog/' + im + x, 'Cover image of ' + p.slug); }); }
+      });
+      var list = Object.keys(urls), done = 0, bad = [], i = 0, total = list.length;
+      $('barBox').hidden = false; $('bar').style.width = '0%';
+      function next() {
+        if (i >= total) return Promise.resolve();
+        var u = list[i++];
+        return check(u).then(function (st) {
+          done++; $('bar').style.width = Math.round(done / total * 100) + '%'; $('status').textContent = 'Checked ' + done + ' of ' + total + '…';
+          if (st !== 200) bad.push({ url: u, status: st, why: urls[u] });
+        }).then(next);
+      }
+      var workers = []; for (var w = 0; w < 6; w++) workers.push(next());
+      return Promise.all(workers).then(function () {
+        btn.disabled = false; $('status').textContent = 'Checked ' + total + ' addresses on ' + new Date().toLocaleString('en-IN') + '.';
+        $('sum').hidden = false;
+        $('sum').innerHTML = '<span class="' + (bad.length ? 'bad' : 'ok') + '"><b>' + bad.length + '</b>not working</span><span class="ok"><b>' + (total - bad.length) + '</b>working</span>' +
+          '<span><b>' + locs.length + '</b>in sitemap.xml</span>' + (notInSitemap.length ? '<span class="bad"><b>' + notInSitemap.length + '</b>published posts missing from the sitemap</span>' : '');
+        if (!bad.length) { $('okMsg').hidden = false; $('okMsg').textContent = 'Everything answers 200. If Search Console still shows an error, open the address there, press Test live URL, then Request indexing.'; return; }
+        bad.sort(function (a, b) { return a.url < b.url ? -1 : 1; });
+        $('probs').innerHTML = bad.map(function (b) {
+          var path = new URL(b.url).pathname;
+          return '<tr><td><a href="' + esc(b.url) + '" target="_blank" rel="noopener">' + esc(path) + '</a><br><small style="color:var(--muted)">' + esc(b.why) + (notes[b.url] ? '. ' + esc(notes[b.url]) : '') + '</small></td>' +
+            '<td><span class="sc-pill">' + (b.status || 'no answer') + '</span></td><td><code>' + esc(repoPath(b.url)) + '</code></td></tr>';
+        }).join('');
+        $('list').value = bad.map(function (b) { return repoPath(b.url); }).join('\n');
+        $('probBox').hidden = false;
+      });
+    }).catch(function (e) { btn.disabled = false; $('status').textContent = 'Couldn’t start: ' + e.message; });
+  });
+  $('copy').addEventListener('click', function () { $('list').select(); try { navigator.clipboard.writeText($('list').value); this.textContent = 'Copied'; } catch (e) { document.execCommand('copy'); } });
+})();
+</script>
+</body>
+</html>

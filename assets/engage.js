@@ -1,4 +1,6 @@
-/* NMX Labs engage layer (v6, 24 Nov 2026). Loaded by /assets/nmx.js on every page.
+/* NMX Labs engage layer (v7, 24 Nov 2026). Loaded by /assets/nmx.js on every page.
+   v7: traffic source classification (Organic Search, Paid Search, Social, Direct, Referral, Unknown) for every visit,
+   sent with page views, notification sign-ups, enquiries and email sign-ups. Still holds no keys: nmx.js is untouched.
    v6: the reading prompt is a half-screen sheet with a ringing bell and a rotating, slightly cheeky line.
    - Browser notifications (standard Web Push with your own VAPID key, LaraPush-style, self-hosted, free)
      v5/v6: "Follow" button instead of a bare bell, a small prompt once a reader is a few lines into a post, an
@@ -81,22 +83,100 @@
   var views = Number(read('nmx-views') || 0) + 1; store('nmx-views', String(views));
   var qs = new URLSearchParams(location.search);
   var refHost = ''; try { var rh = doc.referrer ? new URL(doc.referrer).hostname.replace(/^www\./, '') : ''; if (rh && rh !== location.hostname.replace(/^www\./, '')) refHost = rh; } catch (e) {}
+
+  /* =========================================================== v7: traffic source classification */
+  // v7: Traffic source classification. Same rules in engage.js (browser) and Code-Blog.gs (Sheet), so both agree.
+  // Six classes: Organic Search, Paid Search, Social, Direct, Referral, Unknown. "d" is the detail, e.g. "google / cpc".
+  // o = { ref: referring host, us: utm_source, um: utm_medium, click: { g: Google Ads id, m: Microsoft Ads id, f: fbclid, s: other social id },
+  //       app: in-app browser name, internal: true when the referrer is this site }
+  function classifyTraffic(o) {
+    o = o || {};
+    var ref = String(o.ref || '').toLowerCase().trim().replace(/^www\./, ''), us = String(o.us || '').toLowerCase().trim(), um = String(o.um || '').toLowerCase().trim(), k = o.click || {};
+    var AI = /^(chatgpt\.com|chat\.openai\.com|openai\.com|perplexity\.ai|claude\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|copilot\.com|you\.com|meta\.ai|poe\.com|chat\.deepseek\.com|deepseek\.com|grok\.com|phind\.com|chat\.mistral\.ai)$/;
+    var AI_SRC = /^(chatgpt|openai|perplexity|claude|gemini|copilot|deepseek|grok|meta\.ai)/;
+    var MAIL = /^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com|outlook\.(live|office|office365)\.com|mail\.yahoo\.com|mail\.proton\.me|mail\.zoho\.(com|in)|mail\.aol\.com|mail\.rediff\.com|webmail\..+)$/;
+    var SEARCH = /^((m|www)\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$|^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$|^(cn\.)?bing\.com$|^([a-z]{2}\.)?search\.yahoo\.com$|^yahoo\.co\.jp$|^((html|lite)\.)?duckduckgo\.com$|^yandex\.[a-z.]+$|^baidu\.com$|^ecosia\.org$|^search\.brave\.com$|^startpage\.com$|^qwant\.com$|^(search\.)?naver\.com$|^seznam\.cz$|^sogou\.com$|^so\.com$|^ask\.com$|^search\.aol\.com$|^kagi\.com$/;
+    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
+    var SOC_SRC = /^(facebook|fb|instagram|ig|insta|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
+    var SEARCH_SRC = /^(google|bing|yahoo|duckduckgo|ddg|yandex|baidu|ecosia|brave|naver|msn|microsoft|adwords|googleads|google[-_ ]?ads|bing[-_ ]?ads|microsoft[-_ ]?ads)$/;
+    var PAID = /^(cpc|ppc|paid|paidsearch|paid[-_ ]?search|sem|cpm|cpv|cpa|retargeting|remarketing|display|paid[-_ ].*)$|cp[cmva]/;
+    var SOC_MED = /^(social|social[-_ ]?media|social[-_ ]?network|sm|soc|organic[-_ ]?social|paid[-_ ]?social|social[-_ ]?paid|social[-_ ]?ads?)$/;
+    var MAIL_MED = /^(e[-_ ]?mail|newsletter|mail|edm|mailer)$/;
+    var PUSH_MED = /^(push|web[-_ ]?push|notification|notifications|browser[-_ ]?push)$/;
+    var REF_MED = /^(referral|affiliate|affiliates|partner|partners|link|links|backlink)$/;
+    function d(a, b) { return [a, b].filter(function (x) { return !!x; }).join(' / ').slice(0, 80); }
+    if (k.g || k.m) return { c: 'Paid Search', d: us ? d(us, um || 'cpc') : (k.m ? 'bing / cpc' : 'google / cpc') };
+    if (us || um) {
+      if (AI_SRC.test(us) || AI.test(us.replace(/^www\./, ''))) return { c: 'Referral', d: 'AI answer · ' + us };
+      var social = SOC_SRC.test(us) || SOCIAL.test(us), search = SEARCH_SRC.test(us) || SEARCH.test(us), paid = PAID.test(um);
+      if (paid && (search || /search/.test(um))) return { c: 'Paid Search', d: d(us, um) };
+      if (SOC_MED.test(um) || social) return { c: 'Social', d: d(us, um) };
+      if (um === 'organic' || (search && !paid)) return { c: 'Organic Search', d: d(us, um || 'organic') };
+      if (MAIL_MED.test(um) || us === 'newsletter') return { c: 'Referral', d: d(us, um || 'email') };
+      if (PUSH_MED.test(um)) return { c: 'Referral', d: d(us || 'push', um) };
+      if (REF_MED.test(um)) return { c: 'Referral', d: d(us, um) };
+      return { c: 'Unknown', d: d(us, um) };
+    }
+    if (k.f) return { c: 'Social', d: ref || 'facebook / instagram' };
+    if (k.s) return { c: 'Social', d: ref || String(k.s) };
+    if (ref) {
+      if (AI.test(ref)) return { c: 'Referral', d: 'AI answer · ' + ref };
+      if (MAIL.test(ref)) return { c: 'Referral', d: 'email · ' + ref };
+      if (SEARCH.test(ref)) return { c: 'Organic Search', d: ref };
+      if (SOCIAL.test(ref)) return { c: 'Social', d: ref };
+      return { c: 'Referral', d: ref };
+    }
+    if (o.app) return { c: 'Social', d: String(o.app).toLowerCase() + ' app' };
+    if (o.internal) return { c: 'Unknown', d: 'came from another page of the site' };
+    return { c: 'Direct', d: '' };
+  }
+  var CLICK = { g: qs.get('gclid') || qs.get('gbraid') || qs.get('wbraid') || qs.get('gad_source') || qs.get('dclid') ? 1 : 0, m: qs.get('msclkid') ? 1 : 0, f: qs.get('fbclid') ? 1 : 0,
+    s: qs.get('ttclid') ? 'tiktok' : qs.get('twclid') ? 'x' : qs.get('li_fat_id') ? 'linkedin' : (qs.get('igshid') || qs.get('igsh')) ? 'instagram' : '' };
+  var APP = /Instagram/.test(UAS) ? 'Instagram' : /FBAN|FBAV|FB_IAB/.test(UAS) ? 'Facebook' : /LinkedInApp/.test(UAS) ? 'LinkedIn' : /Snapchat/.test(UAS) ? 'Snapchat'
+    : /Pinterest/.test(UAS) ? 'Pinterest' : /musical_ly|TikTok|BytedanceWebview/.test(UAS) ? 'TikTok' : /Twitter/.test(UAS) ? 'X' : '';
+  var INTERNAL = false; try { INTERNAL = !!doc.referrer && new URL(doc.referrer).hostname.replace(/^www\./, '') === location.hostname.replace(/^www\./, ''); } catch (e) {}
+  var TOUCH = !!(refHost || qs.get('utm_source') || qs.get('utm_medium') || CLICK.g || CLICK.m || CLICK.f || CLICK.s);
+
   var SES = (function () {
-    var s = readJSON('nmx-ses', null), now = Date.now();
-    if (!s || now - s.t > 30 * 60 * 1000) s = { id: rid(), t: now, ref: refHost, us: '', um: '', uc: '' };
+    var s = readJSON('nmx-ses', null), now = Date.now(), fresh = !s || now - s.t > 30 * 60 * 1000, t;
+    if (fresh) s = { id: rid(), t: now, ref: refHost, us: '', um: '', uc: '' };
     if (qs.get('utm_source')) { s.us = qs.get('utm_source'); s.um = qs.get('utm_medium') || ''; s.uc = qs.get('utm_campaign') || ''; }
+    // A new campaign or outside link re-attributes the visit; clicking around the site keeps the source it arrived with.
+    if (TOUCH) t = classifyTraffic({ ref: refHost, us: qs.get('utm_source') || '', um: qs.get('utm_medium') || '', click: CLICK, app: APP });
+    else if (fresh) t = classifyTraffic({ app: APP, internal: INTERNAL });
+    else if (!s.tc) t = classifyTraffic({ ref: s.ref, us: s.us, um: s.um });
+    if (t) { s.tc = t.c; s.td = t.d; }
     s.t = now; store('nmx-ses', JSON.stringify(s));
-    if (!read('nmx-first')) store('nmx-first', JSON.stringify({ ref: refHost, us: s.us, um: s.um, uc: s.uc, page: path, at: today() }));
+    if (!read('nmx-first')) store('nmx-first', JSON.stringify({ ref: refHost, us: s.us, um: s.um, uc: s.uc, page: path, at: today(), tc: s.tc, td: s.td }));
     return s;
   })();
   var FIRST = readJSON('nmx-first', {});
+  if (!FIRST.tc) { var tf = classifyTraffic({ ref: FIRST.ref, us: FIRST.us, um: FIRST.um }); FIRST.tc = tf.c; FIRST.td = tf.d; if (read('nmx-first')) store('nmx-first', JSON.stringify(FIRST)); }
+  window.NMX_TRAFFIC = { now: SES.tc, detail: SES.td || '', first: FIRST.tc, firstDetail: FIRST.td || '' };
+
+  // Email sign-ups are sent by /assets/nmx.js (which holds your keys and is left untouched). This adds the traffic
+  // source to that one request on its way out, and to nothing else.
+  (function () {
+    var of = window.fetch; if (!of || of.nmxTraffic) return;
+    var wrapped = function (input, init) {
+      try {
+        var b = init && init.body;
+        if (b && typeof URLSearchParams !== 'undefined' && b instanceof URLSearchParams && b.get('action') === 'subscribe' && !b.has('tc') &&
+            CFG.BACKEND_URL && String(input && input.url || input).indexOf(String(CFG.BACKEND_URL)) === 0) {
+          b.append('tc', SES.tc || ''); b.append('td', SES.td || ''); b.append('vid', VID);
+        }
+      } catch (e) {}
+      return of.apply(this, arguments);
+    };
+    wrapped.nmxTraffic = true; window.fetch = wrapped;
+  })();
 
   /* =========================================================== first-party statistics -> Google Sheet */
   function logEvent(type, detail) {
     if (!READY || BOT || (NO_TRACK && type === 'pageview')) return;
     var body = new URLSearchParams({ action: 'event', t: type, vid: VID, sid: SES.id, path: path.slice(0, 200), title: doc.title.slice(0, 150),
       ref: type === 'pageview' ? refHost : '', us: SES.us || '', um: SES.um || '', uc: SES.uc || '', dev: U.dev, br: U.br, os: U.os, co: COUNTRY,
-      lang: navigator.language || '', d: String(detail || '').slice(0, 200) });
+      lang: navigator.language || '', d: String(detail || '').slice(0, 200), tc: SES.tc || '', td: SES.td || '' });
     try { if (navigator.sendBeacon && navigator.sendBeacon(CFG.BACKEND_URL, body)) return; } catch (e) {}
     fetch(CFG.BACKEND_URL, { method: 'POST', body: body, mode: 'no-cors', keepalive: true }).catch(function () {});
   }
@@ -295,7 +375,7 @@
     return { action: 'push_subscribe', endpoint: j.endpoint, p256dh: k.p256dh || '', auth: k.auth || '', topics: topics,
       old_endpoint: oldEndpoint || '', br: U.br, os: U.os, dev: U.dev, co: COUNTRY, tz: TZ, lang: navigator.language || '',
       page: path, ref: FIRST.ref || SES.ref || '', us: FIRST.us || SES.us || '', um: FIRST.um || SES.um || '', uc: FIRST.uc || SES.uc || '',
-      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '' };
+      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '', tc: FIRST.tc || SES.tc || '', td: FIRST.td || SES.td || '' };
   }
   // Saving to the Google Sheet can take a few seconds (Apps Script), so it runs in the background with retries.
   // If the reader leaves first, the browser still delivers it (sendBeacon), and the next page view retries anyway.
@@ -821,7 +901,7 @@
       if (name.length < 2) { st.textContent = 'Add your name.'; F('name').focus(); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact) && contact.replace(/\D/g, '').length < 8) { st.textContent = 'Add an email address or a phone number we can reach.'; F('contact').focus(); return; }
       btn.disabled = true; st.textContent = 'Sending…';
-      var send = READY ? post({ action: 'lead', name: name, contact: contact, message: msg, path: path, vid: VID, website: '' })
+      var send = READY ? post({ action: 'lead', name: name, contact: contact, message: msg, path: path, vid: VID, website: '', tc: SES.tc || '', td: SES.td || '' })
         : fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CFG.FALLBACK_INBOX || EMAIL), { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
             body: JSON.stringify({ _subject: 'New enquiry from the site assistant', name: name, contact: contact, message: msg, page: location.href, _template: 'table' }) })
             .then(function (r) { return r.json(); }).then(function (d) { if (!d || String(d.success) !== 'true') throw new Error('inbox'); });

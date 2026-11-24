@@ -1,10 +1,14 @@
-/* NMX Labs dashboard (v6: lives at /dashboard/; sends newsletters, offers and updates by email and/or notification). Was v5: Signs in with ADMIN_KEY, loads row-level data from Code-Blog.gs v5 (admin op "raw") and
+/* NMX Labs dashboard (v7: traffic source classification on every chart and filter, and a "Latest blog post" card that
+   sends a post by email and/or notification without doubling up on the automatic hourly sender).
+   v6: lives at /dashboard/; sends newsletters, offers and updates by email and/or notification). Was v5: Signs in with ADMIN_KEY, loads row-level data from Code-Blog.gs v5 (admin op "raw") and
    counts everything in the browser, so filters and period changes are instant. With a v4 backend it falls back to the
    30-day summary (no filters). Holds no keys: BACKEND_URL and VAPID_PUBLIC_KEY come from /assets/nmx.js. */
 (function () {
   'use strict';
   var CFG, KEY = '', RAW = null, STATS = null, MODEL = null, liveTimer = null;
-  var F = { period: '30', dev: '', br: '', co: '', src: '', sec: '', topic: '' };
+  var F = { period: '30', dev: '', br: '', co: '', src: '', sec: '', topic: '', ts: '' };
+  var TS = ['Organic Search', 'Paid Search', 'Social', 'Direct', 'Referral', 'Unknown'];
+  var TS_COLOR = { 'Organic Search': '#7f9471', 'Paid Search': '#ffc530', 'Social': '#ff5a2b', 'Direct': '#111110', 'Referral': '#8aa7d6', 'Unknown': '#c9c4b8' };
   var DAY = 864e5, IST = 19800000, REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -46,16 +50,22 @@
     var sesSrc = {};
     RAW.visits.forEach(function (r) { if (D(r[1]) === 'pageview' && !(r[3] in sesSrc)) sesSrc[r[3]] = D(r[6]) || D(r[5]) || 'Direct / none'; });
     function srcOf(r) { return sesSrc[r[3]] || D(r[6]) || 'Direct / none'; }
+    // v7: a visit's traffic source is the class of its first page view (backends before v7 send none: "Unknown").
+    var sesTs = {};
+    RAW.visits.forEach(function (r) { if (D(r[1]) === 'pageview' && !(r[3] in sesTs)) sesTs[r[3]] = [D(r[14]) || 'Unknown', D(r[15])]; });
+    function tsOf(r) { return (sesTs[r[3]] || [D(r[14]) || 'Unknown'])[0]; }
+    function tsDetOf(r) { return (sesTs[r[3]] || [0, D(r[15])])[1]; }
     function visitOk(r) {
       return !(F.dev && D(r[9]) !== F.dev) && !(F.br && D(r[10]) !== F.br) && !(F.co && D(r[12]) !== F.co) &&
-        !(F.src && srcOf(r) !== F.src) && !(F.sec && section(D(r[4])) !== F.sec);
+        !(F.src && srcOf(r) !== F.src) && !(F.sec && section(D(r[4])) !== F.sec) && !(F.ts && tsOf(r) !== F.ts);
     }
     function subOk(r) {
       return !(F.dev && D(r[6]) !== F.dev) && !(F.br && D(r[4]) !== F.br) && !(F.co && D(r[7]) !== F.co) &&
-        !(F.src && (D(r[9]) || 'Direct / none') !== F.src) && !(F.sec && section(D(r[8])) !== F.sec) && !(F.topic && D(r[3]).split(',').indexOf(F.topic) < 0);
+        !(F.src && (D(r[9]) || 'Direct / none') !== F.src) && !(F.sec && section(D(r[8])) !== F.sec) && !(F.topic && D(r[3]).split(',').indexOf(F.topic) < 0) &&
+        !(F.ts && (D(r[14]) || 'Unknown') !== F.ts);
     }
 
-    var V = { views: zero(), people: zero(), uniq: {}, ses: {}, pv: 0, prevPv: 0, prevUniq: {}, pages: {}, refs: {}, utm: {}, dev: {}, co: {}, heat: [], firstSeen: {} };
+    var V = { views: zero(), people: zero(), uniq: {}, ses: {}, pv: 0, prevPv: 0, prevUniq: {}, pages: {}, refs: {}, utm: {}, dev: {}, co: {}, heat: [], firstSeen: {}, ts: {}, tsDet: {} };
     for (var h = 0; h < 7; h++) V.heat.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     var dayPeople = {}, ev = {}, evDetail = [], clicks = {}, taps = 0, prevTaps = 0;
     var school = { learnViews: 0, playViews: 0, lessons: {}, quiz: 0, quizScore: 0, quizMax: 0, games: {}, done: 0 };
@@ -68,6 +78,7 @@
       if (type === 'pageview') {
         var day = dk(ms), p = D(r[4]); V.pv++; if (day in V.views) V.views[day]++;
         if (vid) { if (!(vid in V.uniq)) { V.uniq[vid] = 1; bump(V.dev, D(r[9])); bump(V.co, D(r[12])); } dayPeople[day + '|' + vid] = day; }
+        if (D(r[3]) && !V.ses[D(r[3])]) { var tc = tsOf(r); V.ts[tc] = (V.ts[tc] || 0) + 1; if (!F.ts || F.ts === tc) bump(V.tsDet, (F.ts ? '' : tc + ' · ') + (tsDetOf(r) || (tc === 'Direct' ? 'typed, bookmarked or shared in an app' : 'not recorded'))); }
         if (D(r[3])) V.ses[D(r[3])] = 1;
         bump(V.pages, p); bump(V.refs, D(r[5]) || 'Direct / none'); if (D(r[6])) bump(V.utm, [D(r[6]), D(r[7]), D(r[8])].filter(String).join(' / '));
         var w = new Date(ms + IST); V.heat[(w.getUTCDay() + 6) % 7][w.getUTCHours()]++;
@@ -101,12 +112,12 @@
     var seenAll = fz.read[0] + fz.end[0] + fz.follow[0], subAll = fz.read[2] + fz.end[2] + fz.follow[2] + fz.other[2];
 
     // Notification subscribers
-    var P = { active: 0, gained: zero(), lost: zero(), newIn: 0, prevNew: 0, lostIn: 0, br: {}, dev: {}, co: {}, blog: 0, yt: 0, withEmail: 0, installed: 0 };
+    var P = { active: 0, gained: zero(), lost: zero(), newIn: 0, prevNew: 0, lostIn: 0, br: {}, dev: {}, co: {}, blog: 0, yt: 0, withEmail: 0, installed: 0, ts: {} };
     var subs = RAW.push.filter(subOk);
     subs.forEach(function (r) {
       var st = D(r[2]), sub = r[0] * 1000, upd = r[1] * 1000;
       if (st === 'Active') {
-        P.active++; bump(P.br, D(r[4])); bump(P.dev, D(r[6]) + ' · ' + D(r[5])); bump(P.co, D(r[7]));
+        P.active++; bump(P.br, D(r[4])); bump(P.dev, D(r[6]) + ' · ' + D(r[5])); bump(P.co, D(r[7])); bump(P.ts, D(r[14]) || 'Unknown');
         D(r[3]).split(',').forEach(function (x) { if (x === 'blog') P.blog++; if (x === 'youtube') P.yt++; });
         if (D(r[10])) P.withEmail++; if (r[11]) P.installed++;
       }
@@ -114,13 +125,16 @@
       if (st !== 'Active' && upd >= start) { P.lostIn++; var l = dk(upd); if (l in P.lost) P.lost[l]++; }
     });
     var recent = subs.slice().sort(function (a, b) { return b[0] - a[0]; }).slice(0, 15).map(function (r) {
-      return { at: r[0], status: D(r[2]), topics: D(r[3]), browser: D(r[4]), os: D(r[5]), device: D(r[6]), country: D(r[7]), page: D(r[8]), source: D(r[9]), email: D(r[10]), received: r[12] };
+      return { at: r[0], status: D(r[2]), topics: D(r[3]), browser: D(r[4]), os: D(r[5]), device: D(r[6]), country: D(r[7]), page: D(r[8]),
+        source: (D(r[14]) ? D(r[14]) + (D(r[15]) ? ' · ' + D(r[15]) : '') : D(r[9])), email: D(r[10]), received: r[12] };
     });
 
     var camps = RAW.campaigns.filter(function (c) { return Date.parse(c.at) >= start; }), delivered = 0;
     camps.forEach(function (c) { if (c.type !== 'test') delivered += Number(c.delivered || 0); });
     var emailActive = RAW.email.filter(function (r) { return r[1]; }).length, emailNew = RAW.email.filter(function (r) { return r[1] && r[0] * 1000 >= start; }).length;
     var uniq = Object.keys(V.uniq).length, sesN = Object.keys(V.ses).length;
+    var emTs = {}; RAW.email.forEach(function (r) { if (r[1] && (!F.ts || D(r[3]) === F.ts)) bump(emTs, D(r[3]) || 'Unknown'); });
+    var tsRows = function (o) { var tot = 0; TS.forEach(function (k) { tot += o[k] || 0; }); return TS.map(function (k) { return [k + (tot ? ' · ' + Math.round((o[k] || 0) / tot * 100) + '%' : ''), o[k] || 0]; }); };
     return {
       compat: false, days: days,
       kpi: [
@@ -136,7 +150,9 @@
       growthSub: '+' + num(P.newIn) + ' new, −' + num(P.lostIn) + ' lost in this period. ' + num(P.active) + ' active now.',
       funnel: SRC.map(function (s) { return [s[1]].concat(fz[s[0]]); }), checks: checks, heat: V.heat, school: school, camps: camps, clicks: clicks,
       bars: { pBrowser: top(P.br), pDevice: top(P.dev), pCountry: top(P.co), pTopics: [['New posts and lessons', P.blog], ['YouTube videos', P.yt]],
-        vPages: top(V.pages, 10), vRefs: top(V.refs), vUtm: top(V.utm), vDevice: top(V.dev, 5), vCountry: top(V.co) },
+        vPages: top(V.pages, 10), vRefs: top(V.refs), vUtm: top(V.utm), vDevice: top(V.dev, 5), vCountry: top(V.co),
+        tsVisits: tsRows(V.ts), tsDetail: top(V.tsDet, 10), tsSubs: tsRows(P.ts), tsEmail: tsRows(emTs) },
+      ts: V.ts, tsTotal: sesN,
       recent: recent, recentSub: num(P.withEmail) + ' of ' + num(P.active) + ' active subscribers are also on the email list; ' + num(P.installed) + ' installed the app.',
       asks: ev.ask || 0, active: P.active
     };
@@ -162,7 +178,7 @@
       funnel: [['All prompts', f.prompt_shown, f.prompt_yes, f.push_subscribe]], checks: { denied: f.push_denied, later: f.prompt_later },
       heat: null, school: null, camps: s.campaigns, clicks: s.campaigns.reduce(function (o, c) { o[c.id] = c.clicks; return o; }, {}),
       bars: { pBrowser: p.browser, pDevice: p.device.concat(p.os), pCountry: p.country, pTopics: [['New posts and lessons', p.topics.blog], ['YouTube videos', p.topics.youtube]],
-        vPages: v.pages, vRefs: v.refs, vUtm: v.utm, vDevice: v.device, vCountry: v.country },
+        vPages: v.pages, vRefs: v.refs, vUtm: v.utm, vDevice: v.device, vCountry: v.country, tsVisits: [], tsDetail: [], tsSubs: [], tsEmail: [] }, ts: {}, tsTotal: 0,
       recent: p.recent, recentSub: num(p.withEmail) + ' of ' + num(p.active) + ' active subscribers are also on the email list; ' + num(p.installed) + ' installed the app.',
       asks: v.other.ask, active: p.active
     };
@@ -244,15 +260,15 @@
     nextFrame(function () { wrap.querySelectorAll('.grow,.grow-down').forEach(function (r) { r.style.transform = 'scaleY(1)'; }); });
   }
   // Tapping a bar filters the whole dashboard by that value.
-  var FILTER_OF = { pBrowser: 'br', pCountry: 'co', vDevice: 'dev', vCountry: 'co', vRefs: 'src', pTopics: 'topic', vPages: 'sec' };
+  var FILTER_OF = { pBrowser: 'br', pCountry: 'co', vDevice: 'dev', vCountry: 'co', vRefs: 'src', pTopics: 'topic', vPages: 'sec', tsVisits: 'ts', tsSubs: 'ts', tsEmail: 'ts' };
   function bars(id, rows, total) {
     var el = $(id);
     if (!rows || !rows.some(function (r) { return r[1]; })) { el.innerHTML = '<li class="ad-empty">Nothing in this view yet.</li>'; return; }
     var max = total || Math.max.apply(null, rows.map(function (r) { return r[1]; })), fk = MODEL.compat ? '' : FILTER_OF[id] || '';
     el.innerHTML = rows.map(function (r) {
-      var val = fk === 'topic' ? (/YouTube/.test(r[0]) ? 'youtube' : 'blog') : fk === 'sec' ? section(r[0]) : r[0], sel = fk && F[fk] === val;
+      var val = fk === 'topic' ? (/YouTube/.test(r[0]) ? 'youtube' : 'blog') : fk === 'sec' ? section(r[0]) : fk === 'ts' ? r[0].split(' · ')[0] : r[0], sel = fk && F[fk] === val;
       return '<li class="' + (fk ? 'click' : '') + (sel ? ' sel' : '') + '"' + (fk ? ' data-fk="' + fk + '" data-fv="' + esc(val) + '" title="' + (sel ? 'Clear this filter' : 'Show only ' + esc(fk === 'sec' ? val + ' pages' : val)) + '"' : '') +
-        '><span title="' + esc(r[0]) + '">' + esc(r[0]) + '</span><em>' + num(r[1]) + '</em><i><b data-w="' + Math.max(2, Math.round(r[1] / max * 100)) + '"></b></i></li>';
+        '><span title="' + esc(r[0]) + '">' + (fk === 'ts' ? '<i class="ad-tsdot" style="background:' + (TS_COLOR[val] || '#c9c4b8') + '"></i>' : '') + esc(r[0]) + '</span><em>' + num(r[1]) + '</em><i><b data-w="' + Math.max(2, Math.round(r[1] / max * 100)) + '"></b></i></li>';
     }).join('');
     nextFrame(function () { el.querySelectorAll('b[data-w]').forEach(function (b) { b.style.width = b.getAttribute('data-w') + '%'; }); });
   }
@@ -299,7 +315,7 @@
     }).join('') : '<tr><td colspan="6" class="ad-empty">No campaigns in this period. The next one goes out with your next blog post, or send one here.</td></tr>';
   }
   function fillFilters() {
-    var compat = !RAW, opts = { dev: ['All devices'], br: ['All browsers'], co: ['All countries'], src: ['All sources'], sec: ['All sections'], topic: ['All topics', 'blog', 'youtube'] };
+    var compat = !RAW, opts = { dev: ['All devices'], br: ['All browsers'], co: ['All countries'], src: ['All referrers'], sec: ['All sections'], topic: ['All topics', 'blog', 'youtube'], ts: ['All traffic sources'].concat(TS) };
     $('compat').hidden = !compat;
     if (RAW) {
       var d = RAW.dict, c = { dev: {}, br: {}, co: {}, src: {}, sec: {} }, add = function (o, k) { if (k) o[k] = (o[k] || 0) + 1; };
@@ -312,7 +328,7 @@
       s.innerHTML = list.map(function (v, i) { return '<option value="' + (i ? esc(v) : '') + '">' + esc(i && k === 'topic' ? (v === 'blog' ? 'Posts and lessons' : 'YouTube videos') : v) + '</option>'; }).join('');
       s.value = F[k]; s.disabled = compat; s.classList.toggle('on', !!F[k]);
     });
-    $('reset').hidden = !['dev', 'br', 'co', 'src', 'sec', 'topic'].some(function (k) { return F[k]; });
+    $('reset').hidden = !['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts'].some(function (k) { return F[k]; });
     document.querySelectorAll('#period button').forEach(function (b) { var p = b.getAttribute('data-p'); b.setAttribute('aria-pressed', String(p === F.period)); b.disabled = compat && p !== '7' && p !== '30'; });
   }
   function render() {
@@ -323,18 +339,26 @@
     growthChart('growth', MODEL.days, MODEL.series.gained, MODEL.series.lost);
     funnel(MODEL); heat(MODEL); school(MODEL); camps(MODEL);
     Object.keys(MODEL.bars).forEach(function (k) { bars(k, MODEL.bars[k], k === 'pTopics' ? Math.max(1, MODEL.active) : 0); });
+    trafficHead(MODEL);
     $('recentSub').textContent = MODEL.recentSub;
     $('recent').innerHTML = MODEL.recent.length ? MODEL.recent.map(function (r) {
       return '<tr><td>' + when(r.at) + '</td><td>' + esc(r.status) + '</td><td>' + esc(r.topics) + '</td><td>' + esc(r.browser) + '</td><td>' + esc(r.device) + ' · ' + esc(r.os) + '</td><td>' + esc(r.country) + '</td><td>' + esc(r.page) + '</td><td>' + esc(r.source) + '</td><td>' + esc(r.email) + '</td><td class="n">' + num(r.received) + '</td></tr>';
     }).join('') : '<tr><td colspan="10" class="ad-empty">No subscribers match this view.</td></tr>';
     $('askSub').textContent = num(MODEL.asks) + ' questions in this view; the AI-answered ones are listed here, the rest are in the Visitors tab.';
   }
+  function trafficHead(m) {
+    var tot = 0; TS.forEach(function (k) { tot += m.ts[k] || 0; });
+    $('tsStack').innerHTML = TS.map(function (k) { return '<span title="' + esc(k) + ': ' + num(m.ts[k] || 0) + '" style="flex-grow:' + (m.ts[k] || 0) + ';background:' + TS_COLOR[k] + '"></span>'; }).join('');
+    $('tsSub').textContent = m.compat ? 'Shows up once Code-Blog.gs v7 is deployed.' : num(tot) + ' visits in this view, each counted once under the source it arrived from.';
+    $('tsDetailH').textContent = F.ts ? 'Inside ' + F.ts : 'Top sources';
+    $('tsDetailSub').textContent = F.ts ? 'Sites, campaigns and apps behind ' + F.ts + ' in this view. Tap it again on the left to see everything.' : 'The busiest sources across all classes. Tap a class on the left to look inside it.';
+  }
   function renderStatic(d) {
     $('updated').textContent = 'Updated ' + when(d.updated) + ' · backend ' + d.version + (RAW ? ' · ' + num(RAW.visits.length) + ' visitor events from the last ' + RAW.days + ' days' : '');
     $('sheet').href = d.setup.sheet;
     var vapid = /^[A-Za-z0-9_-]{80,100}$/.test(String(CFG.VAPID_PUBLIC_KEY || ''));
     var checks = [
-      [d.version === 'v5', 'Apps Script backend is <code>v5</code> (paste Code-Blog.gs v5, then Deploy > Manage deployments > pencil > Version: New version > Deploy)'],
+      [Number(String(d.version).slice(1)) >= 7, 'Apps Script backend is <code>v7</code> (paste Code-Blog.gs v7, then Deploy > Manage deployments > pencil > Version: New version > Deploy)'],
       [vapid, 'Public VAPID key pasted into <code>VAPID_PUBLIC_KEY</code> in /assets/nmx.js'],
       [d.setup.github, 'GitHub connected: <code>GITHUB_REPO</code> and <code>GITHUB_TOKEN</code> in Script properties' + (d.setup.repo ? ' (' + esc(d.setup.repo) + ')' : '')],
       [!!d.setup.youtube, 'YouTube channel for new-video notifications: <code>YOUTUBE_CHANNEL_ID</code> (optional)'],
@@ -343,7 +367,7 @@
     $('setup').hidden = checks.every(function (c) { return c[0]; });
     $('checks').innerHTML = checks.map(function (c) { return '<li class="' + (c[0] ? 'ok' : '') + '">' + c[1] + '</li>'; }).join('');
     var leads = d.leads || [], asks = d.asks || [];
-    $('leads').innerHTML = leads.length ? leads.map(function (l) { return '<tr><td>' + when(l.at) + '</td><td>' + esc(l.name) + '</td><td>' + esc(l.contact) + '</td><td>' + esc(l.message) + '</td></tr>'; }).join('') : '<tr><td colspan="4" class="ad-empty">No leads yet.</td></tr>';
+    $('leads').innerHTML = leads.length ? leads.map(function (l) { return '<tr><td>' + when(l.at) + '</td><td>' + esc(l.name) + '</td><td>' + esc(l.contact) + '</td><td>' + esc(l.message) + '</td><td>' + esc(l.source || 'Unknown') + (l.sourceDetail ? '<br><small style="color:var(--muted)">' + esc(l.sourceDetail) + '</small>' : '') + '</td></tr>'; }).join('') : '<tr><td colspan="5" class="ad-empty">No leads yet.</td></tr>';
     $('asks').innerHTML = asks.length ? asks.map(function (a) { return '<tr><td>' + when(a.at) + '</td><td>' + esc(a.q) + '</td><td>' + esc(a.page) + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="ad-empty">No questions yet.</td></tr>';
   }
 
@@ -361,7 +385,7 @@
     $('feedSub').textContent = num(ev.filter(function (e) { return e.e === 'pageview'; }).length) + ' page views in the last 30 minutes. Updates every 30 seconds.';
     $('feed').innerHTML = shown.length ? shown.map(function (e) {
       var key = e.t + e.v + e.e, cls = /subscribe|check_yes/.test(e.e) ? 'sub' : e.e === 'push_click' ? 'tap' : /quiz|game|lesson/.test(e.e) ? 'play' : '';
-      var what = e.e === 'pageview' ? 'read <u>' + esc(e.p) + '</u>' : esc(LABEL[e.e]) + (/quiz_complete|game_end/.test(e.e) ? ' <u>' + esc(e.d) + '</u>' : '');
+      var what = e.e === 'pageview' ? 'read <u>' + esc(e.p) + '</u>' + (e.tc && e.tc !== 'Unknown' ? ' <small>(' + esc(e.tc) + ')</small>' : '') : esc(LABEL[e.e]) + (/quiz_complete|game_end/.test(e.e) ? ' <u>' + esc(e.d) + '</u>' : '');
       next[key] = 1;
       return '<li' + (seen[key] ? ' style="animation:none"' : '') + '><span class="dot ' + cls + '"></span><span>' + esc(e.dev || 'Someone') + (e.br ? ' · ' + esc(e.br) : '') + (e.co ? ' in ' + esc(e.co) : '') + ' ' + what + '</span><small>' + ago(e.t) + '</small></li>';
     }).join('') : '<li class="ad-empty" style="display:block;border:0">Nobody in the last 30 minutes.</li>';
@@ -383,12 +407,12 @@
   function load(fresh) {
     $('updated').textContent = 'Loading…'; $('dash').classList.add('ad-loading');
     return api({ op: 'raw', days: '120' }).then(function (d) {
-      if (d && d.ok) { RAW = d; STATS = null; renderStatic(d); render(); pollLive(); loadMail(); return; }
+      if (d && d.ok) { RAW = d; STATS = null; renderStatic(d); render(); pollLive(); loadMail(); loadPost(); return; }
       if (d && /Unknown request/.test(d.error || '')) {               // v4 backend: fall back to its 30-day summary
         return api({ op: 'stats', fresh: fresh ? '1' : '' }).then(function (s) {
           if (!s || !s.ok) throw s;
           RAW = null; STATS = s; if (F.period !== '7') F.period = '30';
-          renderStatic(s); render(); $('liveTxt').textContent = 'Live needs v5'; $('live').classList.add('off'); loadMail();
+          renderStatic(s); render(); $('liveTxt').textContent = 'Live needs v5'; $('live').classList.add('off'); loadMail(); loadPost();
         });
       }
       throw d;
@@ -400,7 +424,7 @@
 
   $('period').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.disabled) return; F.period = b.getAttribute('data-p'); render(); });
   document.querySelectorAll('#filters select').forEach(function (s) { s.addEventListener('change', function () { F[s.getAttribute('data-f')] = s.value; render(); }); });
-  $('reset').addEventListener('click', function () { ['dev', 'br', 'co', 'src', 'sec', 'topic'].forEach(function (k) { F[k] = ''; }); render(); });
+  $('reset').addEventListener('click', function () { ['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts'].forEach(function (k) { F[k] = ''; }); render(); });
   document.addEventListener('click', function (e) {
     var li = e.target.closest && e.target.closest('.ad-bars li[data-fk]'); if (!li) return;
     var k = li.getAttribute('data-fk'), v = li.getAttribute('data-fv'); F[k] = F[k] === v ? '' : v; render();
@@ -532,7 +556,7 @@
     return api({ op: 'mail_list' }).then(function (r) {
       if (!r || !r.ok) { MAILV6 = null; $('mails').innerHTML = '<tr><td colspan="6" class="ad-empty">' + esc(needV6(r)) + '</td></tr>'; mailCounts(); return; }
       MAILV6 = r; mailCounts();
-      var label = { newsletter: 'Newsletter', offer: 'Offer', update: 'Update' };
+      var label = { newsletter: 'Newsletter', offer: 'Offer', update: 'Update', post: 'Blog post' };
       $('mailSub').textContent = num(r.active) + ' active email subscribers · about ' + num(r.quota) + ' emails left in today’s Gmail limit.';
       $('mails').innerHTML = r.campaigns.length ? r.campaigns.map(function (c) {
         var cls = c.status === 'Sent' ? 'ok' : c.status === 'Stopped' ? 'bad' : '';
@@ -546,6 +570,70 @@
     var b = e.target.closest('[data-stop]'); if (!b || !confirm('Stop this campaign? People who already got it keep it.')) return;
     b.disabled = true; api({ op: 'mail_cancel', id: b.getAttribute('data-stop') }).then(function (r) { if (!r.ok) alert(r.error || 'Couldn’t stop it'); loadMail(); });
   });
+  /* ---------------- v7: send a blog post ---------------- */
+  var POST = null;
+  function postAt(sel) { return POST && POST.posts.filter(function (p) { return p.slug === sel; })[0]; }
+  function dateLong(s) { return s ? new Date(s + 'T12:00:00+05:30').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : ''; }
+  function drawPost() {
+    var p = postAt($('postPick').value) || (POST && POST.posts[0]);
+    if (!p) { $('postSub').textContent = 'No published posts in blog/posts.json yet.'; $('postBody').hidden = true; return; }
+    $('postBody').hidden = false; $('postImg').src = p.image || ''; $('postLink').href = p.url;
+    $('postMeta').textContent = [p.category, dateLong(p.date), p.author].filter(Boolean).join(' · ');
+    $('postTitle').textContent = p.title;
+    $('postMailN').textContent = num(POST.active); $('postPushN').textContent = num(POST.followers);
+    var m = $('postMail'), u = $('postPush'), ms = $('postMailSt'), us = $('postPushSt'), left = Math.max(0, POST.active - p.emailed);
+    // Email
+    m.disabled = false; ms.className = '';
+    if (p.queued && p.queued.status === 'Sending') { m.checked = false; m.disabled = true; ms.textContent = 'Sending now: ' + num(p.queued.sent) + ' sent so far. The hourly job finishes the rest (9:00–21:00 IST).'; }
+    else if (POST.active && !left) { m.checked = false; m.disabled = true; ms.className = 'ok'; ms.textContent = 'Already sent to all ' + num(POST.active) + ' subscribers.'; }
+    else if (p.mailAuto === 'later' || p.mailAuto === 'now') { m.checked = false; ms.textContent = (p.mailAuto === 'later' ? 'Goes out automatically from 9:00 India time today.' : 'The automatic sender picks this up within the hour.') + ' Tick to send it now instead; nobody gets it twice.'; }
+    else { m.checked = left > 0; ms.className = left ? 'warn' : ''; ms.textContent = !POST.active ? 'No email subscribers yet.' : (p.emailed ? num(p.emailed) + ' already have it; ' + num(left) + ' haven’t. ' : '') + (p.mailAuto === 'missed' ? 'The automatic sender stopped for today (it sends 9:00–21:00 IST) and only handles posts dated today, so send it here.' : p.emailed ? 'Sending reaches only the ones who haven’t.' : 'Not sent automatically: the hourly sender only emails posts dated today.'); }
+    if (POST.quota < left && m.checked) ms.textContent += ' About ' + num(POST.quota) + ' emails fit in today’s Gmail limit; the rest continue tomorrow by themselves.';
+    // Notification
+    u.disabled = false; us.className = '';
+    if (!POST.pushReady) { u.checked = false; u.disabled = true; us.textContent = 'Connect GitHub first (GITHUB_REPO and GITHUB_TOKEN in Script properties).'; }
+    else if (p.pushed) { u.checked = false; us.className = 'ok'; us.innerHTML = 'Followers already got a notification for this post. <button class="ad-link" type="button" id="postPushAgain">Send it again</button>'; }
+    else if (p.pushAuto === 'later' || p.pushAuto === 'now') { u.checked = false; us.textContent = (p.pushAuto === 'later' ? 'Goes out automatically from 9:00 India time today.' : 'The automatic sender picks this up within the hour.') + ' Tick to send it now instead.'; }
+    else { u.checked = POST.followers > 0; us.className = 'warn'; us.textContent = POST.followers ? 'Not sent yet, and the automatic sender won’t: it only announces posts dated today.' : 'No blog followers yet.'; }
+    $('postGo').disabled = !m.checked && !u.checked;
+    var auto = (p.mailAuto === 'later' || p.mailAuto === 'now') && (p.pushed || p.pushAuto === 'later' || p.pushAuto === 'now' || !POST.pushReady);
+    $('postSub').textContent = auto ? 'This post is dated today, so the automatic sender handles it. Nothing to do unless you want it out sooner.' :
+      'New posts dated today go out by themselves from 9:00 India time. Use this for anything the automatic sender missed or doesn’t cover.';
+  }
+  function loadPost() {
+    return api({ op: 'post_status' }).then(function (r) {
+      if (!r || !r.ok) { $('postSub').textContent = r && /Unknown request/.test(r.error || '') ? 'Paste Code-Blog.gs v7 into Apps Script and deploy a new version to send posts from here.' : (r && r.error) || 'Couldn’t check the latest post.'; $('postBody').hidden = true; return; }
+      var keep = $('postPick').value; POST = r;
+      $('postPick').innerHTML = r.posts.map(function (p, i) { return '<option value="' + esc(p.slug) + '">' + (i ? '' : 'Latest: ') + esc(p.title.length > 70 ? p.title.slice(0, 68) + '…' : p.title) + ' (' + esc(p.date) + ')</option>'; }).join('');
+      $('postPick').hidden = r.posts.length < 2; if (keep && postAt(keep)) $('postPick').value = keep;
+      drawPost();
+    }).catch(function () { $('postSub').textContent = 'The backend didn’t answer.'; });
+  }
+  $('postPick').addEventListener('change', drawPost);
+  ['postMail', 'postPush'].forEach(function (id) { $(id).addEventListener('change', function () { $('postGo').disabled = !$('postMail').checked && !$('postPush').checked; }); });
+  var forcePush = false;
+  $('postPushSt').addEventListener('click', function (e) { if (e.target.id === 'postPushAgain') { forcePush = true; $('postPush').checked = true; $('postGo').disabled = false; e.target.outerHTML = '<b>Will send again.</b>'; } });
+  $('postTest').addEventListener('click', function () {
+    var st = $('postStatus'), p = postAt($('postPick').value) || POST.posts[0]; st.textContent = 'Sending a test…';
+    api({ op: 'post_test', slug: p.slug }).then(function (r) { st.textContent = r.ok ? 'Test sent to ' + r.to + '. Check your inbox (and Promotions).' : r.error || 'That didn’t work.'; })
+      .catch(function () { st.textContent = 'The backend didn’t answer. Try again.'; });
+  });
+  $('postGo').addEventListener('click', function () {
+    var p = postAt($('postPick').value) || POST.posts[0], st = $('postStatus'), em = $('postMail').checked, pu = $('postPush').checked;
+    var who = [em ? 'email subscribers who haven’t had it' : '', pu ? num(POST.followers) + ' blog followers (notification)' : ''].filter(Boolean).join(' and ');
+    if (!confirm('Send “' + p.title + '” to ' + who + '?')) return;
+    $('postGo').disabled = true; st.textContent = 'Sending…';
+    api({ op: 'post_send', slug: p.slug, ch_email: em ? '1' : '0', ch_push: pu ? '1' : '0', force: forcePush ? '1' : '' }).then(function (r) {
+      if (!r.ok) { st.textContent = r.error || 'That didn’t work.'; return; }
+      var bits = [];
+      if (em) bits.push(r.id ? (r.waiting ? 'Sent ' + num(r.sent) + ' emails; ' + num(r.waiting) + ' more go out automatically.' : 'Sent ' + num(r.sent || 0) + ' emails.') : (r.mailNote || ''));
+      if (pu) bits.push(r.pushError ? 'Notification: ' + r.pushError : r.pushNote || 'Notification queued on GitHub.');
+      st.textContent = bits.filter(Boolean).join(' '); forcePush = false;
+      loadPost(); loadMail(); if (pu) setTimeout(function () { load(true); }, 1500);
+    }).catch(function () { st.textContent = 'The backend didn’t answer. Check the Email campaigns table before trying again.'; })
+      .then(function () { $('postGo').disabled = false; });
+  });
+
   $('refresh').addEventListener('click', function () { load(true); });
   $('signout').addEventListener('click', function () { clearKey(); KEY = ''; clearTimeout(liveTimer); show('login'); });
   $('loginForm').addEventListener('submit', function (e) {

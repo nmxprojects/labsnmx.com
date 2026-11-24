@@ -168,6 +168,24 @@
   .ad-starter{display:flex;flex-wrap:wrap;gap:6px;margin:-6px 0 4px}
   .ad-starter button{appearance:none;border:1px dashed var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 11px;font:600 12px/1 var(--font-body);cursor:pointer}
   .ad-starter button:hover{border-color:var(--ink)}
+  /* v7: traffic sources and the latest-post card */
+  .ad-ts-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:12px}
+  .ad-stack{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--cream);margin:4px 0 16px}
+  .ad-stack span{height:100%;transition:flex-grow .7s var(--ease)}
+  .ad-tsdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+  .ad-post{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:22px;align-items:start}
+  .ad-post img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;background:var(--cream);display:block}
+  .ad-post h3{font-family:var(--font-display);font-size:clamp(22px,2.4vw,30px);line-height:1.08;letter-spacing:-.02em;margin:4px 0 14px}
+  .ad-post-meta{font-size:12.5px;color:var(--muted);font-weight:600}
+  .ad-post-head{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  .ad-post-head select{font:600 12.5px/1 var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 13px;max-width:100%}
+  .ad-ch{list-style:none;display:grid;gap:10px;margin:0 0 14px;padding:0}
+  .ad-ch li{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+  .ad-ch input{margin-top:3px;width:16px;height:16px}
+  .ad-ch b{font-size:14px} .ad-ch small{grid-column:2;font-size:12.5px;color:var(--muted);line-height:1.4}
+  .ad-ch small.ok{color:var(--good)} .ad-ch small.warn{color:var(--bad)}
+  .ad-link{appearance:none;background:none;border:0;padding:0;color:var(--ink);font:600 12.5px var(--font-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  @media (max-width:760px){.ad-post{grid-template-columns:1fr}}
   [hidden]{display:none!important}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -219,6 +237,7 @@
     <select data-f="dev" aria-label="Device"></select>
     <select data-f="br" aria-label="Browser"></select>
     <select data-f="co" aria-label="Country"></select>
+    <select data-f="ts" aria-label="Traffic source"></select>
     <select data-f="src" aria-label="Came from"></select>
     <select data-f="sec" aria-label="Section"></select>
     <select data-f="topic" aria-label="Notification topic"></select>
@@ -248,6 +267,23 @@
     <div class="ad-card"><h2>When readers show up</h2><p class="ad-sub">Page views by day and hour, India time. Busier hours are better times to send your own notifications.</p><div class="ad-heat" id="heat"></div></div>
     <div class="ad-card"><h2>Learn and Play</h2><p class="ad-sub" id="schoolSub"></p><div class="ad-chips" id="schoolChips"></div>
       <div class="ad-grid ad-g2" style="margin-top:6px"><div><h3>Most-read lessons</h3><ul class="ad-bars" id="lessons"></ul></div><div><h3>Games and quizzes</h3><ul class="ad-bars" id="games"></ul></div></div></div>
+  </div>
+
+  <div class="ad-card" id="postCard" style="margin-top:16px">
+    <div class="ad-post-head"><div><h2>Latest blog post</h2><p class="ad-sub" id="postSub" style="margin:0">Checking what the automatic sender has done…</p></div>
+      <select id="postPick" aria-label="Choose a post" hidden></select></div>
+    <div class="ad-post" id="postBody" hidden>
+      <a id="postLink" href="#" target="_blank" rel="noopener"><img id="postImg" alt=""></a>
+      <div>
+        <p class="ad-post-meta" id="postMeta"></p><h3 id="postTitle"></h3>
+        <ul class="ad-ch">
+          <li><input type="checkbox" id="postMail"><label for="postMail"><b>Email</b> to <span id="postMailN">your</span> subscribers</label><small id="postMailSt"></small></li>
+          <li><input type="checkbox" id="postPush"><label for="postPush"><b>Browser notification</b> to <span id="postPushN">your</span> blog followers</label><small id="postPushSt"></small></li>
+        </ul>
+        <div class="ad-row"><button class="ad-btn" type="button" id="postTest">Send a test email to me</button><button class="ad-btn ad-btn--go" type="button" id="postGo">Send</button></div>
+        <p class="ad-status" id="postStatus" role="status"></p>
+      </div>
+    </div>
   </div>
 
   <div class="ad-grid ad-g2">
@@ -304,6 +340,17 @@
     <div class="ad-scroll"><table class="ad-table"><thead><tr><th>Sent</th><th>Subject</th><th>Type</th><th>Status</th><th class="n">Emails</th><th></th></tr></thead><tbody id="mails"><tr><td colspan="6" class="ad-empty">Loading…</td></tr></tbody></table></div>
   </div>
 
+  <h2 class="ad-h">Traffic sources</h2>
+  <div class="ad-grid ad-g21">
+    <div class="ad-card"><h2>Where visits come from</h2><p class="ad-sub" id="tsSub">Each visit is counted once, under the source it arrived from.</p>
+      <div class="ad-stack" id="tsStack"></div><ul class="ad-bars" id="tsVisits"></ul></div>
+    <div class="ad-card"><h2 id="tsDetailH">Top sources</h2><p class="ad-sub" id="tsDetailSub">Tap a traffic source on the left to see what’s inside it.</p><ul class="ad-bars" id="tsDetail"></ul></div>
+  </div>
+  <div class="ad-grid ad-g2">
+    <div class="ad-card"><h2>How notification followers found you</h2><p class="ad-sub">The source of the visit when they first came to the site.</p><ul class="ad-bars" id="tsSubs"></ul></div>
+    <div class="ad-card"><h2>How email subscribers found you</h2><p class="ad-sub">People who signed up before this update show as Unknown.</p><ul class="ad-bars" id="tsEmail"></ul></div>
+  </div>
+
   <h2 class="ad-h">Subscribers</h2>
   <div class="ad-grid ad-g3">
     <div class="ad-card"><h2>Browsers</h2><ul class="ad-bars" id="pBrowser"></ul></div>
@@ -320,10 +367,10 @@
     <div class="ad-card"><h2>Where they came from</h2><ul class="ad-bars" id="vRefs"></ul><h3>Campaigns (UTM)</h3><ul class="ad-bars" id="vUtm"></ul></div>
     <div class="ad-card"><h2>Devices</h2><ul class="ad-bars" id="vDevice"></ul><h3>Countries</h3><ul class="ad-bars" id="vCountry"></ul></div>
   </div>
-  <p class="ad-note">Tap a browser, country, device, source or page to filter the whole dashboard by it; tap it again to clear. Visitor numbers come from your own site script and skip people with Do Not Track on, so Google Analytics will show somewhat more.</p>
+  <p class="ad-note">Tap a browser, country, device, traffic source, referrer or page to filter the whole dashboard by it; tap it again to clear. Visitor numbers come from your own site script and skip people with Do Not Track on, so Google Analytics will show somewhat more.</p>
 
   <div class="ad-grid ad-g2">
-    <div class="ad-card"><h2>Leads from the site assistant</h2><p class="ad-sub">Each one was also emailed to you.</p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Message</th></tr></thead><tbody id="leads"></tbody></table></div></div>
+    <div class="ad-card"><h2>Leads from the site assistant</h2><p class="ad-sub">Each one was also emailed to you.</p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Message</th><th>Source</th></tr></thead><tbody id="leads"></tbody></table></div></div>
     <div class="ad-card"><h2>What visitors ask the assistant</h2><p class="ad-sub" id="askSub"></p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Question</th><th>Page</th></tr></thead><tbody id="asks"></tbody></table></div></div>
   </div>
 </section>

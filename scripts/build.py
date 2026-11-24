@@ -22,6 +22,10 @@ both sitemaps, and makes sure every page's menu and footer link to /learn/ and /
 v6: the news layer (scripts/build_news.py, content/news.json): the news front page, the homepage "wire" bento carousel,
 the "Latest in" bar under the menu on blog, news and learn pages, and news/latest.json. The homepage blog section is a
 pastel bento. Also writes llms.txt and llms-full.txt for AI search, and adds the Global category.
+v7: a published post whose page file is missing is no longer dropped silently: --check and every build print a
+warning (and a GitHub Actions annotation + job summary) naming the missing file. A post whose folder is still in
+_scheduled/ when it should be live is moved into blog/ automatically. The homepage carousel can show graphic slides
+from content/home-carousel.json and images on news cards (see scripts/build_news.py).
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -120,12 +124,32 @@ def load(check_only=False):
         print('content/posts.json problems:\n  ' + '\n  '.join(errors)); sys.exit(1)
     return posts
 
+def missing_pages(posts, today):
+    """v7: published posts (dated today or earlier) whose page isn't in blog/<slug>/index.html."""
+    return [p for p in posts if p['status'] == 'published' and p['date'] <= today
+            and not os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))]
+
+def warn_missing(posts, today):
+    gone = missing_pages(posts, today)
+    if not gone: return
+    lines = [f"blog/{p['slug']}/index.html is missing, so \"{p['title']}\" ({p['date']}) is left out of the blog, feed and sitemap and its address answers 404. Upload that file (and its images in assets/blog/)." for p in gone]
+    for l in lines: print('::warning title=Missing post page::' + l)
+    summary = os.environ.get('GITHUB_STEP_SUMMARY')
+    if summary:
+        with open(summary, 'a', encoding='utf-8') as f:
+            f.write('### Missing post pages\n\n' + ''.join('- ' + l + '\n' for l in lines) + '\nCheck the live site any time at https://labsnmx.com/tools/site-check/\n')
+
 def publish_due(posts, today):
     moved = []
     for p in posts:
-        if p['status'] != 'scheduled' or p['date'] > today: continue
+        due = p['date'] <= today and p['status'] in ('scheduled', 'published')
         src, dst = os.path.join(SCHEDULED_DIR, p['slug']), os.path.join(ROOT, 'blog', p['slug'])
-        if not os.path.exists(os.path.join(src, 'index.html')):
+        if not due: continue
+        has_src, has_dst = os.path.exists(os.path.join(src, 'index.html')), os.path.exists(os.path.join(dst, 'index.html'))
+        if p['status'] == 'published' and (has_dst or not has_src): continue      # normal case (or nothing to move)
+        if p['status'] == 'scheduled' and not has_src:
+            if has_dst:                                                           # v7: already moved by hand: just mark it published
+                p['status'] = 'published'; moved.append(p['slug']); continue
             print(f"! {p['slug']} is due but _scheduled/{p['slug']}/index.html is missing; skipped"); continue
         if os.path.exists(dst): shutil.rmtree(dst)
         shutil.move(src, dst)
@@ -468,11 +492,13 @@ def main():
         up = sorted((p for p in posts if p['status'] == 'scheduled'), key=lambda p: p['date'])
         print(f'OK. {sum(p["status"] == "published" for p in posts)} published, {len(up)} scheduled.')
         for p in up:
-            ok = os.path.exists(os.path.join(SCHEDULED_DIR, p['slug'], 'index.html'))
+            ok = os.path.exists(os.path.join(SCHEDULED_DIR, p['slug'], 'index.html')) or os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))
             print(f'  {p["date"]}  {p["slug"]}  {"ready" if ok else "MISSING _scheduled/" + p["slug"] + "/index.html"}')
+        warn_missing(posts, today)
         return
     TODAY = today
     publish_due(posts, today)
+    warn_missing(posts, today)
     order = {p['slug']: i for i, p in enumerate(posts)}
     published = [p for p in posts if p['status'] == 'published' and p['date'] <= today
                  and os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))]
