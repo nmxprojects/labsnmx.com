@@ -1,26 +1,67 @@
 # NMX Labs
 
-> NMX Labs is a creative & performance marketing studio based in Gurugram, India,
-> serving clients worldwide. We combine brand design with Meta Ads performance so
-> the creative and the media are built together.
+> NMX Labs is a design, AI and marketing studio and publication based in Gurugram, India, writing for brand teams in the UK, the US, India and everywhere else. We publish 3–4 new articles every week on branding, AI design tools, advertising and platform growth, run a curated news page, and teach free short courses. Every article lists its sources, and posts where we tested something include a "How we checked this" box.
 
-## What we do
-- Branding & Identity — starter brand system from Rs 25,000 (discovery, logo, colour & type system, social assets, mini guidelines).
-- Social Media Creative — Rs 8,000 / month, 8 custom static/carousel creatives (design only).
-- Campaign Creative — Rs 10,000 per campaign (concept, key visual, 3-5 adaptations).
-- Meta Ads Management — Rs 8,000 / month (setup, audience research, weekly optimisation, reporting; ad spend billed separately).
-- Creative + Meta Ads bundle — Rs 15,000 / month + ad spend (creative and media buying combined).
-- Brand & Marketing Design — from Rs 7,500 (decks, brochures, collateral).
+## The publication
+- [Blog](https://labsnmx.com/blog/): 3–4 new articles every week. Each has key takeaways at the top, numbered sources and a fact-check date.
+- [News](https://labsnmx.com/news/): design, AI and marketing news from around the world, each story with a short NMX take and a link to the original source.
+- [Learn](https://labsnmx.com/learn/): free short courses (YouTube, brand identity, Meta ads, getting found in AI answers).
+- [Play](https://labsnmx.com/play/): quizzes and games for marketers and designers.
+- [Editorial standards](https://labsnmx.com/editorial-standards/): how we research, test, credit and correct.
+- [RSS feed](https://labsnmx.com/blog/feed.xml) · [Every post, summarised](https://labsnmx.com/llms-full.txt) · [Latest headlines as JSON](https://labsnmx.com/news/latest.json)
 
-## Who we work with
-D2C brands, EV & energy, SaaS, hospitality and creator-led businesses, from pre-launch to post-Series A.
+## Latest articles
+- [Blogging is dead. So why are you still reading this?](https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/): Two-thirds of Google searches now end without a click, and AI answers have eaten the “what is” article whole. We went through the studies. Generic blogs are dying. Blogs with a person, a test and an opinion behind them are doing fine, and the difference is learnable. (24 November 2026, Neeraj)
+- [Custom brand typefaces in India: why apps commission their own fonts](https://labsnmx.com/blog/custom-brand-typefaces-india/): Your font is the voice your brand uses on every screen, price tag and ad. In India it also has to speak several scripts and print a rupee sign. We tested ten popular fonts to see how many can, and the answer explains why big brands commission their own. (22 November 2026, Anisha)
+- [Generative video for D2C ads in 2026: what Veo and Firefly are actually good for, and what Sora’s shutdown teaches](https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/): A year ago the question was which AI video model looks best. In 2026 the better questions are which one will still exist next quarter, which one your lawyer is comfortable with, and which shots it should never be trusted with. (22 November 2026, Neeraj)
+- [Latest Adobe AI updates, 21 November 2026: what’s live, what’s beta, and what changed since MAX](https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/): Eleven days after MAX, the release notes have caught up with the keynote. Here’s what you can open today, what’s still in beta, what got clearer this week, and whether the Black Friday offer makes sense for an Indian brand team. (21 November 2026, Neeraj)
+- [Canva vs Figma vs Adobe: the AI design war, and which side a brand team should pick](https://labsnmx.com/blog/canva-figma-adobe-ai-design-war/): Canva gave away a professional design suite. Figma started making marketing assets. Adobe is selling “commercially safe” AI. All three are walking into each other’s territory at once. Here’s the map, and how to pick without changing tools every quarter. (21 November 2026, Neeraj)
+- [Swiggy vs Zomato: the push-notification copy war, and why brand voice beats discounts](https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/): Any food app can match a coupon by lunchtime. Nobody can copy a voice. Here’s how India’s two delivery apps turned the most ignored channel on your phone into a brand asset, where rivals got it badly wrong, and a copy test we ran on real notifications. (20 November 2026, Anisha)
+- [10-minute food: Zepto Cafe vs Swiggy Bolt vs Blinkit Bistro, and why only one model is still growing](https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/): In December 2024 every quick-commerce app wanted to deliver hot food in ten minutes. Two years later, kitchens have closed, apps have been shut and one model is quietly growing. The difference wasn’t speed. It was who had to cook. (20 November 2026, Anisha)
+- [Cadbury’s “Not Just a Cadbury Ad”: the AI personalisation campaign that came too early](https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/): Years before every app could clone a voice, Cadbury made Shah Rukh Khan say the names of thousands of neighbourhood shops. It won India’s first Titanium Lion. Taken apart, it’s still the best brief for AI personalisation an Indian brand has written. (19 November 2026, Neeraj)
+- [Adobe MAX 2026 Sneaks: all 10 projects, ranked by how useful they are for brand work](https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/): Sneaks are Adobe’s research previews, and not all of them ship. We went through all ten from this year and sorted them by what they’d actually change for a brand or ad team. (19 November 2026, Neeraj)
+- [Campa Cola’s comeback: how Reliance restarted the cola war on price](https://labsnmx.com/blog/campa-cola-comeback-price-war/): Reliance bought a 1970s cola for about ₹22 crore, put it in a 200 ml bottle at ₹10 and made Coca-Cola and PepsiCo cut prices. The interesting part isn’t the discount. It’s how a price point became the brand. (18 November 2026, Anisha)
+- [Why Zomato renamed itself Eternal: the house-of-brands bet behind India’s best-known food app](https://labsnmx.com/blog/zomato-to-eternal-house-of-brands/): In 2025 Zomato Ltd became Eternal Ltd, but the app you open at 11 pm kept its name. A year later the founder handed the group CEO job to the man who runs Blinkit. Both moves tell the same story, and it’s a story about brand architecture. (17 November 2026, Anisha)
+- [The 10-minute war: how Blinkit, Zepto and Instamart are fighting with brand, not just dark stores](https://labsnmx.com/blog/quick-commerce-brand-war-blinkit-zepto-instamart/): Speed stopped being a differentiator the day everyone promised ten minutes. Here’s what the numbers say about who’s winning India’s quick-commerce race, how each player is trying to be remembered for something else, and what that means if you sell on these apps. (17 November 2026, Anisha)
+- [Amul made memes before the internet: what 60 years of topical ads teach brand teams about moment marketing](https://labsnmx.com/blog/amul-topical-ads-moment-marketing/): In March 1966 a hoarding in Bombay showed a little girl dressed as a jockey and a single pun. More than 4,000 ads later, the format has barely changed. Here’s why it still works and how to borrow it without embarrassing your brand. (16 November 2026, Anisha)
+- [Why CRED made Rahul Dravid smash a car mirror: the against-type casting playbook](https://labsnmx.com/blog/cred-against-type-celebrity-ads/): In April 2021, CRED took the calmest man in Indian cricket and had him scream at traffic. The ad became the most talked-about of that IPL. Here’s the psychology behind casting against type, its risks, and how a brand without a celebrity budget can borrow it. (16 November 2026, Anisha)
+- [Adobe MAX 2026: 5 announcements that change how Indian D2C brands make ads](https://labsnmx.com/blog/adobe-max-2026-what-it-means-for-indian-brands/): Most MAX coverage is written for American agencies with big teams. Here’s what this year’s launches mean for a five-person D2C brand in Delhi, Bengaluru or Mumbai that ships ads every week. (12 November 2026, Neeraj)
+- [AI in your Meta ads: the “AI info” label, automatic enhancements and what the new terms mean](https://labsnmx.com/blog/meta-ai-info-labels-ai-creative/): Meta now labels AI-made ads, its tools can change your creative after you upload it, and its updated commercial terms put more of the responsibility on you. A practical checklist. (5 November 2026, Anisha)
+- [WhatsApp Business pricing changed in October. Here’s why Click-to-WhatsApp ads matter more now](https://labsnmx.com/blog/whatsapp-business-pricing-click-to-whatsapp-ads/): Service replies on the WhatsApp Business Platform are no longer unlimited and free in India. Conversations that start from an ad still come with a 72-hour free window. (29 October 2026, Neeraj)
+- [Our AI design workflow: where AI earns its place and where we keep it out](https://labsnmx.com/blog/ai-design-workflow-for-brands/): We use AI on almost every project, and on almost no final pixels of a logo or a label. Here’s the exact workflow, step by step, including the checks that catch the mistakes AI makes confidently. (22 October 2026, Anisha)
+- [Meta’s Andromeda, explained: why your ad creative now does the targeting](https://labsnmx.com/blog/meta-andromeda-creative-diversity/): Meta rebuilt the system that decides which ads are even considered for each person. The practical result: ten near-identical ads now behave like one. (15 October 2026, Neeraj)
+- [How we build a Meta ads creative system instead of a batch of ads](https://labsnmx.com/blog/meta-ads-creative-system/): Most brands brief Meta creative one ad at a time. Then they can’t tell why anything worked. This is the system we use to make creative testable, repeatable and cheaper to refresh. (8 October 2026, Neeraj)
+- [Packaging labels in India: the mandatory details your designer must leave room for](https://labsnmx.com/blog/packaging-label-rules-india-d2c/): A beautiful pack that’s missing the unit sale price or the month of manufacture can be held up at a warehouse or a marketplace. Plan the legal text before the artwork. (1 October 2026, Anisha)
+- [How much should an Indian startup spend on Meta ads? A budget guide with the maths](https://labsnmx.com/blog/meta-ads-budget-guide-india/): “Start with ₹500 a day” is the most common advice and usually the wrong number. Your budget should come from your cost per sale, not from a round figure. Here’s how to work it out. (24 September 2026, Neeraj)
+- [Trademarking your brand name in India: a founder’s guide to classes, fees and timelines](https://labsnmx.com/blog/trademark-registration-india-founders/): You can design a beautiful brand on a name someone else already owns. A trademark search and filing early on costs little compared to a rebrand later. (17 September 2026, Anisha)
+- [AI product photography for D2C brands: what to generate, and what you still need to shoot](https://labsnmx.com/blog/ai-product-photography-d2c/): AI can put your product on a beach, a marble counter or a Diwali table in minutes. It can’t be trusted to draw the product itself. Here’s how we split the work. (10 September 2026, Anisha)
+- [What goes in brand guidelines, and how to keep them short enough that people use them](https://labsnmx.com/blog/brand-guidelines-what-to-include/): Most brand guidelines are long PDFs nobody opens after launch. Good ones answer the questions your team, freelancers and marketplace managers ask every week. (3 September 2026, Anisha)
+
+## Topics
+- [Design news](https://labsnmx.com/blog/category/design-news/): Design and creative-industry news, explained for Indian brand and marketing teams.
+- [AI design](https://labsnmx.com/blog/category/ai-design/): AI design tools, Adobe, Canva and Figma, tested on real brand work.
+- [Adobe](https://labsnmx.com/blog/category/adobe/): Adobe Firefly, Photoshop, Express and MAX announcements, and what they change for brand teams.
+- [Meta ads](https://labsnmx.com/blog/category/meta-ads/): Meta ads budgets, creative systems and policy changes, with the numbers behind them.
+- [Branding](https://labsnmx.com/blog/category/branding/): Brand identity, guidelines and launch essentials for startups and D2C brands.
+- [Brand stories](https://labsnmx.com/blog/category/brand-stories/): How Indian brands win and lose: rebrands, rivalries, campaigns and the strategy behind them.
+- [Growth playbook](https://labsnmx.com/blog/category/growth/): YouTube, Instagram and Google Search: algorithm and policy changes, SEO and growth tactics, explained for Indian brands and creators.
+
+## Authors
+- [Neeraj](https://labsnmx.com/blog/author/neeraj/): AI design, Meta ads and platform growth.
+- [Anisha](https://labsnmx.com/blog/author/anisha/): market research, branding and brand stories.
+
+## The studio
+- Branding & Identity: starter brand system from Rs 25,000 (discovery, logo, colour and type system, social assets, mini guidelines).
+- Social Media Creative: Rs 8,000 a month for 8 custom static or carousel creatives (design only).
+- Campaign Creative: Rs 10,000 per campaign (concept, key visual, 3 to 5 adaptations).
+- Meta Ads Management: Rs 8,000 a month (setup, audience research, weekly optimisation, reporting; ad spend billed separately).
+- Creative + Meta Ads bundle: Rs 15,000 a month plus ad spend.
+- Brand & Marketing Design: from Rs 7,500 (decks, brochures, collateral).
+- Who we work with: D2C brands, EV and energy, SaaS, hospitality and creator-led businesses, from pre-launch to post-Series A, in India, the UK, the US and elsewhere.
+- Pricing is fixed upfront; small senior team, no account layer. Prices are in Indian rupees (INR).
 
 ## Contact
 - Website: https://labsnmx.com/
 - Instagram: https://www.instagram.com/_nmxlabs/
 - WhatsApp: https://wa.me/918810438717
 - Email: nmxprojects@gmail.com
-
-## Notes
-- Pricing is fixed upfront; small senior team, no account layer.
-- Prices are in Indian Rupees (INR).

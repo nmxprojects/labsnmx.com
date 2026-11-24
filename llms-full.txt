@@ -1,0 +1,321 @@
+# NMX Labs: every article, summarised
+
+> NMX Labs is a design, AI and marketing studio and publication based in Gurugram, India, writing for brand teams in the UK, the US, India and everywhere else. We publish 3–4 new articles every week on branding, AI design tools, advertising and platform growth, run a curated news page, and teach free short courses. Every article lists its sources, and posts where we tested something include a "How we checked this" box.
+
+Each entry: title, link, date, author, topic, the summary we wrote for it and its key takeaways. Quote freely with a link.
+
+## Blogging is dead. So why are you still reading this?
+https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/
+Published 24 November 2026 · Neeraj · Growth playbook · 7 min read
+
+Two-thirds of Google searches now end without a click, and AI answers have eaten the “what is” article whole. We went through the studies. Generic blogs are dying. Blogs with a person, a test and an opinion behind them are doing fine, and the difference is learnable.
+- When Google shows an AI summary, people click a normal result 8% of the time instead of 15%, and about 68% of US Google searches now end with no click at all.
+- What died is the generic article: definitions, reworded listicles and posts written for search engines rather than people. AI answers those for free.
+- What still gets read has something a summary can’t copy: a real test, a number someone measured, a named person with an opinion, or curation you trust.
+- The fix for a brand blog is fewer glossary posts, more first-hand work, an owned audience (email and notifications), and measuring mentions and branded search, not just clicks.
+
+## Custom brand typefaces in India: why apps commission their own fonts
+https://labsnmx.com/blog/custom-brand-typefaces-india/
+Published 22 November 2026 · Anisha · Branding · 6 min read
+
+Your font is the voice your brand uses on every screen, price tag and ad. In India it also has to speak several scripts and print a rupee sign. We tested ten popular fonts to see how many can, and the answer explains why big brands commission their own.
+- In our test of ten popular Latin fonts, nine had no Devanagari, Bengali, Tamil or Gujarati characters at all, and two (Open Sans and Archivo Black) lacked the ₹ sign.
+- When a font lacks a script, the phone silently swaps in a different one. Your Hindi ad then appears in a typeface you never chose, with a different weight and personality.
+- That gap is one reason Indian companies commission custom, multi-script fonts, as Air India did with Air India Sans in 2023, and why Indian foundries do much of their work on custom commissions.
+- Most small brands don’t need a custom font. They need a well-made family that covers their scripts and the ₹ sign, a licence that covers apps and ads, and a custom wordmark.
+
+## Generative video for D2C ads in 2026: what Veo and Firefly are actually good for, and what Sora’s shutdown teaches
+https://labsnmx.com/blog/generative-video-d2c-ads-veo-firefly/
+Published 22 November 2026 · Neeraj · AI design · 6 min read
+
+A year ago the question was which AI video model looks best. In 2026 the better questions are which one will still exist next quarter, which one your lawyer is comfortable with, and which shots it should never be trusted with.
+- OpenAI closed the Sora app in April 2026 and its video API in September 2026. If your workflow depends on one model, plan for it to disappear.
+- Google’s Veo 3.1 is the active flagship, with a cheaper Lite tier since April 2026. Inside Adobe Firefly, only Adobe’s own model carries Adobe’s “commercially safe” assurances; partner models don’t.
+- Our cost arithmetic shows generation fees are small next to retries and review time. Budget for attempts and people, not seconds of video.
+- Use AI video for B-roll, texture, mood and transitions. Keep it away from your packaging, legible text, real people’s faces and any product claim.
+
+## Latest Adobe AI updates, 21 November 2026: what’s live, what’s beta, and what changed since MAX
+https://labsnmx.com/blog/latest-adobe-ai-updates-november-2026/
+Published 21 November 2026 · Neeraj · Adobe · 6 min read
+
+Eleven days after MAX, the release notes have caught up with the keynote. Here’s what you can open today, what’s still in beta, what got clearer this week, and whether the Black Friday offer makes sense for an Indian brand team.
+- Live now: Photoshop Relight, Generative Restyle and a Remove tool that catches shadows; Premiere Color Mode; Firefly Edit Object and Quick Actions.
+- The Firefly AI Assistant is still beta but now remembers your preferences and brand elements, with Plan Mode and a model picker.
+- After Effects has a beta AI assistant that can explain inherited projects and debug expressions.
+- Local MCP (outside AI agents editing your layered files) is preview-only, with a private beta expected in early 2027.
+- Black Friday: 57% off the first year of Creative Cloud Pro for new subscribers until 27 November; check Indian pricing.
+
+## Canva vs Figma vs Adobe: the AI design war, and which side a brand team should pick
+https://labsnmx.com/blog/canva-figma-adobe-ai-design-war/
+Published 21 November 2026 · Neeraj · AI design · 7 min read
+
+Canva gave away a professional design suite. Figma started making marketing assets. Adobe is selling “commercially safe” AI. All three are walking into each other’s territory at once. Here’s the map, and how to pick without changing tools every quarter.
+- Canva is moving up to professionals: it relaunched Affinity as a free pro desktop app in October 2025 and builds sites from prompts with Canva Code.
+- Figma is moving towards marketing: Make turns prompts into prototypes, Sites publishes pages and Buzz makes on-brand assets at scale.
+- Adobe’s pitch is commercial safety and depth: Firefly trained on licensed content, inside the tools agencies already use.
+- Pick by job: Canva for volume marketing, Figma for product and systems, Adobe for high-end craft and imagery. Watch AI credit limits.
+
+## Swiggy vs Zomato: the push-notification copy war, and why brand voice beats discounts
+https://labsnmx.com/blog/swiggy-zomato-push-notification-copy-war/
+Published 20 November 2026 · Anisha · Brand stories · 7 min read
+
+Any food app can match a coupon by lunchtime. Nobody can copy a voice. Here’s how India’s two delivery apps turned the most ignored channel on your phone into a brand asset, where rivals got it badly wrong, and a copy test we ran on real notifications.
+- A discount can be matched the same day. A recognisable voice can’t, which is why India’s biggest food apps treat notifications as a brand channel.
+- Zomato’s voice came from a one-line brief to a young in-house team, according to its founder. Swiggy’s leans on personalisation built from customers’ own orders.
+- The worst Indian notification mistakes failed on honesty or sensitivity, not on wit: a contraceptive that “misses you”, a fake missed-call alert, copy that imitates the phone’s own alerts.
+- For smaller brands: a one-line voice brief, a “never say” list, plain copy for sensitive categories, and measure opt-outs and repeat opens, not just clicks.
+
+## 10-minute food: Zepto Cafe vs Swiggy Bolt vs Blinkit Bistro, and why only one model is still growing
+https://labsnmx.com/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro/
+Published 20 November 2026 · Anisha · Brand stories · 6 min read
+
+In December 2024 every quick-commerce app wanted to deliver hot food in ten minutes. Two years later, kitchens have closed, apps have been shut and one model is quietly growing. The difference wasn’t speed. It was who had to cook.
+- There were two models: apps cooking in their own kitchens (Zepto Cafe, Blinkit Bistro, Swiggy Snacc) and Swiggy Bolt, which speeds up existing restaurants near you.
+- Own-kitchen models hit staffing and sourcing limits: Zepto Cafe scaled back from a reported 120,000–130,000 daily orders, and Swiggy shut Snacc in February 2026.
+- Bolt kept growing because it needs no new kitchens. Swiggy says over 12% of its food orders now go through Bolt, and Bolt-acquired users retain better.
+- For brands: speed is a feature, not a positioning. Blinkit kept Bistro as a separate app partly to avoid competing with Zomato’s own restaurant partners.
+
+## Cadbury’s “Not Just a Cadbury Ad”: the AI personalisation campaign that came too early
+https://labsnmx.com/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/
+Published 19 November 2026 · Neeraj · AI design · 6 min read
+
+Years before every app could clone a voice, Cadbury made Shah Rukh Khan say the names of thousands of neighbourhood shops. It won India’s first Titanium Lion. Taken apart, it’s still the best brief for AI personalisation an Indian brand has written.
+- In 2020 Cadbury Celebrations gave its Diwali ad space to local shops. In 2021 it went further, using machine learning to recreate Shah Rukh Khan’s face and voice so he named individual stores.
+- Store owners generated their own ads on a microsite; the film came in four versions for four store categories, according to the awards entry.
+- It won India’s first Titanium Lion in 2022 and the Creative Effectiveness Grand Prix in 2023. Rephrase.ai, the AI partner, was bought by Adobe in November 2023.
+- In 2026 the technology is cheap. The hard parts are now the ones Cadbury solved first: a generous idea, the celebrity’s consent, a tight script and clear disclosure.
+
+## Adobe MAX 2026 Sneaks: all 10 projects, ranked by how useful they are for brand work
+https://labsnmx.com/blog/adobe-max-2026-sneaks-explained/
+Published 19 November 2026 · Neeraj · Adobe · 5 min read
+
+Sneaks are Adobe’s research previews, and not all of them ship. We went through all ten from this year and sorted them by what they’d actually change for a brand or ad team.
+- Sneaks are research previews; Adobe doesn’t promise any of them will ship.
+- Most of this year’s ten projects use brushing, dragging and pointing rather than text prompts.
+- For brand teams, Rinse Repeat, Deep Brush, Hands On and Link Up would change day-to-day work the most.
+- Deep Brush and Hands On can already be tried in the Adobe Labs Playground.
+
+## Campa Cola’s comeback: how Reliance restarted the cola war on price
+https://labsnmx.com/blog/campa-cola-comeback-price-war/
+Published 18 November 2026 · Anisha · Brand stories · 6 min read
+
+Reliance bought a 1970s cola for about ₹22 crore, put it in a 200 ml bottle at ₹10 and made Coca-Cola and PepsiCo cut prices. The interesting part isn’t the discount. It’s how a price point became the brand.
+- Reliance acquired Campa in 2022 for about ₹22 crore and relaunched it in 2023 with a 200 ml bottle at ₹10, roughly half what rivals charged at the time.
+- Reported results are large: Campa crossed ₹5,250 crore in sales in the first half of 2026–27 and holds double-digit share in key markets, per Reliance’s results presentation.
+- The ₹10 price works as a brand because it is a coin, sold mainly through kirana shops, backed by nostalgia and by distribution most challengers can’t afford.
+- What D2C brands can copy is the memorable hero price and the channel focus. What they can’t copy is funding a price war against incumbents who can match them.
+
+## Why Zomato renamed itself Eternal: the house-of-brands bet behind India’s best-known food app
+https://labsnmx.com/blog/zomato-to-eternal-house-of-brands/
+Published 17 November 2026 · Anisha · Brand stories · 7 min read
+
+In 2025 Zomato Ltd became Eternal Ltd, but the app you open at 11 pm kept its name. A year later the founder handed the group CEO job to the man who runs Blinkit. Both moves tell the same story, and it’s a story about brand architecture.
+- Only the listed company was renamed. Zomato the app and brand stayed exactly as it was, alongside Blinkit, District and Hyperpure.
+- The company had used “Eternal” internally since buying Blinkit in 2022, to separate the corporate entity from the consumer app.
+- Blinkit’s growth is the real reason: quick commerce became the group’s biggest business, and Blinkit’s founder became group CEO in February 2026.
+- For founders: rename the company, not the consumer brand, once a second business is big enough to be confused with the first.
+
+## The 10-minute war: how Blinkit, Zepto and Instamart are fighting with brand, not just dark stores
+https://labsnmx.com/blog/quick-commerce-brand-war-blinkit-zepto-instamart/
+Published 17 November 2026 · Anisha · Brand stories · 8 min read
+
+Speed stopped being a differentiator the day everyone promised ten minutes. Here’s what the numbers say about who’s winning India’s quick-commerce race, how each player is trying to be remembered for something else, and what that means if you sell on these apps.
+- Blinkit leads clearly: about 917 million orders in FY26 against roughly 640 million for Zepto and 412 million for Instamart, per Zepto’s own draft prospectus.
+- Amazon Now and Flipkart Minutes arrived with deep pockets and existing trust, so pure speed no longer separates anyone.
+- When every app is fast, brands compete on range, reliability and the habit they own: impulse, top-up shop, or emergency.
+- For brands selling on these apps, the battlefield is a thumbnail. Packs and hero images have to work at two centimetres.
+
+## Amul made memes before the internet: what 60 years of topical ads teach brand teams about moment marketing
+https://labsnmx.com/blog/amul-topical-ads-moment-marketing/
+Published 16 November 2026 · Anisha · Brand stories · 7 min read
+
+In March 1966 a hoarding in Bombay showed a little girl dressed as a jockey and a single pun. More than 4,000 ads later, the format has barely changed. Here’s why it still works and how to borrow it without embarrassing your brand.
+- Amul’s first topical ad ran in March 1966: the mascot as a jockey during Bombay’s racing season, with the pun “Thoroughbread”.
+- The format is fixed (pun headline, the girl reacting to the news, the brand line) and only the topic changes. That’s why it can move fast.
+- Speed came from trust: the dairy cooperative let the agency publish quickly instead of routing every ad through committees.
+- For moment marketing today: fix your format, pre-agree what’s off-limits, and tie every joke back to the product.
+
+## Why CRED made Rahul Dravid smash a car mirror: the against-type casting playbook
+https://labsnmx.com/blog/cred-against-type-celebrity-ads/
+Published 16 November 2026 · Anisha · Brand stories · 6 min read
+
+In April 2021, CRED took the calmest man in Indian cricket and had him scream at traffic. The ad became the most talked-about of that IPL. Here’s the psychology behind casting against type, its risks, and how a brand without a celebrity budget can borrow it.
+- CRED’s April 2021 IPL ad cast Rahul Dravid, famous for his calm, as a road-raging “Indiranagar ka gunda”. It was reported as the most viral ad of IPL 2021.
+- Casting against type works because a broken expectation is surprising, and surprise is what people remember and share.
+- The risk is that people remember the joke and not the product, so the brand has to be unmistakable and the product present.
+- Small brands can invert their category’s clichés instead of a celebrity’s image: the same mechanism, a fraction of the cost.
+
+## Adobe MAX 2026: 5 announcements that change how Indian D2C brands make ads
+https://labsnmx.com/blog/adobe-max-2026-what-it-means-for-indian-brands/
+Published 12 November 2026 · Neeraj · Design news · 6 min read
+
+Most MAX coverage is written for American agencies with big teams. Here’s what this year’s launches mean for a five-person D2C brand in Delhi, Bengaluru or Mumbai that ships ads every week.
+- Adobe spent MAX 2026 on agents: a Creative Agent across Firefly and Creative Cloud, and previews of AI assistants working inside real Photoshop and Premiere files.
+- Brand Intelligence with Intelligent Reflow targets the costliest part of a D2C launch: resizing one key visual into every format.
+- Firefly Quick Actions and 3D Digital Twin make packaging changes possible without a reshoot.
+- Before adopting anything, write down your brand rules and get clean packshots; most of the new tools depend on both.
+
+## AI in your Meta ads: the “AI info” label, automatic enhancements and what the new terms mean
+https://labsnmx.com/blog/meta-ai-info-labels-ai-creative/
+Published 5 November 2026 · Anisha · AI design · 3 min read
+
+Meta now labels AI-made ads, its tools can change your creative after you upload it, and its updated commercial terms put more of the responsibility on you. A practical checklist.
+- Meta applies an “AI info” label to ads made or significantly edited with its own AI tools, and detects some third-party AI through industry signals.
+- Ads showing a photorealistic AI-generated person get the label next to “Sponsored”.
+- Automatic creative enhancements can alter what people see; review those settings on every campaign.
+- Meta’s updated commercial terms (from 30 October 2026) place broad responsibility for AI output on the business.
+
+## WhatsApp Business pricing changed in October. Here’s why Click-to-WhatsApp ads matter more now
+https://labsnmx.com/blog/whatsapp-business-pricing-click-to-whatsapp-ads/
+Published 29 October 2026 · Neeraj · Meta ads · 3 min read
+
+Service replies on the WhatsApp Business Platform are no longer unlimited and free in India. Conversations that start from an ad still come with a 72-hour free window.
+- WhatsApp Business Platform moved to per-message pricing in 2025, and from 1 October 2026 service messages in India are charged beyond a free allowance.
+- A chat that starts from a Click-to-WhatsApp ad opens a 72-hour window of free messages if you reply within 24 hours.
+- The ad itself is still paid; the saving is on the follow-up conversation.
+- Fast replies, a clear first message and good tracking decide whether CTWA campaigns pay off.
+
+## Our AI design workflow: where AI earns its place and where we keep it out
+https://labsnmx.com/blog/ai-design-workflow-for-brands/
+Published 22 October 2026 · Anisha · AI design · 5 min read
+
+We use AI on almost every project, and on almost no final pixels of a logo or a label. Here’s the exact workflow, step by step, including the checks that catch the mistakes AI makes confidently.
+- A person writes the brief; AI helps explore directions, not decide strategy.
+- Final creative is rebuilt with the real product, the master logo and live type, in layered files.
+- AI comes back for repetitive production: extensions, cleanup, upscaling and variations.
+- Every asset passes a checklist for product accuracy, text, claims, anatomy and safe zones before it ships.
+
+## Meta’s Andromeda, explained: why your ad creative now does the targeting
+https://labsnmx.com/blog/meta-andromeda-creative-diversity/
+Published 15 October 2026 · Neeraj · Meta ads · 3 min read
+
+Meta rebuilt the system that decides which ads are even considered for each person. The practical result: ten near-identical ads now behave like one.
+- Andromeda is Meta’s retrieval system: it narrows tens of millions of ads to a few thousand candidates for each person.
+- Because retrieval leans on what an ad shows and says, distinct concepts reach different people; near-copies compete for the same slot.
+- Small brands should aim for fewer, genuinely different concepts, then iterate on winners.
+- Simple account structures and broad audiences give the system room to find buyers.
+
+## How we build a Meta ads creative system instead of a batch of ads
+https://labsnmx.com/blog/meta-ads-creative-system/
+Published 8 October 2026 · Neeraj · Meta ads · 5 min read
+
+Most brands brief Meta creative one ad at a time. Then they can’t tell why anything worked. This is the system we use to make creative testable, repeatable and cheaper to refresh.
+- Treat Meta creative as a grid of angles, hooks and formats, not a folder of one-off ads.
+- Name every ad Angle_Hook_Format_Size_Version so reports show what actually worked.
+- Design 4:5 for Feed and 9:16 for Stories and Reels, and keep text out of the safe zones.
+- Test three to five concepts at a time, judge after meaningful spend, and iterate on winning angles.
+
+## Packaging labels in India: the mandatory details your designer must leave room for
+https://labsnmx.com/blog/packaging-label-rules-india-d2c/
+Published 1 October 2026 · Anisha · Branding · 3 min read
+
+A beautiful pack that’s missing the unit sale price or the month of manufacture can be held up at a warehouse or a marketplace. Plan the legal text before the artwork.
+- Packs sold at retail must carry the maker or packer, generic name, net quantity, month and year of manufacture, MRP, unit sale price and consumer care details.
+- Online listings must show the same mandatory declarations as the physical pack.
+- Food products also need FSSAI labelling, and some categories have their own rules.
+- Lock the legal panel with your compliance adviser before the creative design starts.
+
+## How much should an Indian startup spend on Meta ads? A budget guide with the maths
+https://labsnmx.com/blog/meta-ads-budget-guide-india/
+Published 24 September 2026 · Neeraj · Meta ads · 5 min read
+
+“Start with ₹500 a day” is the most common advice and usually the wrong number. Your budget should come from your cost per sale, not from a round figure. Here’s how to work it out.
+- Work out your maximum affordable cost per acquisition from margin and repeat orders before picking a budget.
+- An ad set needs roughly 50 optimisation events a week to leave learning: daily budget ≈ (50 × target CPA) ÷ 7.
+- If that’s out of reach, consolidate ad sets, optimise for an earlier event or raise order value.
+- Keep 20–30% for testing, scale winners gradually, and plan for GST and festive-season costs.
+
+## Trademarking your brand name in India: a founder’s guide to classes, fees and timelines
+https://labsnmx.com/blog/trademark-registration-india-founders/
+Published 17 September 2026 · Anisha · Branding · 4 min read
+
+You can design a beautiful brand on a name someone else already owns. A trademark search and filing early on costs little compared to a rebrand later.
+- Search before you design: check the IP India database in every class you’ll trade in.
+- Government e-filing fees are ₹4,500 per class for individuals, startups and small enterprises, ₹9,000 for others.
+- After filing come examination, publication and a four-month opposition window; plan for a year or more.
+- Use ™ once you’ve applied; use ® only after the mark is registered.
+
+## AI product photography for D2C brands: what to generate, and what you still need to shoot
+https://labsnmx.com/blog/ai-product-photography-d2c/
+Published 10 September 2026 · Anisha · AI design · 4 min read
+
+AI can put your product on a beach, a marble counter or a Diwali table in minutes. It can’t be trusted to draw the product itself. Here’s how we split the work.
+- Shoot the product once, properly: clean packshots on plain backgrounds are the raw material for everything AI does later.
+- Generate scenes, backgrounds and props, never the product, label or logo.
+- Composite the real packshot into the generated scene and match light and shadow by hand.
+- Run every image through a zoomed-in check for label text, shape, hands and reflections before it goes live.
+
+## What goes in brand guidelines, and how to keep them short enough that people use them
+https://labsnmx.com/blog/brand-guidelines-what-to-include/
+Published 3 September 2026 · Anisha · Branding · 3 min read
+
+Most brand guidelines are long PDFs nobody opens after launch. Good ones answer the questions your team, freelancers and marketplace managers ask every week.
+- Write guidelines for the people who make things every week, not for the launch presentation.
+- Cover logo use, colour, type, imagery, voice, claims and templates, with real examples of right and wrong.
+- Ten focused pages with links to files beat a sixty-page PDF.
+- Written rules also make brand-aware AI and resizing tools far more useful.
+
+## How much does a logo cost in India, and what are you actually paying for?
+https://labsnmx.com/blog/logo-design-cost-india/
+Published 27 August 2026 · Anisha · Branding · 4 min read
+
+Quotes for “a logo” range from a few thousand rupees to several lakhs. The difference is rarely the drawing. It’s everything that happens before and after it.
+- Logo prices differ mainly in research, number of directions, testing and the files you receive, not in drawing time.
+- Cheap logos often skip a trademark check and leave you without source files.
+- Ask what’s included: discovery, directions, revisions, a logo system, guidelines and IP assignment.
+- Whatever you pay, insist on owning editable vector files and written IP assignment.
+
+## The startup branding checklist: what to have ready before you launch
+https://labsnmx.com/blog/startup-branding-checklist/
+Published 20 August 2026 · Anisha · Branding · 4 min read
+
+A logo isn’t a brand, but a brand does need more than good intentions. This is the checklist we use with founders to make sure nothing important is missing on launch day.
+- Decide positioning, customer and personality before designing anything.
+- Search trademarks and secure the domain and social handles before you fall for a name.
+- Build a logo system with colour, type, imagery and voice rules, written up as short guidelines.
+- Own every source file and get the IP assigned to your company in writing.
+
+# Free courses
+
+- You don’t need an iPhone: shoot your first video on the phone you already have: https://labsnmx.com/learn/you-dont-need-an-iphone/ (Most first videos fail on light, sound and nerves, not on the camera. Here’s how to get a clean, watchable first video out of a ₹12,000 Android phone, plus the three cheap things worth buying later.)
+- The recipe for a good video: hook, promise, payoff: https://labsnmx.com/learn/recipe-for-a-good-video/ (Good YouTube videos look different on the surface and follow the same recipe underneath. Here’s the three-part structure we use for every script, with a worked example you can copy.)
+- The rules to follow on YouTube: guidelines, copyright, AI and paid promotions: https://labsnmx.com/learn/youtube-rules-to-follow/ (Most channels that get into trouble didn’t mean to break anything. Here are the rules that catch new creators in India most often, explained in plain language, and what to do instead.)
+- Light and sound on a budget: what to fix before you buy a camera: https://labsnmx.com/learn/light-and-sound-on-a-budget/ (A ₹40,000 camera can’t rescue a dark face and an echoing room. A bedsheet, a window and switching off the ceiling fan often can. Here’s our budget playbook for both.)
+- How to shoot educational videos people actually finish: https://labsnmx.com/learn/shooting-educational-videos/ (Teaching on camera is a different skill from teaching in a room. The four formats that work for explainers, how to choose one, and the small production habits that keep learners watching to the end.)
+- Your first edit: free editors that work in India, and cuts that keep people watching: https://labsnmx.com/learn/first-edit-free-editors/ (CapCut has been blocked in India since 2020, so here’s what to use instead on phones and computers, plus the five edits that matter more than any effect.)
+- Titles and thumbnails that earn the click without lying: https://labsnmx.com/learn/titles-and-thumbnails/ (Your title and thumbnail decide whether anyone presses play. How to make them specific, readable on a phone and honest, plus how to test them without guessing.)
+- Shorts and long videos: how to make them help each other: https://labsnmx.com/learn/shorts-and-long-form/ (Shorts bring new people; long videos keep them. How the two formats differ, how to connect them, and a simple weekly mix for a small channel.)
+- How YouTube creators get paid, and what changes on 1 February 2027: https://labsnmx.com/learn/youtube-monetisation-basics/ (The YouTube Partner Programme’s entry bar for ad earnings doubles for new applicants on 1 February 2027. Here’s what the requirements are, what’s changing, and the income that doesn’t depend on them.)
+- Reading YouTube Analytics: five numbers and a 30-minute weekly routine: https://labsnmx.com/learn/youtube-analytics-weekly-routine/ (YouTube Studio shows you dozens of charts. Five of them answer almost every question a small channel has. Here they are, what “good” looks like, and the weekly routine that turns them into decisions.)
+- Write the one sentence your brand stands on: https://labsnmx.com/learn/the-one-sentence-brand/ (Before colours, before a logo, before the mood board you’re itching to make: one sentence that says who you’re for and why you’re different. If a competitor could sign it, it isn’t finished.)
+- A logo that survives at 16 pixels: https://labsnmx.com/learn/a-logo-that-survives-small/ (Your logo will spend most of its life tiny: a browser tab, an app icon, a profile picture in someone’s notifications. Design for that first and the big version takes care of itself.)
+- Colour and type: build a system, not a mood board: https://labsnmx.com/learn/colour-and-type-system/ (A palette isn’t a list of colours you like. It’s a set of jobs: which colour means action, which one is background, which one you almost never use. Same for type. Write it down and everyone, human or AI, gets it right.)
+- How Meta decides who sees your ad, and why creative is now your targeting: https://labsnmx.com/learn/creative-is-the-targeting/ (You used to win on Meta by picking clever interests. Now the system mostly finds people for you, and the strongest signal it has is your ad itself. Here’s how the auction works, in plain English, and what it means for a small budget.)
+- The five numbers that matter, and the vanity ones to ignore: https://labsnmx.com/learn/five-numbers-that-matter/ (Ads Manager shows you about two hundred columns. Five of them tell you almost everything, and they also tell you which part of your funnel is broken. Here they are, with one formula that ties them together.)
+- A 30-minute weekly routine for small ad accounts: https://labsnmx.com/learn/thirty-minute-weekly-routine/ (Small ad accounts die two ways: neglect, or being fiddled with every morning. Here’s the routine we use instead: once a week, half an hour, a few clear rules and a log.)
+- How AI search picks what to quote: https://labsnmx.com/learn/how-ai-search-picks-sources/ (When someone asks ChatGPT, Perplexity or Google’s AI for the best design studio or the cheapest way to run Meta ads, the answer is built from web pages. Here’s roughly how those pages get picked, and the first things to check on your own site.)
+- Write answer-first pages: https://labsnmx.com/learn/write-answer-first-pages/ (The old blog habit was a long story first and the answer somewhere near paragraph nine. Readers hated it, and AI tools skip it. Put the answer at the top, then earn the scroll.)
+- Proof, structure and freshness: why AI trusts some pages: https://labsnmx.com/learn/proof-structure-freshness/ (Two pages say the same thing. One gets quoted, one gets ignored. Usually the difference is proof (who says so and how they know), structure (can a machine tell what’s what) and freshness (is this still true).)
+
+# Recent news, with our take
+
+- 19 November 2026, Docker drops the box-carrying whale for “Run on Trust”: Docker unveiled a new identity on 19 November: a simplified whale with a containment symbol, a new signature blue (#6172FF) and a new line, “Run on Trust”. The pitch moves from shipping containers to running software and AI agents safely. NMX take: When your product’s job changes, the logo has to stop describing the old job. The whale stays, the boxes go, and that’s exactly the right amount of change. Source: DEV Community (Docker) (https://dev.to/docker/docker-rebrand-2026-new-logo-colors-and-strategy-explained-10g2)
+- 19 November 2026, Maker’s Mark gets a new identity, dipped in red wax: Turner Duckworth has redesigned the identity of the Kentucky bourbon brand, built around the hand-dipped red wax seal that has been on its bottles for decades. NMX take: Own one thing so completely that it becomes the brand. Maker’s Mark wax is bourbon’s Tiffany blue, and the redesign is smart enough to lean in. Source: Creative Boom (https://www.creativeboom.com/branding/)
+- 19 November 2026, GTA VI lands, and so does an influencer kit with bite: Grand Theft Auto VI launched on 19 November. Birmingham agency Fluid marked it with “Xbox Has More Bite”, an influencer kit sent to 80 creators across eight countries. NMX take: For the biggest launch of the year, the smart play wasn’t a billboard. It was 80 parcels designed to be unboxed on camera. Source: Design Week (https://www.designweek.co.uk/the-outline-futurebrand-relaunch-gta-vi-heist-kits-and-a-dalek-23-11-2026/)
+- 18 November 2026, FutureBrand says the “finished brand” is over: Relaunching itself, FutureBrand argues that static identity systems can’t keep up now that brands appear everywhere and more of their output is made by AI. Its answer is designing “brand behaviour”: how a brand looks, moves, talks and sounds, and how an AI trained on it makes decisions. The report, From Artefact to Infinite, came out on 18 November. NMX take: Half of this is agency positioning, half is true. If an AI is going to make your ads, your guidelines need rules for judgement, not just logo clear-space. Source: Design Week (https://www.designweek.co.uk/the-outline-futurebrand-relaunch-gta-vi-heist-kits-and-a-dalek-23-11-2026/)
+- 11 November 2026, Koto gives Giffgaff a signpost-led rebrand: UK mobile network Giffgaff has a new identity from London studio Koto, built around the idea of signposts pointing customers to their next chapter. NMX take: Telecom branding is usually tariffs in a trench coat. A wayfinding idea at least gives the brand something to say besides price. Source: Creative Boom (https://www.creativeboom.com/graphic-design/)
+- 10 November 2026, Adobe MAX 2026: your AI assistant can now use Photoshop: At MAX in Miami Beach (10–12 November), Adobe spread its Creative Agent across Creative Cloud, put Firefly Design and Firefly Graph into public beta, and previewed local MCP connections that let outside agents such as ChatGPT, Claude or Gemini edit native Photoshop, Illustrator, Premiere and After Effects files. NMX take: The interesting bit isn’t another generator. It’s Adobe admitting your favourite AI might not be Adobe’s, and building the door anyway. Source: Digital Trends (https://www.digitaltrends.com/computing/adobe-max-2026-firefly-creative-cloud-ai/)
+- 10 November 2026, Google starts its November 2026 core update: Google began rolling out its third broad core update of 2026 on 10 November, for all sites and languages. It says the rollout may take up to two weeks, and advises waiting until it finishes before reading Search Console data. NMX take: Rankings will wobble right before Black Friday. Don’t rewrite your site mid-rollout; measure a full week after it ends. Source: Search Engine Journal (https://www.searchenginejournal.com/google-november-2026-core-update/596614/)
+- 5 November 2026, Christmas ad season opens with stop-motion and cartoons: Early standouts in the 2026 festive ad season include a handcrafted stop-motion film from Levi’s and Prada’s cartoon wonderland directed by former Disney animator John Pomeroy. NMX take: Craft is the new flex. In a feed full of AI-smooth video, visibly handmade work gets noticed. Source: Creative Bloq (https://www.creativebloq.com/news/the-john-lewis-christmas-advert-is-getting-a-mauling)
+- 3 November 2026, Koto: every electric car brand looks the same: Branding studio Koto published a piece arguing that electric car brands have converged on one look: minimal wordmarks, soft gradients and the same calm, techy tone. NMX take: Blanding has reached the car park. If your category all looks alike, the cheapest advantage left is a personality. Source: Creative Boom (https://www.creativeboom.com/branding/)
+- 3 November 2026, John Lewis’s Christmas ad: hated online, loved by the testers: Gloria and Pickles, the 2026 John Lewis Christmas ad starring Dame Kristin Scott Thomas, drew a fierce online backlash, with YouTube comments switched off. Yet System1 scored it 5.6 stars, the retailer’s best festive result since Excitable Edgar in 2019. NMX take: Twitter is not your customer. The loudest reaction and the most effective ad are often different things, and this year proves it. Source: Creative Bloq (https://www.creativebloq.com/news/the-john-lewis-christmas-advert-is-getting-a-mauling)
+- 2 November 2026, How&How becomes HOW+HOW, with a website built for AI search: The London and LA studio renamed itself HOW+HOW after six years, with a volume-dial logo, a new strategy and a site designed to be read by AI search as well as people. NMX take: When a branding studio designs its own site for AI readers, take the hint. Being quotable by machines is now part of the brief. Source: Creative Boom (https://www.creativeboom.com/news/london-and-la-studio-howhow-launches-a-new-name-visual-identity-and-website/)
+- 2 November 2026, Affinity finally comes to iPad, free: Canva’s Affinity, the free pro app for vector, photo and layout work, has arrived on iPad, giving illustrators a free all-in-one option on the tablet. NMX take: The cheapest serious design kit on the market just got portable. Freelancers paying for three subscriptions should do some maths this weekend. Source: Creative Boom (https://www.creativeboom.com/)
+- 15 October 2026, Figma brings code layers and Config to India: At its biggest international Config yet, in India on 15 October, Figma moved code layers into open beta, so teams can build code-backed prototypes on the canvas, and announced an education programme and an MCP partnership with Sarvam. NMX take: Design files are turning into working software. Learn enough code to read what the canvas now produces. Source: Figma Newsroom (https://www.figma.com/newsroom/)
+- 8 October 2026, Google’s September spam update finishes after 14 days: Google’s September 2026 spam update completed around 8 October after nearly two weeks, the longest spam rollout of the year. NMX take: Spam updates hit scaled, thin and copied content. If your blog is mostly reworded AI summaries, this is your warning shot. Source: Optimixed (https://www.optimixed.com/article/google-begins-rolling-out-november-2026-core-update-globally-f7c26e)
+- 20 August 2026, Canva lowers its growth forecast as AI costs bite: Canva cut its expected annual revenue growth from 30% to 20% in August 2026, a slowdown reported alongside the rising cost of the AI features it offers. NMX take: Even the design-for-everyone giant is finding AI expensive to give away. Expect more credit limits and paid tiers across every tool you use. Source: Wikipedia, citing Fortune (https://en.wikipedia.org/wiki/Canva)
+- 15 July 2026, Blinkit’s lead keeps widening: Blinkit handled about 331 million orders in the April–June 2026 quarter and ended it with 2,443 stores, nearly three times Instamart’s order volume. NMX take: Scale is turning into range, and range into habit. Challengers now need a reason to be opened that isn’t speed. Source: Analysis Atlas (https://analysis-atlas.com/research/quick-commerce-instant-delivery-market/)
+- 15 July 2026, Flipkart Minutes passes 1,000 fulfilment centres: Flipkart’s quick-commerce arm crossed 1,000 micro-fulfilment centres across 130+ cities, with a target of about 1,500 by the end of 2026. NMX take: Expect electronics and non-grocery categories to be where Flipkart picks its fights. Source: Brand Chanakya (industry statistics) (https://brandchanakya.in/india-quick-commerce-and-e-commerce-statistics/)
+- 30 June 2026, Figma pushes into marketing assets: Alongside Make (prompt to prototype) and Sites, Figma launched Buzz for producing on-brand marketing assets at scale from designer-controlled templates. NMX take: If your brand system lives in Figma, Buzz may replace a lot of Canva work. If it lives in Canva, stay put. Source: Spanbox (https://spanbox.co/blogs/figma-vs-canva)
+- 15 June 2026, Zepto’s IPO paperwork moves ahead: Zepto reportedly received SEBI’s go-ahead and filed an updated draft prospectus, which also published rare side-by-side order data for Blinkit, Zepto and Instamart. NMX take: Prospectuses are the best free market research in India. Read the peer tables, not the headlines. Source: Brand Chanakya (industry statistics) (https://brandchanakya.in/india-quick-commerce-and-e-commerce-statistics/)
+- 15 February 2026, Blinkit’s founder now runs Eternal: Deepinder Goyal stepped down as Eternal group CEO from 1 February 2026; Blinkit founder Albinder Dhindsa took over, with Goyal staying on as vice chairman. NMX take: The parent brand was renamed for this moment: the biggest business now leads a group named after none of its apps. Source: Business Standard (https://www.business-standard.com/companies/people/deepinder-goyal-eternal-zomato-ceo-126012100845_1.html)
