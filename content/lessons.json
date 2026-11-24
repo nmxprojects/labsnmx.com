@@ -52,7 +52,8 @@
     "a": 1,
     "why": "Facing a window lights your face. A window behind you turns you into a silhouette."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "recipe-for-a-good-video",
@@ -107,7 +108,8 @@
     "a": 1,
     "why": "An end that hands viewers one next video keeps them watching your channel instead of leaving YouTube."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "youtube-rules-to-follow",
@@ -162,7 +164,8 @@
     "a": 1,
     "why": "Disclosure is for realistic content that viewers could mistake for real people, places or events. AI help with scripts or obvious animation doesn’t need it."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "light-and-sound-on-a-budget",
@@ -217,7 +220,8 @@
     "a": 1,
     "why": "That “room tone” lets noise-reduction tools learn what to remove, and fills gaps between cuts so they don’t sound dead."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "shooting-educational-videos",
@@ -272,7 +276,8 @@
     "a": 1,
     "why": "One idea per video is easier to finish, easier to title, and easier for search to match to the right question."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "first-edit-free-editors",
@@ -327,7 +332,8 @@
     "a": 1,
     "why": "Muted viewing is common, especially on Shorts and in public places. Text keeps those viewers with you."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "titles-and-thumbnails",
@@ -382,7 +388,8 @@
     "a": 1,
     "why": "Early exits tell YouTube the video disappointed people, and deceptive thumbnails can break the spam rules."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "shorts-and-long-form",
@@ -437,7 +444,8 @@
     "a": 1,
     "why": "Shorts need their own hook in the first second and a vertical frame. A random chunk usually starts mid-thought."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "youtube-monetisation-basics",
@@ -492,7 +500,8 @@
     "a": 1,
     "why": "Existing members aren’t affected by the new entry requirements, though everyone has to keep following the monetisation policies."
    }
-  ]
+  ],
+  "course": "creator-school"
  },
  {
   "slug": "youtube-analytics-weekly-routine",
@@ -547,6 +556,509 @@
     "a": 1,
     "why": "Channels differ hugely. Compare with your own videos after the same number of days."
    }
-  ]
+  ],
+  "course": "creator-school"
+ },
+ {
+  "slug": "the-one-sentence-brand",
+  "course": "brand-identity-weekend",
+  "date": "2026-11-19",
+  "author": "anisha",
+  "title": "Write the one sentence your brand stands on",
+  "short": "The one-sentence brand",
+  "dek": "Before colours, before a logo, before the mood board you’re itching to make: one sentence that says who you’re for and why you’re different. If a competitor could sign it, it isn’t finished.",
+  "read_min": 4,
+  "glyph": "pen",
+  "takeaways": [
+   "Write your positioning as one sentence: who it’s for, what they need, what you are, how you’re different, and why anyone should believe it.",
+   "Test it: if a competitor could put their name on it, it’s too vague. Rewrite until they couldn’t.",
+   "Do this before any design work. Every visual decision later is easier when the sentence exists."
+  ],
+  "quiz": [
+   {
+    "q": "What makes a positioning sentence useful?",
+    "o": [
+     "It sounds inspiring",
+     "It uses the word premium",
+     "A competitor couldn’t sign it",
+     "It lists every product"
+    ],
+    "a": 2,
+    "why": "If a competitor could put their name on it, it doesn’t describe what makes you different."
+   },
+   {
+    "q": "Which part of the sentence is the proof?",
+    "o": [
+     "The audience",
+     "The reason to believe the difference",
+     "The category",
+     "The brand name"
+    ],
+    "a": 1,
+    "why": "The proof is the checkable reason someone should believe your claim: a process, a person, a number."
+   },
+   {
+    "q": "When should you write the brand sentence?",
+    "o": [
+     "Before any design work",
+     "After the logo is final",
+     "Only when rebranding",
+     "After the first ads run"
+    ],
+    "a": 0,
+    "why": "Every design and copy decision is easier and more consistent when the sentence already exists."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-19",
+  "author_name": "Anisha",
+  "image": "learn-the-one-sentence-brand"
+ },
+ {
+  "slug": "a-logo-that-survives-small",
+  "course": "brand-identity-weekend",
+  "date": "2026-11-20",
+  "author": "anisha",
+  "title": "A logo that survives at 16 pixels",
+  "short": "A logo that survives small",
+  "dek": "Your logo will spend most of its life tiny: a browser tab, an app icon, a profile picture in someone’s notifications. Design for that first and the big version takes care of itself.",
+  "read_min": 4,
+  "glyph": "frame",
+  "takeaways": [
+   "Test every logo idea at 16, 32 and 64 pixels before you fall in love with it. Browser tabs and profile pictures are where people actually see it.",
+   "Plan a set, not one file: a full lockup, a short version or symbol, and a one-colour version.",
+   "Deliver SVG for the web and print, plus PNGs for social profiles, so nobody has to screenshot your logo."
+  ],
+  "quiz": [
+   {
+    "q": "Why test a logo at 16 pixels?",
+    "o": [
+     "It improves SEO",
+     "Browsers show tab icons about that small",
+     "Printers need it",
+     "It looks retro"
+    ],
+    "a": 1,
+    "why": "Favicons in browser tabs and bookmarks are around 16 to 32 pixels, and that’s where many people first see a logo."
+   },
+   {
+    "q": "Which file format scales without losing quality?",
+    "o": [
+     "JPG",
+     "PNG",
+     "GIF",
+     "SVG"
+    ],
+    "a": 3,
+    "why": "SVG is a vector format, so it stays sharp at any size."
+   },
+   {
+    "q": "Which version should every logo have besides full colour?",
+    "o": [
+     "A one-colour version",
+     "A 3D version",
+     "An animated version",
+     "A gradient version"
+    ],
+    "a": 0,
+    "why": "A one-colour version works on photos, in print and anywhere colour isn’t available."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-20",
+  "author_name": "Anisha",
+  "image": "learn-a-logo-that-survives-small"
+ },
+ {
+  "slug": "colour-and-type-system",
+  "course": "brand-identity-weekend",
+  "date": "2026-11-21",
+  "author": "anisha",
+  "title": "Colour and type: build a system, not a mood board",
+  "short": "Colour and type system",
+  "dek": "A palette isn’t a list of colours you like. It’s a set of jobs: which colour means action, which one is background, which one you almost never use. Same for type. Write it down and everyone, human or AI, gets it right.",
+  "read_min": 5,
+  "glyph": "swatch",
+  "takeaways": [
+   "Keep the palette small: one main colour, one or two accents, and neutrals. Give each colour a job.",
+   "Check contrast: body text should be at least 4.5:1 against its background to meet WCAG AA.",
+   "Two type families are plenty for most brands, with a simple size scale.",
+   "Write exact values (hex, RGB, font names, sizes) so designers, developers and AI tools all use the same thing."
+  ],
+  "quiz": [
+   {
+    "q": "What contrast ratio does WCAG AA ask for with normal body text?",
+    "o": [
+     "2 to 1",
+     "3 to 1",
+     "4.5 to 1",
+     "10 to 1"
+    ],
+    "a": 2,
+    "why": "WCAG 2 level AA asks for at least 4.5 to 1 for normal-size text."
+   },
+   {
+    "q": "How many type families does a small brand usually need?",
+    "o": [
+     "One per channel",
+     "Five",
+     "A new one each campaign",
+     "One or two"
+    ],
+    "a": 3,
+    "why": "A display face plus a readable text face, or one versatile family, covers almost everything."
+   },
+   {
+    "q": "Why give each colour a job?",
+    "o": [
+     "So people and tools use it consistently",
+     "It’s a legal requirement",
+     "To use more colours",
+     "To match competitors"
+    ],
+    "a": 0,
+    "why": "Rules like “orange is only for buttons” are easy for designers, developers and AI tools to follow."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-21",
+  "author_name": "Anisha",
+  "image": "learn-colour-and-type-system"
+ },
+ {
+  "slug": "creative-is-the-targeting",
+  "course": "meta-ads-small-budgets",
+  "date": "2026-11-21",
+  "author": "neeraj",
+  "title": "How Meta decides who sees your ad, and why creative is now your targeting",
+  "short": "Creative is the targeting",
+  "dek": "You used to win on Meta by picking clever interests. Now the system mostly finds people for you, and the strongest signal it has is your ad itself. Here’s how the auction works, in plain English, and what it means for a small budget.",
+  "read_min": 5,
+  "glyph": "target",
+  "takeaways": [
+   "Meta runs an auction for every ad slot. The winner isn’t simply the highest bid: it’s the best mix of bid, estimated action rate and ad quality.",
+   "With broad targeting, your creative does most of the targeting, because the people who respond to an ad teach the system who to show it to.",
+   "An ad set needs roughly 50 optimisation events within 7 days to leave the learning phase, so small budgets should use fewer ad sets, not more.",
+   "Different creative concepts reach different people. Five versions of one idea are mostly one ad."
+  ],
+  "quiz": [
+   {
+    "q": "Which three things decide who wins Meta’s ad auction?",
+    "o": [
+     "Budget, age and gender",
+     "Bid, estimated action rate and ad quality",
+     "Followers, likes and shares",
+     "The time of day only"
+    ],
+    "a": 1,
+    "why": "Meta combines your bid, how likely the person is to act, and the ad’s quality into a total value."
+   },
+   {
+    "q": "Roughly how many optimisation events does an ad set need to leave the learning phase?",
+    "o": [
+     "About 50 in 7 days",
+     "5 in a day",
+     "500 in a month",
+     "None"
+    ],
+    "a": 0,
+    "why": "Meta’s guidance is around 50 optimisation events within a 7-day period."
+   },
+   {
+    "q": "With broad targeting, what does most of the targeting work?",
+    "o": [
+     "Interest selections",
+     "Your page’s follower count",
+     "Your creative and who responds to it",
+     "How long the ad text is"
+    ],
+    "a": 2,
+    "why": "People who respond to an ad teach the system who else to show it to, so different ideas reach different people."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-21",
+  "author_name": "Neeraj",
+  "image": "learn-creative-is-the-targeting"
+ },
+ {
+  "slug": "five-numbers-that-matter",
+  "course": "meta-ads-small-budgets",
+  "date": "2026-11-22",
+  "author": "neeraj",
+  "title": "The five numbers that matter, and the vanity ones to ignore",
+  "short": "Five numbers that matter",
+  "dek": "Ads Manager shows you about two hundred columns. Five of them tell you almost everything, and they also tell you which part of your funnel is broken. Here they are, with one formula that ties them together.",
+  "read_min": 5,
+  "glyph": "chart",
+  "takeaways": [
+   "Watch CPM, link CTR, cost per click, conversion rate and cost per result (or ROAS). Together they show where a campaign breaks.",
+   "Cost per result is roughly CPM divided by 1,000, times CTR, times conversion rate, flipped. Improve any one and the result gets cheaper.",
+   "High CPM points at audience or ad quality, low CTR at the hook, good CTR with few sales at the landing page or offer.",
+   "Likes and reach alone are vanity metrics for a sales campaign."
+  ],
+  "quiz": [
+   {
+    "q": "Good CTR but almost no purchases usually points to…",
+    "o": [
+     "The CPM",
+     "The ad’s font",
+     "The landing page or offer",
+     "Too many likes"
+    ],
+    "a": 2,
+    "why": "If people click but don’t buy, the ad did its job; the page, price or offer didn’t."
+   },
+   {
+    "q": "CPM means…",
+    "o": [
+     "Clicks per minute",
+     "Cost per 1,000 impressions",
+     "Cost per message",
+     "Conversions per month"
+    ],
+    "a": 1,
+    "why": "CPM is cost per mille: what you pay for 1,000 impressions."
+   },
+   {
+    "q": "Which is a vanity metric for a sales campaign?",
+    "o": [
+     "Post likes",
+     "Cost per purchase",
+     "Conversion rate",
+     "ROAS"
+    ],
+    "a": 0,
+    "why": "Likes don’t pay. For a sales campaign, judge cost per purchase and return on ad spend."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-22",
+  "author_name": "Neeraj",
+  "image": "learn-five-numbers-that-matter"
+ },
+ {
+  "slug": "thirty-minute-weekly-routine",
+  "course": "meta-ads-small-budgets",
+  "date": "2026-11-22",
+  "author": "neeraj",
+  "title": "A 30-minute weekly routine for small ad accounts",
+  "short": "The 30-minute routine",
+  "dek": "Small ad accounts die two ways: neglect, or being fiddled with every morning. Here’s the routine we use instead: once a week, half an hour, a few clear rules and a log.",
+  "read_min": 4,
+  "glyph": "clock",
+  "takeaways": [
+   "Check once a week, not every morning. Significant edits can restart the learning phase and make results harder to read.",
+   "Use a simple kill rule: if an ad has spent about two to three times your target cost per result with nothing to show, pause it.",
+   "Refresh creative when frequency rises and CTR falls, typically every few weeks for a small audience.",
+   "Change one thing at a time and write it down, so you know what actually worked."
+  ],
+  "quiz": [
+   {
+    "q": "Why avoid editing ad sets every day?",
+    "o": [
+     "Meta charges for each edit",
+     "It deletes the ad",
+     "Significant edits can restart the learning phase",
+     "It changes your pixel"
+    ],
+    "a": 2,
+    "why": "Big changes can send an ad set back into learning, making results noisy and harder to read."
+   },
+   {
+    "q": "Which is a sign your creative is getting tired?",
+    "o": [
+     "Frequency rising while CTR falls",
+     "CPM falling",
+     "More comments",
+     "A lower budget"
+    ],
+    "a": 0,
+    "why": "When the same people see an ad more often and click less, it’s time for new creative."
+   },
+   {
+    "q": "How many things should one test change?",
+    "o": [
+     "Everything at once",
+     "Three",
+     "It doesn’t matter",
+     "One"
+    ],
+    "a": 3,
+    "why": "Change one thing at a time so you know what caused the result."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-22",
+  "author_name": "Neeraj",
+  "image": "learn-thirty-minute-weekly-routine"
+ },
+ {
+  "slug": "how-ai-search-picks-sources",
+  "course": "found-in-ai-answers",
+  "date": "2026-11-23",
+  "author": "neeraj",
+  "title": "How AI search picks what to quote",
+  "short": "How AI picks sources",
+  "dek": "When someone asks ChatGPT, Perplexity or Google’s AI for the best design studio or the cheapest way to run Meta ads, the answer is built from web pages. Here’s roughly how those pages get picked, and the first things to check on your own site.",
+  "read_min": 5,
+  "glyph": "spark",
+  "takeaways": [
+   "AI search tools look things up on the web, pick a handful of pages, then summarise them. If they can’t find or crawl your page, you can’t be quoted.",
+   "Make sure AI crawlers aren’t blocked in robots.txt, for example OAI-SearchBot for ChatGPT search and PerplexityBot for Perplexity.",
+   "ChatGPT search draws on third-party search providers, so being well indexed in Bing as well as Google helps.",
+   "Pages that answer a question clearly, near the top, from a source that looks trustworthy are the easiest to quote."
+  ],
+  "quiz": [
+   {
+    "q": "Before an AI search tool can quote your page, it must be able to…",
+    "o": [
+     "See your Instagram",
+     "Find and crawl it",
+     "Pay for it",
+     "Play your videos"
+    ],
+    "a": 1,
+    "why": "If a page can’t be found and read, it can’t be used in an answer."
+   },
+   {
+    "q": "Which robots.txt user agent belongs to OpenAI’s search crawler?",
+    "o": [
+     "Googlebot-News",
+     "Slurp",
+     "OAI-SearchBot",
+     "AdsBot"
+    ],
+    "a": 2,
+    "why": "OAI-SearchBot is the crawler OpenAI uses for ChatGPT search results."
+   },
+   {
+    "q": "What kind of page is easiest for an AI tool to quote?",
+    "o": [
+     "One that answers the question clearly near the top",
+     "A page that is only images",
+     "A scanned PDF",
+     "A page behind a login"
+    ],
+    "a": 0,
+    "why": "Clear, early answers in plain text are easy to find, read and cite."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-23",
+  "author_name": "Neeraj",
+  "image": "learn-how-ai-search-picks-sources"
+ },
+ {
+  "slug": "write-answer-first-pages",
+  "course": "found-in-ai-answers",
+  "date": "2026-11-23",
+  "author": "neeraj",
+  "title": "Write answer-first pages",
+  "short": "Answer first",
+  "dek": "The old blog habit was a long story first and the answer somewhere near paragraph nine. Readers hated it, and AI tools skip it. Put the answer at the top, then earn the scroll.",
+  "read_min": 4,
+  "glyph": "lines",
+  "takeaways": [
+   "Answer the main question in the first one or two sentences, then add the detail.",
+   "Use headings phrased the way people ask, like “How much does a logo cost?”, so readers and AI tools find the right section.",
+   "Use tables for comparisons, lists for steps and short paragraphs for everything else.",
+   "End with a short FAQ that answers the next questions people ask, in plain sentences."
+  ],
+  "quiz": [
+   {
+    "q": "Where should the direct answer go?",
+    "o": [
+     "At the very end",
+     "In an image",
+     "In the first lines",
+     "In the footer"
+    ],
+    "a": 2,
+    "why": "Put the answer in the first one or two sentences, then add detail."
+   },
+   {
+    "q": "Why use question-style headings?",
+    "o": [
+     "They match how people ask search and AI tools",
+     "They make text bigger",
+     "Google requires them",
+     "They hide text from readers"
+    ],
+    "a": 0,
+    "why": "Headings phrased as real questions help skimmers and give AI tools clear question-and-answer pairs."
+   },
+   {
+    "q": "Which format is best for a comparison?",
+    "o": [
+     "A long paragraph",
+     "A GIF",
+     "A video",
+     "A table"
+    ],
+    "a": 3,
+    "why": "Tables are easy for both people and machines to read and compare."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-23",
+  "author_name": "Neeraj",
+  "image": "learn-write-answer-first-pages"
+ },
+ {
+  "slug": "proof-structure-freshness",
+  "course": "found-in-ai-answers",
+  "date": "2026-11-24",
+  "author": "neeraj",
+  "title": "Proof, structure and freshness: why AI trusts some pages",
+  "short": "Proof and freshness",
+  "dek": "Two pages say the same thing. One gets quoted, one gets ignored. Usually the difference is proof (who says so and how they know), structure (can a machine tell what’s what) and freshness (is this still true).",
+  "read_min": 5,
+  "glyph": "check",
+  "takeaways": [
+   "Show your proof: named authors with real expertise, sources linked for every claim, and first-hand evidence like tests and your own numbers.",
+   "Add structure machines understand: clear headings, dates, and schema markup such as Article, FAQPage and Organization.",
+   "Keep important pages fresh and say when they were last checked. Outdated facts get dropped.",
+   "Measure it: ask AI tools your category questions each month and note who they cite, and watch branded search."
+  ],
+  "quiz": [
+   {
+    "q": "What is llms.txt?",
+    "o": [
+     "A Google ranking factor",
+     "A proposed file that gives AI tools a map of your site",
+     "A paid listing",
+     "A type of virus"
+    ],
+    "a": 1,
+    "why": "It’s a proposed convention for a plain-text site map for AI tools. Cheap to add, but not a guaranteed ranking factor."
+   },
+   {
+    "q": "Which of these is first-hand evidence?",
+    "o": [
+     "A reworded encyclopedia paragraph",
+     "A stock photo",
+     "A list of keywords",
+     "A test you ran with your own numbers"
+    ],
+    "a": 3,
+    "why": "Original tests and measurements are evidence nobody else can copy."
+   },
+   {
+    "q": "How can you check whether AI tools mention your brand?",
+    "o": [
+     "Ask them your customers’ questions regularly and note who they cite",
+     "Buy more ads",
+     "Change your logo",
+     "Delete old posts"
+    ],
+    "a": 0,
+    "why": "There’s no perfect report yet, so a monthly manual check is the most reliable method."
+   }
+  ],
+  "status": "published",
+  "modified": "2026-11-24",
+  "author_name": "Neeraj",
+  "image": "learn-proof-structure-freshness"
  }
 ]

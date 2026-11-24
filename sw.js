@@ -1,4 +1,5 @@
-/* NMX Labs service worker (v5)
+/* NMX Labs service worker (v6)
+   v6: never caches the owner dashboard (/dashboard/).
    v5: tapping the welcome notification (the delivery test sent right after someone subscribes) tells the open page
    that notifications really arrive. Everything else is as in v4.
    - Shows browser notifications sent by .github/workflows/send-push.yml (standard Web Push + VAPID, no third party)
@@ -6,7 +7,7 @@
    - Keeps recently read pages and saved posts readable offline; shows /offline/ when there's no connection
    Registered by /assets/engage.js as /sw.js?b=<your Apps Script /exec URL>. Must stay at the site root. */
 'use strict';
-var VERSION = 'nmx-v5.0';
+var VERSION = 'nmx-v6.0';
 var CORE = 'nmx-core-' + VERSION, PAGES = 'nmx-pages', ASSETS = 'nmx-assets', SAVED = 'nmx-saved';
 var BACKEND = new URL(self.location.href).searchParams.get('b') || '';
 var CORE_FILES = ['/offline/', '/assets/site.css', '/assets/logo.png', '/assets/pwa/icon-192.png', '/assets/pwa/badge-96.png'];
@@ -34,7 +35,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET' || req.headers.has('range')) return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;                       // ads, analytics, YouTube, fonts: untouched
-  if (/^\/(tools|_scheduled)\//.test(url.pathname) || url.searchParams.has('action')) return;
+  if (/^\/(tools|dashboard|_scheduled)\//.test(url.pathname) || url.searchParams.has('action')) return;
 
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(function (res) {

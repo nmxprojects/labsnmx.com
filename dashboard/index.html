@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard | NMX Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<meta name="theme-color" content="#faf9f6">
+<link rel="canonical" href="https://labsnmx.com/dashboard/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script>(function(){try{var t=localStorage.getItem('nmx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.NMX_NO_ENGAGE=true;</script>
+<script defer src="/assets/nmx.js"></script>
+<style>
+  /* v5 dashboard: every number is counted in the browser from your Sheet's rows, so filters apply instantly. */
+  :root{--surface:#fff;--good:#5d8a3f;--bad:#d9480f}
+  :root[data-theme="dark"]{--surface:#1b1a18}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--surface:#1b1a18}}
+  .ad{padding:32px 0 96px}
+  .ad-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:20px}
+  .ad-top h1{font-family:var(--font-display);font-size:clamp(40px,6vw,72px);line-height:.95;letter-spacing:-.03em}
+  .ad-top p{color:var(--muted);font-size:14px;margin-top:8px}
+  .ad-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .ad-btn{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 16px;font:600 13px/1 var(--font-body);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .ad-btn:hover{border-color:var(--ink)}
+  .ad-btn--go{background:var(--orange);border-color:var(--orange);color:#fff}
+  .ad-btn--go:hover{filter:brightness(.94);border-color:var(--orange)}
+  .ad-btn:disabled{opacity:.55;cursor:progress}
+  .ad-live{appearance:none;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--font-body);padding:10px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+  .ad-live i{width:9px;height:9px;border-radius:50%;background:var(--good);position:relative}
+  .ad-live i::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--good);opacity:0;animation:pulse 1.8s ease-out infinite}
+  .ad-live.off i{background:var(--muted)} .ad-live.off i::after{display:none}
+  @keyframes pulse{0%{transform:scale(.6);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+  .ad-live b{font-variant-numeric:tabular-nums}
+
+  .ad-filters{position:sticky;top:61px;z-index:20;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;margin-bottom:4px;background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .ad-seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--cream);gap:2px}
+  .ad-seg button{appearance:none;border:0;background:transparent;color:var(--ink);border-radius:999px;padding:8px 12px;font:600 12.5px/1 var(--font-body);cursor:pointer}
+  .ad-seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .ad-seg button:disabled{opacity:.35;cursor:not-allowed}
+  .ad-filters select{appearance:none;font:600 12.5px/1 var(--font-body);color:var(--ink);background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236f6d67' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid var(--line);border-radius:999px;padding:9px 30px 9px 13px;max-width:190px;cursor:pointer}
+  .ad-filters select.on{border-color:var(--ink);background-color:var(--yellow);color:#111110}
+  .ad-filters select:disabled{opacity:.45;cursor:not-allowed}
+  .ad-filters .ad-note{margin:0 0 0 auto}
+  .ad-reset{appearance:none;border:0;background:none;color:var(--ink);font:600 12.5px/1 var(--font-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 4px}
+  @media (max-width:760px){.ad-filters{top:57px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.ad-filters::-webkit-scrollbar{display:none}.ad-filters>*{flex-shrink:0}}
+
+  .ad-card{border:1px solid var(--line);background:var(--surface);border-radius:22px;padding:clamp(18px,3vw,26px);min-width:0}
+  .ad-card h2{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+  .ad-card h3{font-size:14px;font-weight:700;margin:18px 0 8px}
+  .ad-card .ad-sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .ad-grid{display:grid;gap:16px;margin-top:16px}
+  .ad-g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ad-g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ad-g21{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+  @media (max-width:900px){.ad-g2,.ad-g3,.ad-g21{grid-template-columns:1fr}}
+  .ad-h{margin:44px 0 0;font-family:var(--font-display);font-size:34px;letter-spacing:-.02em}
+
+  .ad-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin-top:16px;border:1px solid var(--line);border-radius:22px;background:var(--surface);overflow:hidden}
+  .ad-kpi{padding:18px 20px;border-left:1px solid var(--line)}
+  .ad-kpi:first-child{border-left:0;background:var(--yellow);color:#111110}
+  .ad-kpi b{display:block;font-family:var(--font-body);font-weight:700;font-size:40px;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+  .ad-kpi span{display:block;font-size:13px;font-weight:600;margin-top:8px}
+  .ad-kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .ad-kpi:first-child small{color:#4a4840}
+  .ad-kpi em{font-style:normal;font-weight:700;font-size:12px;margin-left:6px}
+  .ad-kpi em.up{color:var(--good)} .ad-kpi em.down{color:var(--bad)}
+  .ad-kpi:first-child em.up{color:#2f5a1e}
+  @media (max-width:1100px){.ad-kpis{grid-template-columns:repeat(3,1fr)}.ad-kpi:nth-child(4){border-left:0}.ad-kpi:nth-child(n+4){border-top:1px solid var(--line)}}
+  @media (max-width:600px){.ad-kpis{grid-template-columns:1fr 1fr}.ad-kpi{border-left:0;border-top:1px solid var(--line)}.ad-kpi:nth-child(even){border-left:1px solid var(--line)}.ad-kpi:nth-child(-n+2){border-top:0}}
+
+  .ad-chart svg{width:100%;height:auto;display:block;overflow:visible}
+  .ad-chart .grow{transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s var(--ease)}
+  .ad-chart .grow-down{transform-box:fill-box;transform-origin:50% 0;transition:transform .7s var(--ease)}
+  .ad-chart .draw{transition:stroke-dashoffset 1.1s var(--ease)}
+  .ad-chart .fade{transition:opacity .9s ease .25s}
+  .ad-chart .hit{fill:transparent;cursor:crosshair}
+  .ad-tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;font-weight:600;padding:7px 10px;border-radius:10px;white-space:nowrap;transform:translate(-50%,-120%);opacity:0;transition:opacity .12s;z-index:2}
+  .ad-chartwrap{position:relative}
+  .ad-legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--muted);margin-top:10px}
+  .ad-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+  .ad-bars{list-style:none;display:grid;gap:2px}
+  .ad-bars li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:13.5px;padding:5px 6px;margin:0 -6px;border-radius:10px}
+  .ad-bars li.click{cursor:pointer} .ad-bars li.click:hover{background:var(--cream)}
+  .ad-bars li.sel{background:var(--yellow);color:#111110}
+  .ad-bars li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ad-bars li em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
+  .ad-bars li i{grid-column:1/-1;height:6px;border-radius:6px;background:var(--cream)}
+  .ad-bars li i b{display:block;height:100%;width:0;border-radius:6px;background:var(--ink);transition:width .7s var(--ease)}
+  .ad-bars li.sel i b{background:#111110}
+  .ad-empty{color:var(--muted);font-size:13.5px}
+
+  .ad-funnel{display:grid;gap:10px}
+  .ad-frow{display:grid;grid-template-columns:140px 1fr 96px;gap:12px;align-items:center;font-size:13px}
+  .ad-frow b{font-weight:600}
+  .ad-ftrack{position:relative;height:30px;border-radius:9px;background:var(--cream);overflow:hidden}
+  .ad-ftrack span{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:9px;transition:width .8s var(--ease)}
+  .ad-ftrack .s1{background:rgba(17,17,16,.16)} .ad-ftrack .s2{background:var(--yellow)} .ad-ftrack .s3{background:var(--ink)}
+  .ad-frow small{color:var(--muted);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+  .ad-frow small strong{color:var(--ink)}
+  @media (max-width:600px){.ad-frow{grid-template-columns:1fr 96px}.ad-frow .ad-ftrack{grid-column:1/-1;grid-row:2}}
+  .ad-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .ad-chip{display:inline-flex;gap:6px;align-items:baseline;padding:8px 12px;border-radius:12px;background:var(--cream);font-size:12.5px}
+  .ad-chip b{font-size:16px;font-variant-numeric:tabular-nums}
+
+  .ad-heat{display:grid;grid-template-columns:34px repeat(24,minmax(0,1fr));gap:2px;font-size:10.5px;color:var(--muted)}
+  .ad-heat div{aspect-ratio:1;border-radius:3px;background:var(--orange);opacity:0;transition:opacity .7s ease}
+  .ad-heat span{align-self:center}
+  .ad-heat .hx{text-align:left}
+
+  .ad-feed{list-style:none;max-height:390px;overflow:auto}
+  .ad-feed li{display:grid;grid-template-columns:16px 1fr auto;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.35;animation:feedIn .5s var(--ease)}
+  .ad-feed li small{color:var(--muted);white-space:nowrap}
+  .ad-feed li u{text-decoration:none;color:var(--muted);word-break:break-all}
+  .ad-feed .dot{width:10px;height:10px;border-radius:50%;margin-top:4px;box-shadow:inset 0 0 0 2px var(--muted)}
+  .ad-feed .dot.sub{background:var(--yellow);box-shadow:none} .ad-feed .dot.tap{background:var(--orange);box-shadow:none} .ad-feed .dot.play{background:var(--sage);box-shadow:none}
+  @keyframes feedIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  .ad-form{display:grid;gap:12px}
+  .ad-form label{display:grid;gap:6px;font-size:13px;font-weight:600}
+  .ad-form label small{font-weight:500;color:var(--muted)}
+  .ad-form input,.ad-form textarea,.ad-form select{font:500 15px/1.4 var(--font-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px;width:100%}
+  .ad-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .ad-status{font-size:13.5px;font-weight:600;min-height:1.3em}
+  .ad-preview{border-radius:16px;background:#2b2a27;color:#f1eee7;padding:14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;font-size:13px;line-height:1.35}
+  .ad-preview img.ic{width:40px;height:40px;border-radius:10px;grid-row:span 2}
+  .ad-preview b{font-size:14px}
+  .ad-preview .host{color:#a7a49c;font-size:12px;grid-column:2}
+  .ad-preview img.big{grid-column:1/-1;width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:10px;margin-top:8px}
+  .ad-table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .ad-table th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ad-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .ad-table td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ad-table th.n{text-align:right}
+  .ad-scroll{overflow-x:auto}
+  .ad-pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--cream);white-space:nowrap}
+  .ad-pill.ok{background:#e3eedb;color:#2f5a1e}.ad-pill.bad{background:#ffe0d6;color:#9c2b0a}
+  :root[data-theme="dark"] .ad-pill.ok{background:#25331d;color:#a5c493}:root[data-theme="dark"] .ad-pill.bad{background:#3a1d14;color:#ff8a65}
+  .ad-ctr{display:block;width:100%;height:5px;border-radius:5px;background:var(--cream);margin-top:5px;overflow:hidden}
+  .ad-ctr b{display:block;height:100%;background:var(--orange)}
+  .ad-checks{list-style:none;display:grid;gap:8px;font-size:14px}
+  .ad-checks li::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;background:var(--orange)}
+  .ad-checks li.ok::before{background:var(--good)}
+  .ad-login{max-width:480px;margin:40px 0}
+  .ad-note{font-size:13px;color:var(--muted);margin-top:12px}
+  .ad-note code,.ad-checks code{font-size:12.5px;background:var(--cream);padding:1px 6px;border-radius:6px}
+  .ad-loading{opacity:.5;transition:opacity .2s}
+
+  /* v6: composer for notifications, newsletters, offers and updates */
+  .ad-tabs{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:999px;background:var(--cream);margin:2px 0 18px;width:max-content;max-width:100%}
+  .ad-tabs button{appearance:none;border:0;background:transparent;color:var(--ink);border-radius:999px;padding:9px 15px;font:600 13px/1 var(--font-body);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+  .ad-tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+  .ad-tabs svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .ad-two{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media (max-width:600px){.ad-two{grid-template-columns:1fr}}
+  .ad-form .ad-check{display:flex;flex-direction:row;gap:9px;align-items:center;font-weight:500}
+  .ad-form .ad-check input{width:auto}
+  .ad-chan{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+  .ad-chan legend{font-size:12px;font-weight:700;color:var(--muted);padding:0 6px}
+  .ad-hint{font-size:12.5px;color:var(--muted);line-height:1.45;margin:-2px 0 0}
+  .ad-hint b{color:var(--ink)}
+  .ad-mailprev{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#f2f0eb}
+  .ad-mailprev iframe{display:block;width:100%;height:620px;border:0;background:#f2f0eb}
+  .ad-mailprev p{font-size:12px;color:var(--muted);padding:8px 12px;margin:0;border-bottom:1px solid var(--line);background:var(--surface)}
+  .ad-starter{display:flex;flex-wrap:wrap;gap:6px;margin:-6px 0 4px}
+  .ad-starter button{appearance:none;border:1px dashed var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 11px;font:600 12px/1 var(--font-body);cursor:pointer}
+  .ad-starter button:hover{border-color:var(--ink)}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Main">
+  <a href="/" class="nav-logo"><img src="/assets/logo.png" alt="NMX Labs" width="102" height="19"></a>
+  <div class="nav-links"><a href="/blog/">Blog</a><a href="/tools/backend-check/">Setup check</a><a href="/tools/push-keys/">Notification keys</a><a href="/learn/">Learn</a><a href="/play/">Play</a></div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" aria-pressed="false"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+</nav>
+<main class="wrap ad">
+
+<section id="login" class="ad-login" hidden>
+  <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,64px);line-height:.95;letter-spacing:-.03em">Dashboard</h1>
+  <p style="color:var(--muted);margin:12px 0 20px">For the site owner. Sign in with the <code>ADMIN_KEY</code> from your Apps Script log (run <code>checkPushSetup()</code> to see it).</p>
+  <form id="loginForm" class="ad-form">
+    <label>Admin key<input id="key" type="password" autocomplete="current-password" required></label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input id="remember" type="checkbox" style="width:auto"> Keep me signed in on this device</label>
+    <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Sign in</button></div>
+    <p class="ad-status" id="loginStatus" role="status"></p>
+  </form>
+</section>
+
+<section id="noBackend" class="ad-login" hidden>
+  <h1 style="font-family:var(--font-display);font-size:48px;line-height:1">Connect the backend first</h1>
+  <p style="color:var(--muted);margin-top:12px">Paste your Apps Script <code>/exec</code> URL into <code>BACKEND_URL</code> in <code>/assets/nmx.js</code>, upload it, and reload this page.</p>
+</section>
+
+<section id="dash" hidden>
+  <div class="ad-top">
+    <div><h1>Dashboard</h1><p id="updated">Loading…</p></div>
+    <div class="ad-acts">
+      <button class="ad-live" id="live" type="button" aria-pressed="true" title="Checks every 30 seconds while this tab is open. Tap to pause."><i></i><span id="liveTxt">Live</span></button>
+      <button class="ad-btn" id="refresh" type="button">Refresh</button>
+      <a class="ad-btn" id="sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
+      <button class="ad-btn" id="signout" type="button">Sign out</button>
+    </div>
+  </div>
+
+  <div class="ad-card" id="setup" style="margin:8px 0 16px" hidden>
+    <h2>Finish setting up</h2><p class="ad-sub">This list disappears once everything is connected.</p>
+    <ul class="ad-checks" id="checks"></ul>
+  </div>
+
+  <div class="ad-filters" id="filters" role="group" aria-label="Filters">
+    <div class="ad-seg" id="period" role="group" aria-label="Period">
+      <button type="button" data-p="today">Today</button><button type="button" data-p="7">7 days</button><button type="button" data-p="30" aria-pressed="true">30 days</button><button type="button" data-p="90">90 days</button><button type="button" data-p="all">All</button>
+    </div>
+    <select data-f="dev" aria-label="Device"></select>
+    <select data-f="br" aria-label="Browser"></select>
+    <select data-f="co" aria-label="Country"></select>
+    <select data-f="src" aria-label="Came from"></select>
+    <select data-f="sec" aria-label="Section"></select>
+    <select data-f="topic" aria-label="Notification topic"></select>
+    <button class="ad-reset" id="reset" type="button" hidden>Clear filters</button>
+    <span class="ad-note" id="compat" hidden>Paste Code-Blog.gs v5 and deploy a new version to use these filters.</span>
+  </div>
+
+  <div class="ad-kpis" id="kpis"></div>
+
+  <div class="ad-grid ad-g21">
+    <div class="ad-card ad-chart"><h2>Visitors and page views</h2><p class="ad-sub" id="visitSub"></p><div class="ad-chartwrap" id="visits"></div>
+      <div class="ad-legend"><span><i style="background:var(--orange)"></i>People</span><span><i style="background:var(--ink);opacity:.2"></i>Page views</span></div></div>
+    <div class="ad-card"><h2>On the site now</h2><p class="ad-sub" id="feedSub">Last 30 minutes, newest first.</p><ul class="ad-feed" id="feed"><li class="ad-empty" style="display:block;border:0">Waiting for the first check…</li></ul></div>
+  </div>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card ad-chart"><h2>Notification subscribers</h2><p class="ad-sub" id="growthSub"></p><div class="ad-chartwrap" id="growth"></div>
+      <div class="ad-legend"><span><i style="background:var(--ink)"></i>New</span><span><i style="background:var(--orange)"></i>Lost (unsubscribed, blocked or expired)</span></div></div>
+    <div class="ad-card"><h2>How people subscribe</h2><p class="ad-sub">Where the offer was seen, how many tapped it, and how many ended up subscribed.</p>
+      <div class="ad-funnel" id="funnel"></div>
+      <div class="ad-legend"><span><i style="background:rgba(17,17,16,.16)"></i>Saw it</span><span><i style="background:var(--yellow)"></i>Tapped</span><span><i style="background:var(--ink)"></i>Subscribed</span></div>
+      <h3>After subscribing</h3><div class="ad-chips" id="checksOut"></div>
+    </div>
+  </div>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card"><h2>When readers show up</h2><p class="ad-sub">Page views by day and hour, India time. Busier hours are better times to send your own notifications.</p><div class="ad-heat" id="heat"></div></div>
+    <div class="ad-card"><h2>Learn and Play</h2><p class="ad-sub" id="schoolSub"></p><div class="ad-chips" id="schoolChips"></div>
+      <div class="ad-grid ad-g2" style="margin-top:6px"><div><h3>Most-read lessons</h3><ul class="ad-bars" id="lessons"></ul></div><div><h3>Games and quizzes</h3><ul class="ad-bars" id="games"></ul></div></div></div>
+  </div>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card" id="composer">
+      <h2>Send to your readers</h2><p class="ad-sub">New blog posts and YouTube videos go out by themselves. Use this for newsletters, offers, updates and one-off notifications.</p>
+      <div class="ad-tabs" role="tablist" aria-label="What to send">
+        <button type="button" role="tab" aria-selected="true" data-mode="push"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>Notification</button>
+        <button type="button" role="tab" aria-selected="false" data-mode="newsletter"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>Newsletter</button>
+        <button type="button" role="tab" aria-selected="false" data-mode="offer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="8" cy="8" r="1.4"/></svg>Offer</button>
+        <button type="button" role="tab" aria-selected="false" data-mode="update"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>Update</button>
+      </div>
+      <form class="ad-form" id="send">
+        <label>Title <small><span id="tc">0</span>/90</small><input name="title" maxlength="90" required placeholder="Our Diwali offer is live"></label>
+        <label>Message <small>optional, <span id="mc">0</span>/200</small><textarea name="message" rows="2" maxlength="200" placeholder="One line that makes people tap."></textarea></label>
+        <label>Link that opens<input name="url" type="url" value="https://labsnmx.com/blog/" required></label>
+        <label>Image <small>optional, https address of a wide image (2:1 works best)</small><input name="image" type="url" placeholder="https://labsnmx.com/assets/blog/….jpg"></label>
+        <label>Who gets it<select name="audience"><option value="all">Everyone subscribed</option><option value="blog">Blog post subscribers</option><option value="youtube">YouTube video subscribers</option></select></label>
+        <div class="ad-preview" aria-label="Preview"><img class="ic" src="/assets/pwa/icon-192.png" alt=""><b id="pvT">Title</b><span id="pvM"></span><span class="host">labsnmx.com</span><img class="big" id="pvI" alt="" hidden></div>
+        <div class="ad-row"><button class="ad-btn" type="button" id="test">Send a test to this browser</button><button class="ad-btn ad-btn--go" type="submit" id="go">Send to subscribers</button></div>
+        <p class="ad-status" id="sendStatus" role="status"></p>
+      </form>
+      <form class="ad-form" id="mail" hidden novalidate>
+        <div class="ad-starter" id="starters" aria-label="Start from"></div>
+        <label>Subject line <small><span id="sc">0</span>/120 · what shows in the inbox</small><input name="subject" maxlength="120" required></label>
+        <label>Preview text <small>optional · the grey line after the subject</small><input name="preheader" maxlength="140"></label>
+        <label>Headline <small>optional · the big line inside the email (defaults to the subject)</small><input name="headline" maxlength="120"></label>
+        <label>Message <small>write like you talk · a blank line starts a new paragraph</small><textarea name="body" rows="7" maxlength="5000"></textarea></label>
+        <div class="ad-two" data-offer hidden>
+          <label>Offer code <small>optional</small><input name="code" maxlength="30" placeholder="NMX20" autocapitalize="characters"></label>
+          <label>Valid until <small>optional</small><input name="expires" type="date"></label>
+        </div>
+        <div class="ad-two">
+          <label>Button text<input name="cta" maxlength="40" value="Read more"></label>
+          <label>Button link<input name="link" type="url" value="https://labsnmx.com/blog/" required></label>
+        </div>
+        <label>Image <small>optional · https address of a wide image</small><input name="image" type="url" placeholder="https://labsnmx.com/assets/blog/….jpg"></label>
+        <label class="ad-check"><input type="checkbox" name="quick" checked> Add the two newest blog posts at the bottom</label>
+        <fieldset class="ad-chan"><legend>Send as</legend>
+          <label class="ad-check"><input type="checkbox" name="ch_email" checked> Email to <b id="mailCount">your</b>&nbsp;subscribers</label>
+          <label class="ad-check"><input type="checkbox" name="ch_push"> Also a browser notification to <b id="pushCount">your</b>&nbsp;followers</label>
+          <p class="ad-hint" id="quotaHint"></p>
+        </fieldset>
+        <div class="ad-row"><button class="ad-btn" type="button" id="mailPreview">Preview</button><button class="ad-btn" type="button" id="mailTest">Send a test to me</button><button class="ad-btn ad-btn--go" type="submit" id="mailGo">Send</button></div>
+        <p class="ad-status" id="mailStatus" role="status"></p>
+        <div class="ad-mailprev" id="mailPrevBox" hidden><p id="mailPrevSubj"></p><iframe id="mailFrame" title="Email preview" sandbox=""></iframe></div>
+      </form>
+    </div>
+    <div class="ad-card"><h2>Campaigns</h2><p class="ad-sub">Click-through = taps ÷ delivered. GitHub runs usually finish within a minute or two.</p>
+      <div class="ad-scroll"><table class="ad-table"><thead><tr><th>Sent</th><th>Title</th><th>Status</th><th class="n">Delivered</th><th class="n">Taps</th><th></th></tr></thead><tbody id="camps"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="ad-card" style="margin-top:16px"><h2>Email campaigns</h2><p class="ad-sub" id="mailSub">Newsletters, offers and updates sent from this page.</p>
+    <div class="ad-scroll"><table class="ad-table"><thead><tr><th>Sent</th><th>Subject</th><th>Type</th><th>Status</th><th class="n">Emails</th><th></th></tr></thead><tbody id="mails"><tr><td colspan="6" class="ad-empty">Loading…</td></tr></tbody></table></div>
+  </div>
+
+  <h2 class="ad-h">Subscribers</h2>
+  <div class="ad-grid ad-g3">
+    <div class="ad-card"><h2>Browsers</h2><ul class="ad-bars" id="pBrowser"></ul></div>
+    <div class="ad-card"><h2>Devices</h2><ul class="ad-bars" id="pDevice"></ul><h3>Topics</h3><ul class="ad-bars" id="pTopics"></ul></div>
+    <div class="ad-card"><h2>Countries</h2><ul class="ad-bars" id="pCountry"></ul></div>
+  </div>
+  <div class="ad-card" style="margin-top:16px"><h2>Newest subscribers</h2><p class="ad-sub" id="recentSub"></p>
+    <div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Status</th><th>Topics</th><th>Browser</th><th>Device</th><th>Country</th><th>Signed up on</th><th>Came from</th><th>Email</th><th class="n">Received</th></tr></thead><tbody id="recent"></tbody></table></div>
+  </div>
+
+  <h2 class="ad-h">Visitors</h2>
+  <div class="ad-grid ad-g3">
+    <div class="ad-card"><h2>Top pages</h2><ul class="ad-bars" id="vPages"></ul></div>
+    <div class="ad-card"><h2>Where they came from</h2><ul class="ad-bars" id="vRefs"></ul><h3>Campaigns (UTM)</h3><ul class="ad-bars" id="vUtm"></ul></div>
+    <div class="ad-card"><h2>Devices</h2><ul class="ad-bars" id="vDevice"></ul><h3>Countries</h3><ul class="ad-bars" id="vCountry"></ul></div>
+  </div>
+  <p class="ad-note">Tap a browser, country, device, source or page to filter the whole dashboard by it; tap it again to clear. Visitor numbers come from your own site script and skip people with Do Not Track on, so Google Analytics will show somewhat more.</p>
+
+  <div class="ad-grid ad-g2">
+    <div class="ad-card"><h2>Leads from the site assistant</h2><p class="ad-sub">Each one was also emailed to you.</p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Message</th></tr></thead><tbody id="leads"></tbody></table></div></div>
+    <div class="ad-card"><h2>What visitors ask the assistant</h2><p class="ad-sub" id="askSub"></p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Question</th><th>Page</th></tr></thead><tbody id="asks"></tbody></table></div></div>
+  </div>
+</section>
+</main>
+<script src="/dashboard/dashboard.js" defer></script>
+</body>
+</html>

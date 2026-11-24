@@ -19,6 +19,9 @@ footer "Popular reads", blog/feed.xml, sitemap.xml, the HTML sitemap at /sitemap
 (the Apps Script email automation reads blog/posts.json to send new-post emails).
 v5: also builds Learn (Creator school) and Play through scripts/build_learn.py (content/lessons.json), adds them to
 both sitemaps, and makes sure every page's menu and footer link to /learn/ and /play/.
+v6: the news layer (scripts/build_news.py, content/news.json): the news front page, the homepage "wire" bento carousel,
+the "Latest in" bar under the menu on blog, news and learn pages, and news/latest.json. The homepage blog section is a
+pastel bento. Also writes llms.txt and llms-full.txt for AI search, and adds the Global category.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -28,6 +31,11 @@ try:
 except Exception as _e:
     build_learn = None
     print('Learn/Play skipped: ' + str(_e))
+try:
+    import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
+except Exception as _e:
+    build_news = None
+    print('News skipped: ' + str(_e))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://labsnmx.com'
@@ -46,6 +54,7 @@ CATEGORIES = collections.OrderedDict([
     ('branding',      ('Branding',        'Brand identity, guidelines and launch essentials for startups and D2C brands.')),
     ('brand-stories', ('Brand stories',   'How Indian brands win and lose: rebrands, rivalries, campaigns and the strategy behind them.')),
     ('growth',        ('Growth playbook', 'YouTube, Instagram and Google Search: algorithm and policy changes, SEO and growth tactics, explained for Indian brands and creators.')),
+    ('global',        ('Global',          'Design, advertising and marketing stories from the UK, the US and the rest of the world, and what they mean for your brand.')),
 ])
 AUTHORS = {'neeraj': 'Neeraj', 'anisha': 'Anisha'}
 PILLARS = [  # (category slug, title, line) shown in "Notes from the studio" on /blog/
@@ -53,6 +62,7 @@ PILLARS = [  # (category slug, title, line) shown in "Notes from the studio" on 
     ('meta-ads', 'Advertising and marketing', 'Meta ads, campaigns and channels, with the numbers behind them.'),
     ('brand-stories', 'Branding and design strategy', 'Brand stories, rebrands, identity and packaging for Indian brands.'),
     ('growth', 'Platform growth', 'YouTube, Instagram and SEO: what changed this week and what to do about it.'),
+    ('global', 'Around the world', 'UK, US and global design and marketing stories, told with opinions.'),
 ]
 STATIC_PAGES = [  # (path, changefreq, priority)
     ('/', 'weekly', '1.0'), ('/blog/', 'daily', '0.9'), ('/news/', 'daily', '0.7'), ('/videos/', 'monthly', '0.6'),
@@ -258,12 +268,48 @@ def build_post(p, published):
         a = re.sub(r'(<div class="byline">.*?</span><span>)\d{1,2} \w+ 20\d\d(</span>)', lambda m: m.group(1) + human(p['date']) + m.group(2), a, count=1, flags=re.S)
         wr(amp, a)
 
-def build_home(published, today):
+TINTS = ['#ffe4d6', '#e2f0df', '#e9e3fb', '#fff0c2', '#dcebfa', '#fde0ea', '#e8efe1']
+def home_blog(published, today):
+    """v6: the homepage blog section as a pastel bento (one lead tile, six tiles, a browse tile)."""
+    lead, rest = published[0], published[1:7]
+    fresh = (dt.date.fromisoformat(today) - dt.date.fromisoformat(lead['date'])).days <= 7
+    def tile(p, i, cls=''):
+        return (f'      <li class="hb-tile{cls}" style="--tint:{TINTS[i % len(TINTS)]}"><a href="/blog/{p["slug"]}/">'
+                f'<span class="hb-img"><img src="/assets/blog/{p["image"]}-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async"></span>'
+                f'<span class="hb-body"><span class="hb-cat">{esc(p["category_label"])}</span><span class="hb-ttl">{esc(p["title"])}</span>'
+                f'<span class="hb-meta"><time datetime="{p["date"]}">{human(p["date"])}</time> · {p["read_min"]} min</span></span></a></li>\n')
+    tiles = ''.join(tile(p, i + 1, ' hb-tile--wide' if i == 4 else '') for i, p in enumerate(rest))
+    cats = ''.join(f'<span>{CATEGORIES[c][0]}</span>' for c in CATEGORIES if any(p['category'] == c for p in published))
+    return (f'\n<section class="hb" id="blog" aria-labelledby="hb-h">\n  <div class="hb-top">\n'
+            f'    <div><p class="hb-kick">From the blog · 3–4 new articles every week</p><h2 id="hb-h">Fresh from the studio</h2>'
+            f'<p class="hb-sub">Design, AI and marketing, written by the people who do the work. Real tests, named sources and opinions we’ll happily defend.</p></div>\n'
+            f'    <a class="hb-all" href="/blog/">Read all {len(published)} posts</a>\n  </div>\n  <ul class="hb-grid">\n'
+            f'      <li class="hb-tile hb-tile--lead" style="--tint:{TINTS[0]}"><a href="/blog/{lead["slug"]}/">'
+            f'<span class="hb-img"><img src="/assets/blog/{lead["image"]}.webp" alt="" width="1200" height="675" loading="lazy" decoding="async"></span>'
+            f'<span class="hb-body"><span class="hb-cat">{"New this week" if fresh else "Latest"} · {esc(lead["category_label"])}</span>'
+            f'<span class="hb-ttl">{esc(lead["title"])}</span><span class="hb-dek">{esc(lead["dek"])}</span>'
+            f'<span class="hb-meta"><time datetime="{lead["date"]}">{human(lead["date"])}</time> · {lead["read_min"]} min read · by {esc(lead["author_name"])}</span></span></a></li>\n'
+            f'{tiles}      <li class="hb-tile hb-tile--cta"><a href="/blog/"><span class="hb-n">{len(published)}</span><span class="hb-ttl">posts and counting. Browse them all</span>'
+            f'<span class="hb-cats">{cats}</span></a></li>\n  </ul>\n</section>\n')
+
+def build_home(published, today, news_home=''):
     s = rd('index.html')
+    if '<!--HOME-BLOG-->' in s:                                       # v6 layout
+        s = between(s, '<!--HOME-BLOG-->', '<!--/HOME-BLOG-->', home_blog(published, today))
+        if news_home: s = between(s, '<!--HOME-NEWS-->', '<!--/HOME-NEWS-->', news_home)
+        wr('index.html', s); return
     s = re.sub(r'<a class="bh-feature" href=.*?</a>', lambda m: home_feature(published[0], today), s, count=1, flags=re.S)
     s = replace_list(s, ''.join(home_tile(p) for p in published[1:12]) + '        ', r'<ul class="bh-rail" id="bhRail">')
     s = re.sub(r'Read all \d+ posts', f'Read all {len(published)} posts', s)
     wr('index.html', s)
+
+SUB_OLD = ('An email when a new post goes live, with a quick read of the key points. Usually two or three a week. No spam, one-click unsubscribe.',
+           'New posts every week.')
+SUB_NEW = ('An email when a new post goes live (we publish 3–4 a week), with a quick read of the key points, plus the occasional newsletter or studio offer. No spam, one-click unsubscribe.',
+           '3–4 new articles every week.')
+def v6_copy(s):
+    for a, b in zip(SUB_OLD, SUB_NEW): s = s.replace(a, b)
+    return s
 
 def build_footers(published):
     inner = popular_html(published)
@@ -276,6 +322,8 @@ def build_footers(published):
             s = rd(p)
             if '<!--POPULAR-->' in s: s = between(s, '<!--POPULAR-->', '<!--/POPULAR-->', inner)
             if build_learn and not rel.replace('\\', '/').startswith('tools'): s = build_learn.add_school_links(s)   # v5: Learn and Play in menus and footer
+            if WIRE_BAR and build_news: s = build_news.add_bar(s, WIRE_BAR, rel)                                  # v6: "Latest in" bar
+            s = v6_copy(s)
             wr(p, s)
 
 def build_feed(published):
@@ -314,7 +362,7 @@ def build_sitemap(published, live_cats):
         img = ''.join(f'\n    <image:image><image:loc>{esc(i)}</image:loc></image:image>' for i in images)
         urls.append(f'  <url>\n    <loc>{SITE}{loc}</loc>\n    <lastmod>{lastmod}</lastmod>\n    <changefreq>{freq}</changefreq>\n    <priority>{prio}</priority>{img}\n  </url>')
     for loc, freq, prio in STATIC_PAGES:
-        url(loc, latest if loc in ('/', '/blog/', '/news/', '/sitemap/') else '2026-11-22', freq, prio)
+        url(loc, latest if loc in ('/', '/blog/', '/news/', '/sitemap/') else '2026-11-24', freq, prio)
     for c in CATEGORIES:
         if c in live_cats: url(f'/blog/category/{c}/', max(p['date'] for p in published if p['category'] == c), 'weekly', '0.6')
     for a in AUTHORS:
@@ -355,6 +403,45 @@ def build_html_sitemap(published, live_cats):
     s = re.sub(r'<a href="/blog/"\s*class="nav-pop" aria-current="page">', '<a href="/blog/" class="nav-pop">', s)
     wr('sitemap/index.html', s)
 
+def build_llms(published, lessons, news):
+    """v6: llms.txt (a map for AI search engines) and llms-full.txt (every post's summary and key points)."""
+    head = ('# NMX Labs\n\n> NMX Labs is a design, AI and marketing studio and publication based in Gurugram, India, writing for brand teams in the '
+            'UK, the US, India and everywhere else. We publish 3–4 new articles every week on branding, AI design tools, advertising and '
+            'platform growth, run a curated news page, and teach free short courses. Every article lists its sources, and posts where we '
+            'tested something include a "How we checked this" box.\n\n')
+    pub = ('## The publication\n'
+           f'- [Blog]({SITE}/blog/): 3–4 new articles every week. Each has key takeaways at the top, numbered sources and a fact-check date.\n'
+           f'- [News]({SITE}/news/): design, AI and marketing news from around the world, each story with a short NMX take and a link to the original source.\n'
+           f'- [Learn]({SITE}/learn/): free short courses (YouTube, brand identity, Meta ads, getting found in AI answers).\n'
+           f'- [Play]({SITE}/play/): quizzes and games for marketers and designers.\n'
+           f'- [Editorial standards]({SITE}/editorial-standards/): how we research, test, credit and correct.\n'
+           f'- [RSS feed]({SITE}/blog/feed.xml) · [Every post, summarised]({SITE}/llms-full.txt) · [Latest headlines as JSON]({SITE}/news/latest.json)\n\n')
+    latest = '## Latest articles\n' + ''.join(f'- [{p["title"]}]({SITE}/blog/{p["slug"]}/): {p["dek"]} ({human(p["date"])}, {p["author_name"]})\n' for p in published[:25]) + '\n'
+    cats = '## Topics\n' + ''.join(f'- [{CATEGORIES[c][0]}]({SITE}/blog/category/{c}/): {CATEGORIES[c][1]}\n' for c in CATEGORIES if any(p['category'] == c for p in published)) + '\n'
+    authors = (f'## Authors\n- [Neeraj]({SITE}/blog/author/neeraj/): AI design, Meta ads and platform growth.\n'
+               f'- [Anisha]({SITE}/blog/author/anisha/): market research, branding and brand stories.\n\n')
+    studio = ('## The studio\n'
+              '- Branding & Identity: starter brand system from Rs 25,000 (discovery, logo, colour and type system, social assets, mini guidelines).\n'
+              '- Social Media Creative: Rs 8,000 a month for 8 custom static or carousel creatives (design only).\n'
+              '- Campaign Creative: Rs 10,000 per campaign (concept, key visual, 3 to 5 adaptations).\n'
+              '- Meta Ads Management: Rs 8,000 a month (setup, audience research, weekly optimisation, reporting; ad spend billed separately).\n'
+              '- Creative + Meta Ads bundle: Rs 15,000 a month plus ad spend.\n'
+              '- Brand & Marketing Design: from Rs 7,500 (decks, brochures, collateral).\n'
+              '- Who we work with: D2C brands, EV and energy, SaaS, hospitality and creator-led businesses, from pre-launch to post-Series A, in India, the UK, the US and elsewhere.\n'
+              '- Pricing is fixed upfront; small senior team, no account layer. Prices are in Indian rupees (INR).\n\n'
+              f'## Contact\n- Website: {SITE}/\n- Instagram: https://www.instagram.com/_nmxlabs/\n- WhatsApp: https://wa.me/918810438717\n- Email: nmxprojects@gmail.com\n')
+    wr('llms.txt', head + pub + latest + cats + authors + studio.rstrip('\n') + '\n')
+    full = [head.replace('# NMX Labs', '# NMX Labs: every article, summarised'),
+            'Each entry: title, link, date, author, topic, the summary we wrote for it and its key takeaways. Quote freely with a link.\n\n']
+    for p in published:
+        full.append(f'## {p["title"]}\n{SITE}/blog/{p["slug"]}/\nPublished {human(p["date"])} · {p["author_name"]} · {p["category_label"]} · {p["read_min"]} min read\n\n{p["dek"]}\n'
+                    + ''.join(f'- {t}\n' for t in p.get('takeaways', [])) + '\n')
+    if lessons:
+        full.append('# Free courses\n\n' + ''.join(f'- {x["title"]}: {SITE}/learn/{x["slug"]}/ ({x["dek"]})\n' for x in lessons) + '\n')
+    if news:
+        full.append('# Recent news, with our take\n\n' + ''.join(f'- {human(x["date"])}, {x["title"]}: {x["summary"]} NMX take: {x["take"]} Source: {x["source"]} ({x["url"]})\n' for x in news[:20]))
+    wr('llms-full.txt', ''.join(full))
+
 def build_public_json(published):
     out = {'updated': published[0]['date'], 'site': SITE, 'posts': []}
     for p in published[:40]:
@@ -367,6 +454,7 @@ def build_public_json(published):
 # ------------------------------------------------------------------ main
 TODAY = None
 LESSON_LINKS = []
+WIRE_BAR = ''
 
 def main():
     global TODAY, LESSON_LINKS
@@ -395,7 +483,12 @@ def main():
         if c in live_cats: build_category(c, [p for p in published if p['category'] == c], live_cats)
     for a_ in AUTHORS: build_author(a_, [p for p in published if p['author'] == a_])
     for p in published: build_post(p, published)
-    build_home(published, today)
+    global WIRE_BAR
+    news, news_home = [], ''
+    if build_news:                                                     # v6: news page, homepage wire and the "Latest in" bar
+        try: news, WIRE_BAR, news_home = build_news.build(today, published); CHANGED.extend(build_news.WRITTEN)
+        except Exception as e: print('News not rebuilt: ' + str(e))
+    build_home(published, today, news_home)
     lessons = []
     if build_learn:                                                    # v5: before the footer pass, so new pages get it too
         try: lessons = build_learn.build(today); CHANGED.extend(build_learn.WRITTEN)
@@ -406,6 +499,7 @@ def main():
     build_sitemap(published, live_cats)
     build_html_sitemap(published, live_cats)
     build_public_json(published)
+    build_llms(published, lessons, news)
     print(f'{today}: {len(published)} posts live, {len(CHANGED)} files updated.')
 
 if __name__ == '__main__':

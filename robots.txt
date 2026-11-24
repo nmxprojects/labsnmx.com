@@ -1,9 +1,35 @@
+# labsnmx.com: everything public is open to search engines and AI answer engines.
+# We want NMX Labs articles to be found, quoted and linked by Google, Bing, ChatGPT, Claude, Perplexity and others.
+
 User-agent: *
 Allow: /
 Disallow: /_scheduled/
 Disallow: /scripts/
 Disallow: /content/
 Disallow: /tools/
+Disallow: /dashboard/
+Disallow: /unsubscribe/
+
+# AI search and answer engines (explicitly welcome)
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bingbot
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+Allow: /
+Disallow: /_scheduled/
+Disallow: /scripts/
+Disallow: /content/
+Disallow: /tools/
+Disallow: /dashboard/
 Disallow: /unsubscribe/
 
 Sitemap: https://labsnmx.com/sitemap.xml

@@ -1,0 +1,102 @@
+[
+ {
+  "slug": "creator-school",
+  "title": "Creator school",
+  "short": "Make videos people finish",
+  "tone": "y",
+  "glyph": "play",
+  "desc": "Shooting on the phone you already have, light and sound, editing, titles, thumbnails and getting paid on YouTube.",
+  "quiz": "quiz-youtube",
+  "seo_title": "Free YouTube course for beginners: shoot, edit and grow on a phone",
+  "seo_desc": "A free YouTube course for beginners: shoot on the phone you already have, fix light and sound for almost nothing, edit for free, write titles and thumbnails people click, and learn how creators get paid.",
+  "faq": [
+   [
+    "Is the YouTube course really free?",
+    "Yes. Every lesson, quiz and game is free, with no sign-up. Your progress is saved in your own browser."
+   ],
+   [
+    "Do I need an expensive camera?",
+    "No. The course is written for the phone you already have, plus a few cheap extras if and when you want them."
+   ],
+   [
+    "How long does it take?",
+    "About an hour in total. Each lesson takes five or six minutes and ends with a three-question quiz."
+   ]
+  ]
+ },
+ {
+  "slug": "brand-identity-weekend",
+  "title": "Brand identity in a weekend",
+  "short": "Build a brand that holds together",
+  "tone": "p",
+  "glyph": "pen",
+  "desc": "The one sentence your brand stands on, a logo that survives at 16 pixels, and a colour and type system people (and AI tools) can follow.",
+  "quiz": "quiz-branding",
+  "seo_title": "Free brand identity course for small businesses: positioning, logo, colour and type",
+  "seo_desc": "A free short course on brand identity for small businesses and startups: write a positioning sentence, design a logo that works at 16 pixels, and build a colour and type system that people and AI tools can follow.",
+  "faq": [
+   [
+    "Is this brand identity course free?",
+    "Yes, completely, with no sign-up. Each lesson takes about five minutes and ends with a short quiz."
+   ],
+   [
+    "Do I need design software?",
+    "No. You can do the exercises on paper, in Canva, Figma or the free Affinity apps."
+   ],
+   [
+    "Can I build my brand identity in a weekend?",
+    "You can build the foundations: the positioning sentence, a tested logo set and a written colour and type system. Polishing usually takes longer, and that is normal."
+   ]
+  ]
+ },
+ {
+  "slug": "meta-ads-small-budgets",
+  "title": "Meta ads for small budgets",
+  "short": "Spend less, learn faster",
+  "tone": "o",
+  "glyph": "target",
+  "desc": "How Meta decides who sees your ad, the five numbers worth watching, and a 30-minute weekly routine for small accounts.",
+  "quiz": "quiz-metaads",
+  "seo_title": "Free Meta ads course for small budgets: Facebook and Instagram ads for small businesses",
+  "seo_desc": "A free Meta ads course for small businesses: how Facebook and Instagram decide who sees your ads, the five numbers worth watching, and a 30-minute weekly routine for accounts spending a little each day.",
+  "faq": [
+   [
+    "Is this Meta ads course free?",
+    "Yes. All three lessons and the quiz are free, with no sign-up."
+   ],
+   [
+    "How small a budget is this for?",
+    "It is written for accounts spending a few hundred to a few thousand rupees, pounds or dollars a day, where every test has to count."
+   ],
+   [
+    "Does it cover Advantage+ and broad targeting?",
+    "Yes. Lesson one explains why creative now does most of the targeting and how the learning phase affects small budgets."
+   ]
+  ]
+ },
+ {
+  "slug": "found-in-ai-answers",
+  "title": "Get found in AI answers",
+  "short": "Be the source AI quotes",
+  "tone": "s",
+  "glyph": "spark",
+  "desc": "How ChatGPT, Perplexity and Google’s AI pick what to quote, how to write answer-first pages, and the proof that earns trust.",
+  "quiz": "quiz-geo",
+  "seo_title": "Free GEO course: how to get your brand cited in ChatGPT, Perplexity and Google AI answers",
+  "seo_desc": "A free course on generative engine optimisation (GEO) for small brands: how AI search tools pick sources, how to write answer-first pages, and the proof, structure and freshness that get you quoted in ChatGPT, Perplexity and Google AI answers.",
+  "faq": [
+   [
+    "What is GEO?",
+    "Generative engine optimisation: making your pages easy for AI search tools such as ChatGPT, Perplexity and Google’s AI features to find, trust and quote."
+   ],
+   [
+    "Is this GEO course free?",
+    "Yes, free and without sign-up. Three short lessons and a quiz."
+   ],
+   [
+    "Does GEO replace SEO?",
+    "No. It builds on it. Pages still need to be crawlable and indexed; GEO is about being clear, credible and quotable once they are."
+   ]
+  ]
+ }
+]

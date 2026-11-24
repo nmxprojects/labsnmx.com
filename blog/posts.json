@@ -1,7 +1,26 @@
 {
- "updated": "2026-11-22",
+ "updated": "2026-11-24",
  "site": "https://labsnmx.com",
  "posts": [
+  {
+   "slug": "blogging-is-dead-why-are-you-reading-this",
+   "title": "Blogging is dead. So why are you still reading this?",
+   "url": "https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/",
+   "date": "2026-11-24",
+   "dek": "Two-thirds of Google searches now end without a click, and AI answers have eaten the “what is” article whole. We went through the studies. Generic blogs are dying. Blogs with a person, a test and an opinion behind them are doing fine, and the difference is learnable.",
+   "takeaways": [
+    "When Google shows an AI summary, people click a normal result 8% of the time instead of 15%, and about 68% of US Google searches now end with no click at all.",
+    "What died is the generic article: definitions, reworded listicles and posts written for search engines rather than people. AI answers those for free.",
+    "What still gets read has something a summary can’t copy: a real test, a number someone measured, a named person with an opinion, or curation you trust.",
+    "The fix for a brand blog is fewer glossary posts, more first-hand work, an owned audience (email and notifications), and measuring mentions and branded search, not just clicks."
+   ],
+   "category": "Growth playbook",
+   "track": "growth",
+   "author": "Neeraj",
+   "read_min": 7,
+   "image": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg",
+   "thumb": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg"
+  },
   {
    "slug": "custom-brand-typefaces-india",
    "title": "Custom brand typefaces in India: why apps commission their own fonts",

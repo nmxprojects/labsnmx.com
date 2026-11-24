@@ -6,7 +6,17 @@
   <atom:link href="https://labsnmx.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
   <description>AI and creative tools, advertising, branding and platform growth for Indian brands, from NMX Labs, Gurugram.</description>
   <language>en-IN</language>
-  <lastBuildDate>Sun, 22 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <lastBuildDate>Tue, 24 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <item>
+    <title>Blogging is dead. So why are you still reading this?</title>
+    <link>https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg" length="69020" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/</guid>
+    <category>Growth playbook</category>
+    <pubDate>Tue, 24 Nov 2026 09:00:00 +0530</pubDate>
+    <description>Two-thirds of Google searches now end without a click, and AI answers have eaten the “what is” article whole. We went through the studies. Generic blogs are dying. Blogs with a person, a test and an opinion behind them are doing fine, and the difference is learnable.</description>
+  </item>
   <item>
     <title>Custom brand typefaces in India: why apps commission their own fonts</title>
     <link>https://labsnmx.com/blog/custom-brand-typefaces-india/</link>
