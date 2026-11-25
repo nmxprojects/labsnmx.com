@@ -1,19 +1,13 @@
-/* NMX Labs engage layer (v7, 24 Nov 2026). Loaded by /assets/nmx.js on every page.
-   v7: traffic source classification (Organic Search, Paid Search, Social, Direct, Referral, Unknown) for every visit,
-   sent with page views, notification sign-ups, enquiries and email sign-ups. Still holds no keys: nmx.js is untouched.
-   v6: the reading prompt is a half-screen sheet with a ringing bell and a rotating, slightly cheeky line.
-   - Browser notifications (standard Web Push with your own VAPID key, LaraPush-style, self-hosted, free)
-     v5/v6: "Follow" button instead of a bare bell, a small prompt once a reader is a few lines into a post, an
-     end-of-post card, instant confirmation (the slow parts finish in the background), a test notification to
-     confirm delivery, and step-by-step fixes when the phone or browser is blocking notifications.
-   - "Ask NMX Labs" assistant: instant answers from the studio facts below, Google Gemini (free tier) through your
-     Apps Script backend for anything else, and a hand-off to a person (lead form or WhatsApp)
-   - Saved posts (stored in the reader's browser, readable offline), installable app (PWA)
-   - First-party visitor statistics sent to your Google Sheet (respects Do Not Track / Global Privacy Control)
-   - v5: "Learn" and "Play" links in the menu (until scripts/build.py writes them into every page)
-   Reads BACKEND_URL and VAPID_PUBLIC_KEY from /assets/nmx.js (window.NMX_CFG). This file holds no keys, so it can be
-   replaced without touching your settings. Without them the Follow button stays hidden and the assistant answers from
-   the studio facts only. */
+/* NMX Labs engage layer (v9, 26 Nov 2026). Loaded by /assets/nmx.js on every page.
+   - Browser notifications (standard Web Push, self-hosted, free): a "Follow" button, a small prompt once a reader is a
+     few lines into a post, an end-of-post card, a test notification and step-by-step fixes when notifications are blocked.
+   - "Ask NMX Labs" assistant: instant answers from the studio facts below, an AI answer for anything else, and a hand-off
+     to a person (lead form or WhatsApp).
+   - Saved posts (kept in the reader's browser, readable offline) and the installable app.
+   - First-party visit statistics (respects Do Not Track and Global Privacy Control; no cookies, no IP address).
+   - v9: traffic sources in plain English ("Instagram · Meta ads · Instagram Stories"), ad placement from utm_term or
+     utm_content, the in-app browser by name, and /assets/curate.js (picks by country, the personalise sheet).
+   Reads its settings from /assets/nmx.js (window.NMX_CFG). This file holds no keys, so it can be replaced on its own. */
 (function () {
   'use strict';
   if (window.NMX_ENGAGE_LOADED) return; window.NMX_ENGAGE_LOADED = true;
@@ -50,7 +44,13 @@
   var IPADOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
   var U = (function () {
     var br = 'Other', os = 'Other', dev = 'Desktop';
-    if (/FBAN|FBAV|Instagram|Line\/|; wv\)/.test(UAS)) br = 'In-app browser';
+    if (/Instagram/.test(UAS)) br = 'Instagram in-app browser';
+    else if (/FBAN|FBAV|FB_IAB/.test(UAS)) br = 'Facebook in-app browser';
+    else if (/LinkedInApp/.test(UAS)) br = 'LinkedIn in-app browser';
+    else if (/GSA\//.test(UAS)) br = 'Google app in-app browser';
+    else if (/Line\//.test(UAS)) br = 'LINE in-app browser';
+    else if (/Snapchat/.test(UAS)) br = 'Snapchat in-app browser';
+    else if (/; wv\)/.test(UAS)) br = 'Android app in-app browser';
     else if (/Edg\/|EdgA\//.test(UAS)) br = 'Edge'; else if (/OPR\/|Opera/.test(UAS)) br = 'Opera';
     else if (/SamsungBrowser/.test(UAS)) br = 'Samsung Internet'; else if (/Firefox\/|FxiOS/.test(UAS)) br = 'Firefox';
     else if (/CriOS|Chrome\//.test(UAS)) br = 'Chrome'; else if (/Safari\//.test(UAS)) br = 'Safari';
@@ -84,75 +84,138 @@
   var qs = new URLSearchParams(location.search);
   var refHost = ''; try { var rh = doc.referrer ? new URL(doc.referrer).hostname.replace(/^www\./, '') : ''; if (rh && rh !== location.hostname.replace(/^www\./, '')) refHost = rh; } catch (e) {}
 
-  /* =========================================================== v7: traffic source classification */
-  // v7: Traffic source classification. Same rules in engage.js (browser) and Code-Blog.gs (Sheet), so both agree.
-  // Six classes: Organic Search, Paid Search, Social, Direct, Referral, Unknown. "d" is the detail, e.g. "google / cpc".
-  // o = { ref: referring host, us: utm_source, um: utm_medium, click: { g: Google Ads id, m: Microsoft Ads id, f: fbclid, s: other social id },
-  //       app: in-app browser name, internal: true when the referrer is this site }
+  /* =========================================================== traffic sources */
+  /* ---- v9 traffic source classification: the same code runs on the site, in the backend and on the dashboard ----
+     Six classes (Organic Search, Paid Search, Social, Direct, Referral, Unknown) and a plain-English detail, for example
+     "Instagram · Meta ads · Instagram Stories", "Audience Network (Meta partner apps) · Meta ads", "Google app (Search or Discover)".
+     o = { ref, us: utm_source, um: utm_medium, ct: utm_content, ut: utm_term, click: { g, m, f, s }, app, internal } */
+  var NMX_SRC = { fb: 'Facebook', facebook: 'Facebook', ig: 'Instagram', instagram: 'Instagram', insta: 'Instagram', an: 'Audience Network (Meta partner apps)',
+    msg: 'Messenger', messenger: 'Messenger', wa: 'WhatsApp', whatsapp: 'WhatsApp', th: 'Threads', threads: 'Threads', meta: 'Meta', google: 'Google', bing: 'Bing',
+    yahoo: 'Yahoo', duckduckgo: 'DuckDuckGo', ddg: 'DuckDuckGo', youtube: 'YouTube', yt: 'YouTube', linkedin: 'LinkedIn', li: 'LinkedIn', lnkd: 'LinkedIn',
+    x: 'X (Twitter)', twitter: 'X (Twitter)', pinterest: 'Pinterest', reddit: 'Reddit', quora: 'Quora', telegram: 'Telegram', tg: 'Telegram', tiktok: 'TikTok',
+    snapchat: 'Snapchat', newsletter: 'Email newsletter', email: 'Email', push: 'Browser notification', pwa: 'Installed app', chatgpt: 'ChatGPT', openai: 'ChatGPT',
+    perplexity: 'Perplexity', claude: 'Claude', gemini: 'Gemini', copilot: 'Copilot', deepseek: 'DeepSeek', grok: 'Grok', sharechat: 'ShareChat', discord: 'Discord' };
+  var NMX_HOSTS = [[/^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$/, 'Google app (Search or Discover)'], [/^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com)$/, 'Gmail'],
+    [/^((m|www)\.)?google\.[a-z.]+$/, 'Google Search'], [/(^|\.)bing\.com$/, 'Bing'], [/duckduckgo\.com$/, 'DuckDuckGo'], [/(^|\.)yahoo\.(com|co\.jp)$/, 'Yahoo'],
+    [/^(l\.|lm\.|m\.|web\.)?facebook\.com$|^fb\.(com|me)$|^com\.facebook\.(katana|lite)$/, 'Facebook'], [/^(l\.)?instagram\.com$|^com\.instagram\.android$/, 'Instagram'],
+    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
+    [/linkedin\.com$|^lnkd\.in$|^com\.linkedin\.android$/, 'LinkedIn'], [/^(t\.co|twitter\.com|x\.com|com\.twitter\.android)$/, 'X (Twitter)'],
+    [/youtube\.com$|^youtu\.be$|^com\.google\.android\.youtube$/, 'YouTube'], [/^(chatgpt\.com|chat\.openai\.com|openai\.com)$/, 'ChatGPT'], [/perplexity\.ai$/, 'Perplexity'],
+    [/^claude\.ai$/, 'Claude'], [/^gemini\.google\.com$/, 'Gemini'], [/copilot\.(microsoft\.)?com$/, 'Copilot'], [/deepseek\.com$/, 'DeepSeek'], [/^grok\.com$/, 'Grok'],
+    [/outlook\.(live|office|office365)\.com$/, 'Outlook'], [/pinterest\.|^pin\.it$/, 'Pinterest'], [/reddit\.com$|^redd\.it$/, 'Reddit'], [/^(t\.me|telegram\.org|org\.telegram\.messenger)$/, 'Telegram'],
+    [/quora\.com$/, 'Quora'], [/medium\.com$/, 'Medium'], [/behance\.net$/, 'Behance'], [/dribbble\.com$/, 'Dribbble']];
+  function nmxHostName(h) { h = String(h || '').toLowerCase().replace(/^www\./, ''); for (var i = 0; i < NMX_HOSTS.length; i++) if (NMX_HOSTS[i][0].test(h)) return NMX_HOSTS[i][1]; return h; }
+  function nmxPlacement(s) {
+    s = String(s || '').trim(); if (!s || /^\{\{.*\}\}$/.test(s)) return '';
+    var k = s.toLowerCase().replace(/[\s-]+/g, '_');
+    var fixed = { facebook_mobile_feed: 'Facebook feed', facebook_desktop_feed: 'Facebook feed (desktop)', instagram_feed: 'Instagram feed', instagram_stories: 'Instagram Stories',
+      instagram_reels: 'Instagram Reels', instagram_explore: 'Instagram Explore', instagram_explore_grid_home: 'Instagram Explore', instagram_profile_feed: 'Instagram profile',
+      facebook_stories: 'Facebook Stories', facebook_mobile_reels: 'Facebook Reels', facebook_reels: 'Facebook Reels', facebook_marketplace: 'Facebook Marketplace',
+      facebook_right_column: 'Facebook right column', facebook_instream_video: 'Facebook in-stream video', facebook_search: 'Facebook search results',
+      messenger_inbox: 'Messenger inbox', messenger_stories: 'Messenger Stories', threads_feed: 'Threads feed', others: 'other placements', an_classic: 'Audience Network apps' };
+    if (fixed[k]) return fixed[k];
+    if (/^(facebook|instagram|messenger|threads|whatsapp|audience_network|an)_/.test(k)) {
+      var w = k.replace(/^an_/, 'audience_network_').split('_').filter(function (x) { return x && x !== 'mobile'; });
+      var brand = { facebook: 'Facebook', instagram: 'Instagram', messenger: 'Messenger', threads: 'Threads', whatsapp: 'WhatsApp', audience: 'Audience Network' }[w[0]] || w[0];
+      return (brand + ' ' + w.slice(w[0] === 'audience' ? 2 : 1).join(' ')).trim().slice(0, 40);
+    }
+    return '';
+  }
   function classifyTraffic(o) {
     o = o || {};
-    var ref = String(o.ref || '').toLowerCase().trim().replace(/^www\./, ''), us = String(o.us || '').toLowerCase().trim(), um = String(o.um || '').toLowerCase().trim(), k = o.click || {};
+    var ref = String(o.ref || '').toLowerCase().trim().replace(/^www\./, ''), usRaw = String(o.us || '').trim(), us = usRaw.toLowerCase(), um = String(o.um || '').toLowerCase().trim(), k = o.click || {};
     var AI = /^(chatgpt\.com|chat\.openai\.com|openai\.com|perplexity\.ai|claude\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|copilot\.com|you\.com|meta\.ai|poe\.com|chat\.deepseek\.com|deepseek\.com|grok\.com|phind\.com|chat\.mistral\.ai)$/;
     var AI_SRC = /^(chatgpt|openai|perplexity|claude|gemini|copilot|deepseek|grok|meta\.ai)/;
     var MAIL = /^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com|outlook\.(live|office|office365)\.com|mail\.yahoo\.com|mail\.proton\.me|mail\.zoho\.(com|in)|mail\.aol\.com|mail\.rediff\.com|webmail\..+)$/;
     var SEARCH = /^((m|www)\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$|^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$|^(cn\.)?bing\.com$|^([a-z]{2}\.)?search\.yahoo\.com$|^yahoo\.co\.jp$|^((html|lite)\.)?duckduckgo\.com$|^yandex\.[a-z.]+$|^baidu\.com$|^ecosia\.org$|^search\.brave\.com$|^startpage\.com$|^qwant\.com$|^(search\.)?naver\.com$|^seznam\.cz$|^sogou\.com$|^so\.com$|^ask\.com$|^search\.aol\.com$|^kagi\.com$/;
     var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
-    var SOC_SRC = /^(facebook|fb|instagram|ig|insta|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
+    var SOC_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|th|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
+    var META_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|wa|whatsapp|th|threads|meta)$/;
     var SEARCH_SRC = /^(google|bing|yahoo|duckduckgo|ddg|yandex|baidu|ecosia|brave|naver|msn|microsoft|adwords|googleads|google[-_ ]?ads|bing[-_ ]?ads|microsoft[-_ ]?ads)$/;
     var PAID = /^(cpc|ppc|paid|paidsearch|paid[-_ ]?search|sem|cpm|cpv|cpa|retargeting|remarketing|display|paid[-_ ].*)$|cp[cmva]/;
     var SOC_MED = /^(social|social[-_ ]?media|social[-_ ]?network|sm|soc|organic[-_ ]?social|paid[-_ ]?social|social[-_ ]?paid|social[-_ ]?ads?)$/;
     var MAIL_MED = /^(e[-_ ]?mail|newsletter|mail|edm|mailer)$/;
     var PUSH_MED = /^(push|web[-_ ]?push|notification|notifications|browser[-_ ]?push)$/;
     var REF_MED = /^(referral|affiliate|affiliates|partner|partners|link|links|backlink)$/;
-    function d(a, b) { return [a, b].filter(function (x) { return !!x; }).join(' / ').slice(0, 80); }
-    if (k.g || k.m) return { c: 'Paid Search', d: us ? d(us, um || 'cpc') : (k.m ? 'bing / cpc' : 'google / cpc') };
+    var macro = /^\{\{.*\}\}$/.test(usRaw);
+    var sn = macro ? 'Meta (platform not passed)' : (NMX_SRC[us] || (us ? nmxHostName(us) : ''));
+    var pl = nmxPlacement(o.ut) || nmxPlacement(o.ct);
+    function out(c, parts) { return { c: c, d: parts.filter(function (x) { return !!x; }).join(' · ').slice(0, 80), sn: (parts[0] || '').slice(0, 60), pl: pl }; }
+    var paidSoc = /paid|ads?$|cp[cmva]/.test(um);
+    if (k.g || k.m) return out('Paid Search', [us ? sn : (k.m ? 'Bing' : 'Google'), k.m && !us ? 'Microsoft Ads' : (us && !SEARCH_SRC.test(us) ? 'paid' : 'Google Ads')]);
     if (us || um) {
-      if (AI_SRC.test(us) || AI.test(us.replace(/^www\./, ''))) return { c: 'Referral', d: 'AI answer · ' + us };
-      var social = SOC_SRC.test(us) || SOCIAL.test(us), search = SEARCH_SRC.test(us) || SEARCH.test(us), paid = PAID.test(um);
-      if (paid && (search || /search/.test(um))) return { c: 'Paid Search', d: d(us, um) };
-      if (SOC_MED.test(um) || social) return { c: 'Social', d: d(us, um) };
-      if (um === 'organic' || (search && !paid)) return { c: 'Organic Search', d: d(us, um || 'organic') };
-      if (MAIL_MED.test(um) || us === 'newsletter') return { c: 'Referral', d: d(us, um || 'email') };
-      if (PUSH_MED.test(um)) return { c: 'Referral', d: d(us || 'push', um) };
-      if (REF_MED.test(um)) return { c: 'Referral', d: d(us, um) };
-      return { c: 'Unknown', d: d(us, um) };
+      if (AI_SRC.test(us) || AI.test(us.replace(/^www\./, ''))) return out('Referral', ['AI answer', NMX_SRC[us.split('.')[0]] || nmxHostName(us)]);
+      if (us === 'pwa') return out('Direct', ['Installed app (home-screen icon)']);
+      var social = macro || SOC_SRC.test(us) || SOCIAL.test(us), search = SEARCH_SRC.test(us) || SEARCH.test(us), paid = PAID.test(um);
+      if (paid && (search || /search/.test(um))) return out('Paid Search', [sn, /^(google|googleads|adwords)/.test(us) ? 'Google Ads' : /^(bing|microsoft)/.test(us) ? 'Microsoft Ads' : 'paid search']);
+      if (SOC_MED.test(um) || social) {
+        if (macro) return out('Social', ['Meta ads', 'platform not passed', pl]);
+        return out('Social', [sn, paidSoc ? (META_SRC.test(us) ? 'Meta ads' : 'paid ad') : (um ? 'organic post' : ''), pl]);
+      }
+      if (um === 'organic' || (search && !paid)) return out('Organic Search', [sn || 'Search', 'organic']);
+      if (MAIL_MED.test(um) || us === 'newsletter') return out('Referral', [us === 'newsletter' || !us ? 'Email newsletter' : sn, us === 'newsletter' ? '' : 'email']);
+      if (PUSH_MED.test(um)) return out('Referral', ['Browser notification', us && us !== 'push' ? sn : '']);
+      if (REF_MED.test(um)) return out('Referral', [sn, 'link']);
+      return out('Unknown', [sn || 'Tagged link', um]);
     }
-    if (k.f) return { c: 'Social', d: ref || 'facebook / instagram' };
-    if (k.s) return { c: 'Social', d: ref || String(k.s) };
+    if (k.f) return out('Social', [ref ? nmxHostName(ref) : 'Facebook or Instagram', 'link with a Meta click ID']);
+    if (k.s) return out('Social', [ref ? nmxHostName(ref) : (NMX_SRC[String(k.s)] || String(k.s)), 'link with a click ID']);
     if (ref) {
-      if (AI.test(ref)) return { c: 'Referral', d: 'AI answer · ' + ref };
-      if (MAIL.test(ref)) return { c: 'Referral', d: 'email · ' + ref };
-      if (SEARCH.test(ref)) return { c: 'Organic Search', d: ref };
-      if (SOCIAL.test(ref)) return { c: 'Social', d: ref };
-      return { c: 'Referral', d: ref };
+      if (AI.test(ref)) return out('Referral', ['AI answer', nmxHostName(ref)]);
+      if (MAIL.test(ref)) return out('Referral', ['Email', nmxHostName(ref)]);
+      if (SEARCH.test(ref)) return out('Organic Search', [nmxHostName(ref)]);
+      if (SOCIAL.test(ref)) return out('Social', [nmxHostName(ref), 'organic post or profile link']);
+      return out('Referral', [nmxHostName(ref)]);
     }
-    if (o.app) return { c: 'Social', d: String(o.app).toLowerCase() + ' app' };
-    if (o.internal) return { c: 'Unknown', d: 'came from another page of the site' };
-    return { c: 'Direct', d: '' };
+    if (o.app) {
+      var A = { instagram: 'Instagram app (bio link, story or DM)', facebook: 'Facebook app (post, story or Messenger)', linkedin: 'LinkedIn app', snapchat: 'Snapchat app',
+        pinterest: 'Pinterest app', tiktok: 'TikTok app', x: 'X (Twitter) app', gmail: 'Gmail app', 'google app': 'Google app (Search or Discover)' }[String(o.app).toLowerCase()];
+      return out('Social', [A || String(o.app) + ' app']);
+    }
+    if (o.internal) return out('Unknown', ['Inside the site (an earlier visit timed out)']);
+    return out('Direct', ['']);
+  }
+  // Older rows were saved with short codes ("an / paid_social", "google.com", "instagram app"). This turns them into the new names.
+  function relabelTraffic(c, d) {
+    d = String(d || ''); c = String(c || '');
+    if (!d || /^(Inside the site|Installed app|Email newsletter|Browser notification|Meta ads · )/.test(d)) return d;
+    var m = /^(.+?) \/ (.+)$/.exec(d);
+    if (m) return classifyTraffic({ us: m[1], um: m[2] }).d || d;
+    var a = /^(AI answer|email) · (.+)$/.exec(d);
+    if (a) return (a[1] === 'email' ? 'Email' : 'AI answer') + ' · ' + nmxHostName(a[2]);
+    if (d === 'came from another page of the site') return 'Inside the site (an earlier visit timed out)';
+    if (d === 'facebook / instagram') return 'Facebook or Instagram · link with a Meta click ID';
+    var app = /^(\w[\w ]*) app$/.exec(d);
+    if (app) return classifyTraffic({ app: app[1] }).d;
+    if (/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(d)) { var n = nmxHostName(d); return n === d ? d : n + (c === 'Social' ? ' · organic post or profile link' : ''); }
+    return d;
   }
   var CLICK = { g: qs.get('gclid') || qs.get('gbraid') || qs.get('wbraid') || qs.get('gad_source') || qs.get('dclid') ? 1 : 0, m: qs.get('msclkid') ? 1 : 0, f: qs.get('fbclid') ? 1 : 0,
     s: qs.get('ttclid') ? 'tiktok' : qs.get('twclid') ? 'x' : qs.get('li_fat_id') ? 'linkedin' : (qs.get('igshid') || qs.get('igsh')) ? 'instagram' : '' };
   var APP = /Instagram/.test(UAS) ? 'Instagram' : /FBAN|FBAV|FB_IAB/.test(UAS) ? 'Facebook' : /LinkedInApp/.test(UAS) ? 'LinkedIn' : /Snapchat/.test(UAS) ? 'Snapchat'
-    : /Pinterest/.test(UAS) ? 'Pinterest' : /musical_ly|TikTok|BytedanceWebview/.test(UAS) ? 'TikTok' : /Twitter/.test(UAS) ? 'X' : '';
+    : /Pinterest/.test(UAS) ? 'Pinterest' : /musical_ly|TikTok|BytedanceWebview/.test(UAS) ? 'TikTok' : /Twitter/.test(UAS) ? 'X' : /GSA\//.test(UAS) ? 'Google app' : '';
   var INTERNAL = false; try { INTERNAL = !!doc.referrer && new URL(doc.referrer).hostname.replace(/^www\./, '') === location.hostname.replace(/^www\./, ''); } catch (e) {}
   var TOUCH = !!(refHost || qs.get('utm_source') || qs.get('utm_medium') || CLICK.g || CLICK.m || CLICK.f || CLICK.s);
 
   var SES = (function () {
     var s = readJSON('nmx-ses', null), now = Date.now(), fresh = !s || now - s.t > 30 * 60 * 1000, t;
-    if (fresh) s = { id: rid(), t: now, ref: refHost, us: '', um: '', uc: '' };
-    if (qs.get('utm_source')) { s.us = qs.get('utm_source'); s.um = qs.get('utm_medium') || ''; s.uc = qs.get('utm_campaign') || ''; }
+    if (fresh) s = { id: rid(), t: now, ref: refHost, us: '', um: '', uc: '', ct: '', ut: '' };
+    if (qs.get('utm_source')) { s.us = qs.get('utm_source'); s.um = qs.get('utm_medium') || ''; s.uc = qs.get('utm_campaign') || ''; s.ct = qs.get('utm_content') || ''; s.ut = qs.get('utm_term') || ''; }
     // A new campaign or outside link re-attributes the visit; clicking around the site keeps the source it arrived with.
-    if (TOUCH) t = classifyTraffic({ ref: refHost, us: qs.get('utm_source') || '', um: qs.get('utm_medium') || '', click: CLICK, app: APP });
+    if (TOUCH) t = classifyTraffic({ ref: refHost, us: qs.get('utm_source') || '', um: qs.get('utm_medium') || '', ct: qs.get('utm_content') || '', ut: qs.get('utm_term') || '', click: CLICK, app: APP });
     else if (fresh) t = classifyTraffic({ app: APP, internal: INTERNAL });
-    else if (!s.tc) t = classifyTraffic({ ref: s.ref, us: s.us, um: s.um });
-    if (t) { s.tc = t.c; s.td = t.d; }
+    else if (!s.tc) t = classifyTraffic({ ref: s.ref, us: s.us, um: s.um, ct: s.ct, ut: s.ut });
+    else if (s.v9 !== 1) { s.td = relabelTraffic(s.tc, s.td); s.v9 = 1; }
+    if (t) { s.tc = t.c; s.td = t.d; s.sn = t.sn; s.pl = t.pl; s.v9 = 1; }
     s.t = now; store('nmx-ses', JSON.stringify(s));
     if (!read('nmx-first')) store('nmx-first', JSON.stringify({ ref: refHost, us: s.us, um: s.um, uc: s.uc, page: path, at: today(), tc: s.tc, td: s.td }));
     return s;
   })();
   var FIRST = readJSON('nmx-first', {});
   if (!FIRST.tc) { var tf = classifyTraffic({ ref: FIRST.ref, us: FIRST.us, um: FIRST.um }); FIRST.tc = tf.c; FIRST.td = tf.d; if (read('nmx-first')) store('nmx-first', JSON.stringify(FIRST)); }
-  window.NMX_TRAFFIC = { now: SES.tc, detail: SES.td || '', first: FIRST.tc, firstDetail: FIRST.td || '' };
+  else if (FIRST.td && FIRST.v9 !== 1) { FIRST.td = relabelTraffic(FIRST.tc, FIRST.td); FIRST.v9 = 1; store('nmx-first', JSON.stringify(FIRST)); }
+  window.NMX_TRAFFIC = { now: SES.tc, detail: SES.td || '', first: FIRST.tc, firstDetail: FIRST.td || '', source: SES.sn || '', placement: SES.pl || '' };
+  window.NMX_VISITOR = { vid: VID, country: COUNTRY, tz: TZ, dev: U.dev, os: U.os, br: U.br, app: APP };
 
   // Email sign-ups are sent by /assets/nmx.js (which holds your keys and is left untouched). This adds the traffic
   // source to that one request on its way out, and to nothing else.
@@ -171,16 +234,19 @@
     wrapped.nmxTraffic = true; window.fetch = wrapped;
   })();
 
-  /* =========================================================== first-party statistics -> Google Sheet */
+  /* =========================================================== first-party statistics */
   function logEvent(type, detail) {
     if (!READY || BOT || (NO_TRACK && type === 'pageview')) return;
     var body = new URLSearchParams({ action: 'event', t: type, vid: VID, sid: SES.id, path: path.slice(0, 200), title: doc.title.slice(0, 150),
       ref: type === 'pageview' ? refHost : '', us: SES.us || '', um: SES.um || '', uc: SES.uc || '', dev: U.dev, br: U.br, os: U.os, co: COUNTRY,
-      lang: navigator.language || '', d: String(detail || '').slice(0, 200), tc: SES.tc || '', td: SES.td || '' });
+      lang: navigator.language || '', d: String(detail || '').slice(0, 200), tc: SES.tc || '', td: SES.td || '',
+      sn: SES.sn || '', pl: SES.pl || '', ap: APP || '', ct: SES.ct || '', ut: SES.ut || '' });
     try { if (navigator.sendBeacon && navigator.sendBeacon(CFG.BACKEND_URL, body)) return; } catch (e) {}
     fetch(CFG.BACKEND_URL, { method: 'POST', body: body, mode: 'no-cors', keepalive: true }).catch(function () {});
   }
   window.nmxEvent = logEvent;
+  // v9: picks by country, the personalise sheet and reading interests.
+  if (!window.NMX_NO_CURATE && !/\/amp\/?$/.test(path)) { var cj = doc.createElement('script'); cj.src = '/assets/curate.js?v=9'; cj.defer = true; doc.head.appendChild(cj); }
   if (doc.readyState === 'complete') setTimeout(function () { logEvent('pageview'); }, 600);
   else addEventListener('load', function () { setTimeout(function () { logEvent('pageview'); }, 600); });
 
@@ -222,8 +288,8 @@
   var PUSH_API = SW && 'PushManager' in window && 'Notification' in window;
   var PUSH_ON = READY && VAPID_OK;
   // iPhone/iPad: Safari only allows web push for sites added to the Home Screen (iOS 16.4+).
-  var IOS_NEEDS_INSTALL = PUSH_ON && IOS && !STANDALONE && U.br !== 'In-app browser';
-  var INAPP = U.br === 'In-app browser';
+  var IOS_NEEDS_INSTALL = PUSH_ON && IOS && !STANDALONE && !/in-app browser$/.test(U.br);
+  var INAPP = /in-app browser$/.test(U.br);
   var SHOW_FOLLOW = PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL || INAPP);
 
   // Phone brand, for brand-specific fixes (Chrome on Android tells pages the model when asked).
@@ -375,9 +441,10 @@
     return { action: 'push_subscribe', endpoint: j.endpoint, p256dh: k.p256dh || '', auth: k.auth || '', topics: topics,
       old_endpoint: oldEndpoint || '', br: U.br, os: U.os, dev: U.dev, co: COUNTRY, tz: TZ, lang: navigator.language || '',
       page: path, ref: FIRST.ref || SES.ref || '', us: FIRST.us || SES.us || '', um: FIRST.um || SES.um || '', uc: FIRST.uc || SES.uc || '',
-      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '', tc: FIRST.tc || SES.tc || '', td: FIRST.td || SES.td || '' };
+      vid: VID, email: read('nmx-sub-email') || '', standalone: STANDALONE ? '1' : '', tc: FIRST.tc || SES.tc || '', td: FIRST.td || SES.td || '',
+      sn: SES.sn || '', pl: SES.pl || '', ct: SES.ct || '', ut: SES.ut || '' };
   }
-  // Saving to the Google Sheet can take a few seconds (Apps Script), so it runs in the background with retries.
+  // Saving can take a few seconds, so it runs in the background with retries.
   // If the reader leaves first, the browser still delivers it (sendBeacon), and the next page view retries anyway.
   function queueSave(params) {
     store('nmx-push-pending', JSON.stringify(params));
@@ -388,6 +455,7 @@
         var st = pushState() || {};
         st.id = d.id || st.id; st.topics = d.topics || params.topics; st.endpoint = params.endpoint; st.seen = today(); delete st.pending;
         setPushState(st); store('nmx-push-pending', null);
+        try { doc.dispatchEvent(new CustomEvent('nmx:push-saved', { detail: { id: st.id } })); } catch (e) {}   // v9: curate.js offers topics
       }).catch(function () { if (tries < 3) setTimeout(attempt, tries === 1 ? 4000 : 15000); });
     })();
   }

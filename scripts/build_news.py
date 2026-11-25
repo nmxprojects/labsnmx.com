@@ -151,7 +151,9 @@ def item_card(x, with_id=True, lead=False):
     links = [f'<a href="{esc(x["url"])}" target="_blank" rel="noopener">Source: {esc(x["source"])}</a>']
     if x.get('deep'): links.append(f'<a href="{esc(x["deep"])}">Our deep dive</a>')
     idattr = ' id="' + esc(x['id']) + '"' if with_id else ''
-    return (f'<article class="nw-item nw-item--{TONE[x["topic"]]}{" nw-item--lead" if lead else ""}"{idattr}>'
+    reg = {'India': 'in', 'UK': 'uk', 'US': 'us', 'Middle East': 'me', 'Gulf': 'me', 'UAE': 'me'}.get(str(x.get('region') or ''), 'global')   # v9: for picks by country
+    if x.get('youtube'): links.append(f'<a href="https://www.youtube.com/watch?v={esc(x["youtube"])}" target="_blank" rel="noopener">Watch on YouTube</a>')   # v9: optional "youtube": "<video id>"
+    return (f'<article class="nw-item nw-item--{TONE[x["topic"]]}{" nw-item--lead" if lead else ""}"{idattr} data-region="{reg}" data-title="{esc(x["title"])}">'
             f'<p class="nw-meta"><span class="nw-tag">{esc(x["topic"])}</span><span>{esc(x.get("tag") or "")}{" · " + esc(x["region"]) if x.get("region") else ""}</span><time datetime="{x["date"]}">{esc(label(x))}</time></p>'
             f'<h3>{esc(x["title"])}</h3><p>{esc(x["summary"])}</p>'
             f'<p class="nw-take"><strong>NMX take:</strong> {esc(x["take"])}</p>'

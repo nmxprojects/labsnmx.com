@@ -9,6 +9,7 @@ Disallow: /content/
 Disallow: /tools/
 Disallow: /dashboard/
 Disallow: /unsubscribe/
+Disallow: /email-previews/
 
 # AI search and answer engines (explicitly welcome)
 User-agent: OAI-SearchBot
@@ -31,5 +32,7 @@ Disallow: /content/
 Disallow: /tools/
 Disallow: /dashboard/
 Disallow: /unsubscribe/
+Disallow: /email-previews/
 
 Sitemap: https://labsnmx.com/sitemap.xml
+Sitemap: https://labsnmx.com/sitemap_index.xml

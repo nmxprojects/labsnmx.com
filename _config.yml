@@ -1,0 +1,16 @@
+# Keeps working files out of the published website. They stay in the repository; they just aren't served on labsnmx.com.
+# (Pages, images, scripts the browser uses and the /content/ data are published as before.)
+exclude:
+  - Code-Blog.gs
+  - "*.gs"
+  - README.md
+  - README-UPLOAD.txt
+  - UPLOAD-NOTES.md
+  - "UPLOAD-NOTES*.md"
+  - EDITORIAL-CALENDAR.md
+  - content/EDITORIAL-CALENDAR.md
+  - publish-scheduled.yml
+  - send-push.yml
+  - scripts
+  - _scheduled
+  - "Content Blog Creator.html"

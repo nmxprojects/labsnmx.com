@@ -30,6 +30,11 @@ v8: Services has its own page (/services/): every #services and /clients link on
 address. sitemap.xml never loses a page: it lists every indexable page actually in the repo (what GitHub Pages serves),
 keeps each page's previous lastmod, and reports anything it leaves out, and why, in the Actions run summary. The Videos page
 is built from content/videos.json (YouTube links, Google Drive links or uploaded files), made with Content Blog Creator.
+v9: the blog page is a bento grid with cover images (filters still work) and a "Most read this month" band; category and
+author pages use the same tiles; every post's "Related reading" becomes bento cards with covers, a YouTube tile and the
+month's most-read posts; posts and news carry a region tag so /assets/curate.js can pick posts for each reader's country;
+sitemap_index.xml with section sitemaps (pages, posts, learn, Google News, video); 404.html and redirect pages; IndexNow.
+All of it lives in scripts/build_v9.py: if that file is missing or fails, the v8 behaviour runs.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -39,6 +44,11 @@ try:
 except Exception as _e:
     build_learn = None
     print('Learn/Play skipped: ' + str(_e))
+try:
+    import build_v9    # v9: bento, most read, regions, YouTube tiles, sitemap index, 404. If it breaks, v8 behaviour runs.
+except Exception as _e:
+    build_v9 = None
+    print('v9 layer skipped: ' + str(_e))
 try:
     import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
 except Exception as _e:
@@ -225,7 +235,11 @@ def replace_list(s, items_html, ul_open_re=r'<ul class="post-list"[^>]*>'):
     return s[:m.end()] + '\n' + items_html + s[end:]
 
 def popular_html(published):
-    pops = [p for p in published if p.get('popular')][:5] or published[:5]
+    if build_v9 and build_v9.POPULAR['slugs']:                       # v9: real reader counts when we have them
+        by = {p['slug']: p for p in published}
+        pops = [by[x] for x in build_v9.POPULAR['slugs'] if x in by][:5]
+    else:
+        pops = [p for p in published if p.get('popular')][:5] or published[:5]
     return ''.join(f'<li><a href="/blog/{p["slug"]}/">{esc(p.get("short") or short_title(p["title"]))}</a></li>' for p in pops)
 
 def short_title(t):
@@ -236,8 +250,11 @@ def short_title(t):
 def build_blog_index(published, live_cats):
     s = rd('blog/index.html')
     s = re.sub(r'<nav class="cats" aria-label="Blog categories">.*?</nav>', lambda m: cats_nav(live_cats, None, True), s, count=1, flags=re.S)
-    s, _ = sub_once(r'<a class="feature" href=.*?</a>\n', feature(published[0]), s)
-    s = replace_list(s, ''.join(row(p) for p in published[1:]))
+    if V9_OK:                                                         # v9: most-read band + bento grid of every post
+        s = build_v9.blog_index(s, published, TODAY)
+    else:
+        s, _ = sub_once(r'<a class="feature" href=.*?</a>\n', feature(published[0]), s)
+        s = replace_list(s, ''.join(row(p) for p in published[1:]))
     ld = ',\n'.join(json.dumps({'@type': 'BlogPosting', 'headline': p['title'], 'url': f'{SITE}/blog/{p["slug"]}/',
                                 'datePublished': p['date'], 'dateModified': p['modified'],
                                 'image': f'{SITE}/assets/blog/{p["image"]}.jpg',
@@ -262,13 +279,14 @@ def build_category(slug, posts_in_cat, live_cats):
         wr(path, tpl)
     s = rd(path)
     s = re.sub(r'<nav class="cats" aria-label="Blog categories">.*?</nav>', lambda m: cats_nav(live_cats, slug), s, count=1, flags=re.S)
-    s = replace_list(s, ''.join(row(p) for p in posts_in_cat))
+    s = build_v9.listing(s, posts_in_cat, TODAY) if V9_OK else replace_list(s, ''.join(row(p) for p in posts_in_cat))
     wr(path, s)
 
 def build_author(slug, posts_by):
     path = f'blog/author/{slug}/index.html'
     if not os.path.exists(os.path.join(ROOT, path)): return
-    wr(path, replace_list(rd(path), ''.join(row(p) for p in posts_by)))
+    s = rd(path)
+    wr(path, build_v9.listing(s, posts_by, TODAY) if V9_OK else replace_list(s, ''.join(row(p) for p in posts_by)))
 
 def rail_for(p, published):
     same = [q for q in published if q['slug'] != p['slug'] and q['category'] == p['category']]
@@ -285,6 +303,9 @@ def build_post(p, published):
     s = re.sub(r'(<div class="byline">.*?)<time datetime="[^"]+">[^<]+</time>',
                lambda m: m.group(1) + f'<time datetime="{p["date"]}">{human(p["date"])}</time>', s, count=1, flags=re.S)
     s = replace_list(s, ''.join(tile(q) for q in rail_for(p, published)), r'<ul class="rail-track">')
+    if V9_OK:
+        try: s = build_v9.related(s, p, published)                     # v9: related reading as bento cards
+        except Exception as e: print(f'Related reading left as is on {p["slug"]}: {e}')
     if 'data-comments' not in s and os.path.exists(os.path.join(ROOT, 'scripts', 'comments-snippet.html')):
         s = s.replace('</article>\n', '</article>\n' + rd('scripts/comments-snippet.html').replace('{slug}', p['slug']), 1)
     wr(path, s)
@@ -492,7 +513,9 @@ def build_public_json(published):
         out['posts'].append({'slug': p['slug'], 'title': p['title'], 'url': f'{SITE}/blog/{p["slug"]}/', 'date': p['date'],
                              'dek': p['dek'], 'takeaways': p['takeaways'][:4], 'category': p['category_label'], 'track': p['track'],
                              'author': p['author_name'], 'read_min': p['read_min'],
-                             'image': f'{SITE}/assets/blog/{p["image"]}.jpg', 'thumb': f'{SITE}/assets/blog/{p["image"]}.jpg'})
+                             'image': f'{SITE}/assets/blog/{p["image"]}.jpg', 'thumb': f'{SITE}/assets/blog/{p["image"]}.jpg',
+                             'thumb_small': f'{SITE}/assets/blog/{p["image"]}-640.webp', 'regions': p.get('regions', ['global']),
+                             'most_read': (build_v9.pop_rank(p['slug']) if V9_OK else 0)})
     wr('blog/posts.json', json.dumps(out, ensure_ascii=False, indent=1) + '\n')
 
 # ------------------------------------------------------------------ v8: links, page discovery, sitemap that never loses pages, videos
@@ -589,6 +612,8 @@ def build_videos():
         if v.get('credit'):
             cap = '<figcaption>' + esc(v['credit']) + (f' <a href="{esc(v["credit_url"])}" target="_blank" rel="noopener">(source)</a>' if v.get('credit_url') else '') + '</figcaption>'
         more = f' <a href="{esc(v["related"])}" style="text-decoration:underline">{esc(v.get("related_label") or "Read our breakdown")}</a>' if v.get('related') else ''
+        if v.get('kind') == 'youtube':                                 # v9: a direct YouTube link under every YouTube video
+            more += f' <a href="https://www.youtube.com/watch?v={esc(v["id"])}" target="_blank" rel="noopener" style="text-decoration:underline">Watch on YouTube</a>'
         idattr = f' id="{esc(v["slug"])}"' if v.get('slug') else ''
         cards.append(f'<div{idattr}><figure class="video">\n  {video_frame(v)}\n  {cap}\n</figure><h2>{esc(v.get("title", ""))}</h2><p>{esc(v.get("description", ""))}{more}</p></div>')
     grid = '<section class="video-grid" aria-label="' + esc(data.get('label') or 'Videos') + '">\n' + ''.join(cards) + '\n</section>'
@@ -612,6 +637,7 @@ def build_videos():
 
 # ------------------------------------------------------------------ main
 TODAY = None
+V9_OK = False
 LESSON_LINKS = []
 WIRE_BAR = ''
 
@@ -620,6 +646,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--today', help='YYYY-MM-DD (default: today in India)')
     ap.add_argument('--check', action='store_true')
+    ap.add_argument('--fetch', action='store_true', help='v9: read reader counts for "Most read" (automatic on GitHub)')
     a = ap.parse_args()
     today = a.today or dt.datetime.now(IST).date().isoformat()
     posts = load()
@@ -639,6 +666,10 @@ def main():
                  and os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))]
     published.sort(key=lambda p: order[p['slug']]); published.sort(key=lambda p: p['date'], reverse=True)
     live_cats = {p['category'] for p in published}
+    global V9_OK
+    if build_v9:                                                       # v9: regions, reader counts, YouTube matches
+        try: build_v9.prepare(published, fetch=a.fetch or bool(os.environ.get('GITHUB_ACTIONS'))); V9_OK = True
+        except Exception as e: print('v9 layer skipped: ' + str(e))
     build_blog_index(published, live_cats)
     for c in CATEGORIES:
         if c in live_cats: build_category(c, [p for p in published if p['category'] == c], live_cats)
@@ -656,12 +687,26 @@ def main():
         except SystemExit: print('Learn/Play not rebuilt: fix content/lessons.json (see the message above).')
     LESSON_LINKS = [(f"/learn/{x['slug']}/", x['title']) for x in lessons]
     build_videos()                                                     # v8: Videos page from content/videos.json
+    if V9_OK:                                                          # v9: 404 page and redirect pages, before the footer pass
+        try: build_v9.redirects(); build_v9.page_404()
+        except Exception as e: print('404/redirects not rebuilt: ' + str(e))
     build_footers(published)
     build_feed(published)
     build_sitemap(published, live_cats)
+    if V9_OK:                                                          # v9: sitemap_index.xml + section sitemaps
+        try: print('v9 sitemaps: %d posts, %d pages, %d learn, %d news, %d videos' % build_v9.sitemaps(published, today))
+        except Exception as e: print('Section sitemaps not rebuilt: ' + str(e))
     build_html_sitemap(published, live_cats)
     build_public_json(published)
     build_llms(published, lessons, news)
+    if V9_OK:
+        CHANGED.extend(build_v9.WRITTEN)
+        fresh = [f'{SITE}/blog/{p["slug"]}/' for p in published if p['modified'] >= today or p['date'] >= today]
+        if fresh:
+            n = build_v9.indexnow(fresh + [f'{SITE}/blog/', f'{SITE}/', f'{SITE}/sitemap.xml'])
+            if n: print(f'IndexNow: told Bing and others about {n} addresses')
+        else: build_v9.indexnow([])                                     # keeps the key file in place
+        for note in build_v9.NOTES: print('v9: ' + note)
     print(f'{today}: {len(published)} posts live, {len(CHANGED)} files updated.')
 
 if __name__ == '__main__':

@@ -1,10 +1,115 @@
-/* NMX Labs dashboard (v7: traffic source classification on every chart and filter, and a "Latest blog post" card that
+/* NMX Labs dashboard (v9: plain-English traffic sources and notifications by topic or region. v7: traffic source classification on every chart and filter, and a "Latest blog post" card that
    sends a post by email and/or notification without doubling up on the automatic hourly sender).
    v6: lives at /dashboard/; sends newsletters, offers and updates by email and/or notification). Was v5: Signs in with ADMIN_KEY, loads row-level data from Code-Blog.gs v5 (admin op "raw") and
    counts everything in the browser, so filters and period changes are instant. With a v4 backend it falls back to the
    30-day summary (no filters). Holds no keys: BACKEND_URL and VAPID_PUBLIC_KEY come from /assets/nmx.js. */
 (function () {
   'use strict';
+  /* ---- v9 traffic source classification: the same code runs on the site, in the backend and on the dashboard ----
+     Six classes (Organic Search, Paid Search, Social, Direct, Referral, Unknown) and a plain-English detail, for example
+     "Instagram · Meta ads · Instagram Stories", "Audience Network (Meta partner apps) · Meta ads", "Google app (Search or Discover)".
+     o = { ref, us: utm_source, um: utm_medium, ct: utm_content, ut: utm_term, click: { g, m, f, s }, app, internal } */
+  var NMX_SRC = { fb: 'Facebook', facebook: 'Facebook', ig: 'Instagram', instagram: 'Instagram', insta: 'Instagram', an: 'Audience Network (Meta partner apps)',
+    msg: 'Messenger', messenger: 'Messenger', wa: 'WhatsApp', whatsapp: 'WhatsApp', th: 'Threads', threads: 'Threads', meta: 'Meta', google: 'Google', bing: 'Bing',
+    yahoo: 'Yahoo', duckduckgo: 'DuckDuckGo', ddg: 'DuckDuckGo', youtube: 'YouTube', yt: 'YouTube', linkedin: 'LinkedIn', li: 'LinkedIn', lnkd: 'LinkedIn',
+    x: 'X (Twitter)', twitter: 'X (Twitter)', pinterest: 'Pinterest', reddit: 'Reddit', quora: 'Quora', telegram: 'Telegram', tg: 'Telegram', tiktok: 'TikTok',
+    snapchat: 'Snapchat', newsletter: 'Email newsletter', email: 'Email', push: 'Browser notification', pwa: 'Installed app', chatgpt: 'ChatGPT', openai: 'ChatGPT',
+    perplexity: 'Perplexity', claude: 'Claude', gemini: 'Gemini', copilot: 'Copilot', deepseek: 'DeepSeek', grok: 'Grok', sharechat: 'ShareChat', discord: 'Discord' };
+  var NMX_HOSTS = [[/^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$/, 'Google app (Search or Discover)'], [/^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com)$/, 'Gmail'],
+    [/^((m|www)\.)?google\.[a-z.]+$/, 'Google Search'], [/(^|\.)bing\.com$/, 'Bing'], [/duckduckgo\.com$/, 'DuckDuckGo'], [/(^|\.)yahoo\.(com|co\.jp)$/, 'Yahoo'],
+    [/^(l\.|lm\.|m\.|web\.)?facebook\.com$|^fb\.(com|me)$|^com\.facebook\.(katana|lite)$/, 'Facebook'], [/^(l\.)?instagram\.com$|^com\.instagram\.android$/, 'Instagram'],
+    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
+    [/linkedin\.com$|^lnkd\.in$|^com\.linkedin\.android$/, 'LinkedIn'], [/^(t\.co|twitter\.com|x\.com|com\.twitter\.android)$/, 'X (Twitter)'],
+    [/youtube\.com$|^youtu\.be$|^com\.google\.android\.youtube$/, 'YouTube'], [/^(chatgpt\.com|chat\.openai\.com|openai\.com)$/, 'ChatGPT'], [/perplexity\.ai$/, 'Perplexity'],
+    [/^claude\.ai$/, 'Claude'], [/^gemini\.google\.com$/, 'Gemini'], [/copilot\.(microsoft\.)?com$/, 'Copilot'], [/deepseek\.com$/, 'DeepSeek'], [/^grok\.com$/, 'Grok'],
+    [/outlook\.(live|office|office365)\.com$/, 'Outlook'], [/pinterest\.|^pin\.it$/, 'Pinterest'], [/reddit\.com$|^redd\.it$/, 'Reddit'], [/^(t\.me|telegram\.org|org\.telegram\.messenger)$/, 'Telegram'],
+    [/quora\.com$/, 'Quora'], [/medium\.com$/, 'Medium'], [/behance\.net$/, 'Behance'], [/dribbble\.com$/, 'Dribbble']];
+  function nmxHostName(h) { h = String(h || '').toLowerCase().replace(/^www\./, ''); for (var i = 0; i < NMX_HOSTS.length; i++) if (NMX_HOSTS[i][0].test(h)) return NMX_HOSTS[i][1]; return h; }
+  function nmxPlacement(s) {
+    s = String(s || '').trim(); if (!s || /^\{\{.*\}\}$/.test(s)) return '';
+    var k = s.toLowerCase().replace(/[\s-]+/g, '_');
+    var fixed = { facebook_mobile_feed: 'Facebook feed', facebook_desktop_feed: 'Facebook feed (desktop)', instagram_feed: 'Instagram feed', instagram_stories: 'Instagram Stories',
+      instagram_reels: 'Instagram Reels', instagram_explore: 'Instagram Explore', instagram_explore_grid_home: 'Instagram Explore', instagram_profile_feed: 'Instagram profile',
+      facebook_stories: 'Facebook Stories', facebook_mobile_reels: 'Facebook Reels', facebook_reels: 'Facebook Reels', facebook_marketplace: 'Facebook Marketplace',
+      facebook_right_column: 'Facebook right column', facebook_instream_video: 'Facebook in-stream video', facebook_search: 'Facebook search results',
+      messenger_inbox: 'Messenger inbox', messenger_stories: 'Messenger Stories', threads_feed: 'Threads feed', others: 'other placements', an_classic: 'Audience Network apps' };
+    if (fixed[k]) return fixed[k];
+    if (/^(facebook|instagram|messenger|threads|whatsapp|audience_network|an)_/.test(k)) {
+      var w = k.replace(/^an_/, 'audience_network_').split('_').filter(function (x) { return x && x !== 'mobile'; });
+      var brand = { facebook: 'Facebook', instagram: 'Instagram', messenger: 'Messenger', threads: 'Threads', whatsapp: 'WhatsApp', audience: 'Audience Network' }[w[0]] || w[0];
+      return (brand + ' ' + w.slice(w[0] === 'audience' ? 2 : 1).join(' ')).trim().slice(0, 40);
+    }
+    return '';
+  }
+  function classifyTraffic(o) {
+    o = o || {};
+    var ref = String(o.ref || '').toLowerCase().trim().replace(/^www\./, ''), usRaw = String(o.us || '').trim(), us = usRaw.toLowerCase(), um = String(o.um || '').toLowerCase().trim(), k = o.click || {};
+    var AI = /^(chatgpt\.com|chat\.openai\.com|openai\.com|perplexity\.ai|claude\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|copilot\.com|you\.com|meta\.ai|poe\.com|chat\.deepseek\.com|deepseek\.com|grok\.com|phind\.com|chat\.mistral\.ai)$/;
+    var AI_SRC = /^(chatgpt|openai|perplexity|claude|gemini|copilot|deepseek|grok|meta\.ai)/;
+    var MAIL = /^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com|outlook\.(live|office|office365)\.com|mail\.yahoo\.com|mail\.proton\.me|mail\.zoho\.(com|in)|mail\.aol\.com|mail\.rediff\.com|webmail\..+)$/;
+    var SEARCH = /^((m|www)\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$|^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$|^(cn\.)?bing\.com$|^([a-z]{2}\.)?search\.yahoo\.com$|^yahoo\.co\.jp$|^((html|lite)\.)?duckduckgo\.com$|^yandex\.[a-z.]+$|^baidu\.com$|^ecosia\.org$|^search\.brave\.com$|^startpage\.com$|^qwant\.com$|^(search\.)?naver\.com$|^seznam\.cz$|^sogou\.com$|^so\.com$|^ask\.com$|^search\.aol\.com$|^kagi\.com$/;
+    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
+    var SOC_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|th|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
+    var META_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|wa|whatsapp|th|threads|meta)$/;
+    var SEARCH_SRC = /^(google|bing|yahoo|duckduckgo|ddg|yandex|baidu|ecosia|brave|naver|msn|microsoft|adwords|googleads|google[-_ ]?ads|bing[-_ ]?ads|microsoft[-_ ]?ads)$/;
+    var PAID = /^(cpc|ppc|paid|paidsearch|paid[-_ ]?search|sem|cpm|cpv|cpa|retargeting|remarketing|display|paid[-_ ].*)$|cp[cmva]/;
+    var SOC_MED = /^(social|social[-_ ]?media|social[-_ ]?network|sm|soc|organic[-_ ]?social|paid[-_ ]?social|social[-_ ]?paid|social[-_ ]?ads?)$/;
+    var MAIL_MED = /^(e[-_ ]?mail|newsletter|mail|edm|mailer)$/;
+    var PUSH_MED = /^(push|web[-_ ]?push|notification|notifications|browser[-_ ]?push)$/;
+    var REF_MED = /^(referral|affiliate|affiliates|partner|partners|link|links|backlink)$/;
+    var macro = /^\{\{.*\}\}$/.test(usRaw);
+    var sn = macro ? 'Meta (platform not passed)' : (NMX_SRC[us] || (us ? nmxHostName(us) : ''));
+    var pl = nmxPlacement(o.ut) || nmxPlacement(o.ct);
+    function out(c, parts) { return { c: c, d: parts.filter(function (x) { return !!x; }).join(' · ').slice(0, 80), sn: (parts[0] || '').slice(0, 60), pl: pl }; }
+    var paidSoc = /paid|ads?$|cp[cmva]/.test(um);
+    if (k.g || k.m) return out('Paid Search', [us ? sn : (k.m ? 'Bing' : 'Google'), k.m && !us ? 'Microsoft Ads' : (us && !SEARCH_SRC.test(us) ? 'paid' : 'Google Ads')]);
+    if (us || um) {
+      if (AI_SRC.test(us) || AI.test(us.replace(/^www\./, ''))) return out('Referral', ['AI answer', NMX_SRC[us.split('.')[0]] || nmxHostName(us)]);
+      if (us === 'pwa') return out('Direct', ['Installed app (home-screen icon)']);
+      var social = macro || SOC_SRC.test(us) || SOCIAL.test(us), search = SEARCH_SRC.test(us) || SEARCH.test(us), paid = PAID.test(um);
+      if (paid && (search || /search/.test(um))) return out('Paid Search', [sn, /^(google|googleads|adwords)/.test(us) ? 'Google Ads' : /^(bing|microsoft)/.test(us) ? 'Microsoft Ads' : 'paid search']);
+      if (SOC_MED.test(um) || social) {
+        if (macro) return out('Social', ['Meta ads', 'platform not passed', pl]);
+        return out('Social', [sn, paidSoc ? (META_SRC.test(us) ? 'Meta ads' : 'paid ad') : (um ? 'organic post' : ''), pl]);
+      }
+      if (um === 'organic' || (search && !paid)) return out('Organic Search', [sn || 'Search', 'organic']);
+      if (MAIL_MED.test(um) || us === 'newsletter') return out('Referral', [us === 'newsletter' || !us ? 'Email newsletter' : sn, us === 'newsletter' ? '' : 'email']);
+      if (PUSH_MED.test(um)) return out('Referral', ['Browser notification', us && us !== 'push' ? sn : '']);
+      if (REF_MED.test(um)) return out('Referral', [sn, 'link']);
+      return out('Unknown', [sn || 'Tagged link', um]);
+    }
+    if (k.f) return out('Social', [ref ? nmxHostName(ref) : 'Facebook or Instagram', 'link with a Meta click ID']);
+    if (k.s) return out('Social', [ref ? nmxHostName(ref) : (NMX_SRC[String(k.s)] || String(k.s)), 'link with a click ID']);
+    if (ref) {
+      if (AI.test(ref)) return out('Referral', ['AI answer', nmxHostName(ref)]);
+      if (MAIL.test(ref)) return out('Referral', ['Email', nmxHostName(ref)]);
+      if (SEARCH.test(ref)) return out('Organic Search', [nmxHostName(ref)]);
+      if (SOCIAL.test(ref)) return out('Social', [nmxHostName(ref), 'organic post or profile link']);
+      return out('Referral', [nmxHostName(ref)]);
+    }
+    if (o.app) {
+      var A = { instagram: 'Instagram app (bio link, story or DM)', facebook: 'Facebook app (post, story or Messenger)', linkedin: 'LinkedIn app', snapchat: 'Snapchat app',
+        pinterest: 'Pinterest app', tiktok: 'TikTok app', x: 'X (Twitter) app', gmail: 'Gmail app', 'google app': 'Google app (Search or Discover)' }[String(o.app).toLowerCase()];
+      return out('Social', [A || String(o.app) + ' app']);
+    }
+    if (o.internal) return out('Unknown', ['Inside the site (an earlier visit timed out)']);
+    return out('Direct', ['']);
+  }
+  // Older rows were saved with short codes ("an / paid_social", "google.com", "instagram app"). This turns them into the new names.
+  function relabelTraffic(c, d) {
+    d = String(d || ''); c = String(c || '');
+    if (!d || /^(Inside the site|Installed app|Email newsletter|Browser notification|Meta ads · )/.test(d)) return d;
+    var m = /^(.+?) \/ (.+)$/.exec(d);
+    if (m) return classifyTraffic({ us: m[1], um: m[2] }).d || d;
+    var a = /^(AI answer|email) · (.+)$/.exec(d);
+    if (a) return (a[1] === 'email' ? 'Email' : 'AI answer') + ' · ' + nmxHostName(a[2]);
+    if (d === 'came from another page of the site') return 'Inside the site (an earlier visit timed out)';
+    if (d === 'facebook / instagram') return 'Facebook or Instagram · link with a Meta click ID';
+    var app = /^(\w[\w ]*) app$/.exec(d);
+    if (app) return classifyTraffic({ app: app[1] }).d;
+    if (/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(d)) { var n = nmxHostName(d); return n === d ? d : n + (c === 'Social' ? ' · organic post or profile link' : ''); }
+    return d;
+  }
   var CFG, KEY = '', RAW = null, STATS = null, MODEL = null, liveTimer = null;
   var F = { period: '30', dev: '', br: '', co: '', src: '', sec: '', topic: '', ts: '' };
   var TS = ['Organic Search', 'Paid Search', 'Social', 'Direct', 'Referral', 'Unknown'];
@@ -54,7 +159,7 @@
     var sesTs = {};
     RAW.visits.forEach(function (r) { if (D(r[1]) === 'pageview' && !(r[3] in sesTs)) sesTs[r[3]] = [D(r[14]) || 'Unknown', D(r[15])]; });
     function tsOf(r) { return (sesTs[r[3]] || [D(r[14]) || 'Unknown'])[0]; }
-    function tsDetOf(r) { return (sesTs[r[3]] || [0, D(r[15])])[1]; }
+    function tsDetOf(r) { return relabelTraffic(tsOf(r), (sesTs[r[3]] || [0, D(r[15])])[1]); }   // v9: plain-English source names, old rows too
     function visitOk(r) {
       return !(F.dev && D(r[9]) !== F.dev) && !(F.br && D(r[10]) !== F.br) && !(F.co && D(r[12]) !== F.co) &&
         !(F.src && srcOf(r) !== F.src) && !(F.sec && section(D(r[4])) !== F.sec) && !(F.ts && tsOf(r) !== F.ts);
@@ -126,7 +231,7 @@
     });
     var recent = subs.slice().sort(function (a, b) { return b[0] - a[0]; }).slice(0, 15).map(function (r) {
       return { at: r[0], status: D(r[2]), topics: D(r[3]), browser: D(r[4]), os: D(r[5]), device: D(r[6]), country: D(r[7]), page: D(r[8]),
-        source: (D(r[14]) ? D(r[14]) + (D(r[15]) ? ' · ' + D(r[15]) : '') : D(r[9])), email: D(r[10]), received: r[12] };
+        source: (D(r[14]) ? D(r[14]) + (D(r[15]) ? ' · ' + relabelTraffic(D(r[14]), D(r[15])) : '') : D(r[9])), email: D(r[10]), received: r[12] };
     });
 
     var camps = RAW.campaigns.filter(function (c) { return Date.parse(c.at) >= start; }), delivered = 0;
@@ -439,6 +544,7 @@
   }
   ['input', 'change'].forEach(function (ev) { form.addEventListener(ev, preview); });
   function activeFor(a) {
+    if (/^(topic|region|role):/.test(a)) return 'the readers who picked this';   // v9: worked out by the backend at send time
     if (!RAW) return a === 'all' ? STATS.push.active : STATS.push.topics[a];
     return RAW.push.filter(function (r) { return RAW.dict[r[2]] === 'Active' && (a === 'all' || RAW.dict[r[3]].split(',').indexOf(a) > -1); }).length;
   }
@@ -456,7 +562,7 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var a = form.audience.value, n = activeFor(a);
-    if (confirm('Send “' + form.title.value.trim() + '” to ' + n + ' subscriber' + (n === 1 ? '' : 's') + '?')) send(a);
+    if (confirm('Send “' + form.title.value.trim() + '” to ' + n + (typeof n === 'number' ? ' subscriber' + (n === 1 ? '' : 's') : '') + '?')) send(a);
   });
   $('test').addEventListener('click', function () {
     var me = null; try { me = JSON.parse(localStorage.getItem('nmx-push') || 'null'); } catch (e) {}

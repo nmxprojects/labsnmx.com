@@ -200,7 +200,7 @@
 
 <section id="login" class="ad-login" hidden>
   <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,64px);line-height:.95;letter-spacing:-.03em">Dashboard</h1>
-  <p style="color:var(--muted);margin:12px 0 20px">For the site owner. Sign in with the <code>ADMIN_KEY</code> from your Apps Script log (run <code>checkPushSetup()</code> to see it).</p>
+  <p style="color:var(--muted);margin:12px 0 20px">For the site owner. Sign in with your admin key.</p>
   <form id="loginForm" class="ad-form">
     <label>Admin key<input id="key" type="password" autocomplete="current-password" required></label>
     <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input id="remember" type="checkbox" style="width:auto"> Keep me signed in on this device</label>
@@ -211,7 +211,7 @@
 
 <section id="noBackend" class="ad-login" hidden>
   <h1 style="font-family:var(--font-display);font-size:48px;line-height:1">Connect the backend first</h1>
-  <p style="color:var(--muted);margin-top:12px">Paste your Apps Script <code>/exec</code> URL into <code>BACKEND_URL</code> in <code>/assets/nmx.js</code>, upload it, and reload this page.</p>
+  <p style="color:var(--muted);margin-top:12px">The site settings aren’t loaded yet. Check the site settings file and reload this page.</p>
 </section>
 
 <section id="dash" hidden>
@@ -300,7 +300,7 @@
         <label>Message <small>optional, <span id="mc">0</span>/200</small><textarea name="message" rows="2" maxlength="200" placeholder="One line that makes people tap."></textarea></label>
         <label>Link that opens<input name="url" type="url" value="https://labsnmx.com/blog/" required></label>
         <label>Image <small>optional, https address of a wide image (2:1 works best)</small><input name="image" type="url" placeholder="https://labsnmx.com/assets/blog/….jpg"></label>
-        <label>Who gets it<select name="audience"><option value="all">Everyone subscribed</option><option value="blog">Blog post subscribers</option><option value="youtube">YouTube video subscribers</option></select></label>
+        <label>Who gets it<select name="audience"><option value="all">Everyone subscribed</option><option value="blog">Blog post subscribers</option><option value="youtube">YouTube video subscribers</option><optgroup label="Readers who picked a topic"><option value="topic:ai-design">AI design</option><option value="topic:adobe">Adobe</option><option value="topic:meta-ads">Meta ads</option><option value="topic:branding">Branding</option><option value="topic:brand-stories">Brand stories</option><option value="topic:growth">YouTube, Instagram and SEO</option><option value="topic:global">Global stories</option><option value="topic:news">Daily news</option><option value="topic:videos">Videos</option></optgroup><optgroup label="Readers in a region"><option value="region:in">India</option><option value="region:uk">UK</option><option value="region:us">US</option><option value="region:me">Middle East</option></optgroup><optgroup label="Readers by role"><option value="role:founder">Founders</option><option value="role:marketer">Marketers</option><option value="role:designer">Designers</option><option value="role:creator">Creators</option></optgroup></select></label>
         <div class="ad-preview" aria-label="Preview"><img class="ic" src="/assets/pwa/icon-192.png" alt=""><b id="pvT">Title</b><span id="pvM"></span><span class="host">labsnmx.com</span><img class="big" id="pvI" alt="" hidden></div>
         <div class="ad-row"><button class="ad-btn" type="button" id="test">Send a test to this browser</button><button class="ad-btn ad-btn--go" type="submit" id="go">Send to subscribers</button></div>
         <p class="ad-status" id="sendStatus" role="status"></p>
