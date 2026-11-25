@@ -26,6 +26,10 @@ v7: a published post whose page file is missing is no longer dropped silently: -
 warning (and a GitHub Actions annotation + job summary) naming the missing file. A post whose folder is still in
 _scheduled/ when it should be live is moved into blog/ automatically. The homepage carousel can show graphic slides
 from content/home-carousel.json and images on news cards (see scripts/build_news.py).
+v8: Services has its own page (/services/): every #services and /clients link on every page is rewritten to the real
+address. sitemap.xml never loses a page: it lists every indexable page actually in the repo (what GitHub Pages serves),
+keeps each page's previous lastmod, and reports anything it leaves out, and why, in the Actions run summary. The Videos page
+is built from content/videos.json (YouTube links, Google Drive links or uploaded files), made with Content Blog Creator.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -69,8 +73,8 @@ PILLARS = [  # (category slug, title, line) shown in "Notes from the studio" on 
     ('global', 'Around the world', 'UK, US and global design and marketing stories, told with opinions.'),
 ]
 STATIC_PAGES = [  # (path, changefreq, priority)
-    ('/', 'weekly', '1.0'), ('/blog/', 'daily', '0.9'), ('/news/', 'daily', '0.7'), ('/videos/', 'monthly', '0.6'),
-    ('/about/', 'yearly', '0.6'), ('/contact/', 'yearly', '0.5'), ('/editorial-standards/', 'yearly', '0.5'),
+    ('/', 'weekly', '1.0'), ('/services/', 'monthly', '0.9'), ('/blog/', 'daily', '0.9'), ('/news/', 'daily', '0.7'), ('/videos/', 'monthly', '0.6'),
+    ('/about/', 'yearly', '0.6'), ('/clients/', 'monthly', '0.6'), ('/contact/', 'yearly', '0.5'), ('/editorial-standards/', 'yearly', '0.5'),
     ('/sitemap/', 'weekly', '0.4'), ('/privacy-policy.html', 'yearly', '0.3'), ('/terms/', 'yearly', '0.3'),
 ]
 
@@ -348,6 +352,7 @@ def build_footers(published):
             if build_learn and not rel.replace('\\', '/').startswith('tools'): s = build_learn.add_school_links(s)   # v5: Learn and Play in menus and footer
             if WIRE_BAR and build_news: s = build_news.add_bar(s, WIRE_BAR, rel)                                  # v6: "Latest in" bar
             s = v6_copy(s)
+            s = fix_links(s)                                                                      # v8: /services/ and /clients/
             wr(p, s)
 
 def build_feed(published):
@@ -380,13 +385,22 @@ def build_feed(published):
 ''')
 
 def build_sitemap(published, live_cats):
+    """v8: never loses a page. Lists the blog, Learn and every other indexable page actually in the repo (found by
+    scanning it), keeps each page's previous lastmod, and reports anything that left the sitemap and why."""
     latest = published[0]['date']
-    urls = []
+    urls, done = [], set()
+    before, live = old_sitemap(), discover_pages()
     def url(loc, lastmod, freq, prio, images=()):
+        if loc in done: return
+        done.add(loc)
         img = ''.join(f'\n    <image:image><image:loc>{esc(i)}</image:loc></image:image>' for i in images)
         urls.append(f'  <url>\n    <loc>{SITE}{loc}</loc>\n    <lastmod>{lastmod}</lastmod>\n    <changefreq>{freq}</changefreq>\n    <priority>{prio}</priority>{img}\n  </url>')
     for loc, freq, prio in STATIC_PAGES:
-        url(loc, latest if loc in ('/', '/blog/', '/news/', '/sitemap/') else '2026-11-24', freq, prio)
+        if loc not in live: continue                                   # a page that isn't there would show up as a 404
+        if loc in ('/', '/blog/', '/news/', '/sitemap/'): lm = latest
+        elif loc == '/videos/' and VIDEOS_CHANGED: lm = TODAY
+        else: lm = before.get(loc) or live.get(loc) or TODAY
+        url(loc, lm, freq, prio)
     for c in CATEGORIES:
         if c in live_cats: url(f'/blog/category/{c}/', max(p['date'] for p in published if p['category'] == c), 'weekly', '0.6')
     for a in AUTHORS:
@@ -396,8 +410,13 @@ def build_sitemap(published, live_cats):
         url(f'/blog/{p["slug"]}/', p['modified'], 'monthly', '0.8', [f'{SITE}/assets/blog/{p["image"]}.jpg'])
     for loc, lastmod in (build_learn.urls(TODAY) if build_learn else []):                       # v5: Learn hub, lessons and Play
         url(loc, lastmod, 'weekly' if loc in ('/learn/', '/play/') else 'monthly', '0.8' if loc == '/learn/' else '0.7')
+    extra = [loc for loc in sorted(live) if loc not in done]           # v8: any other real page (new sections, hand-made pages)
+    for loc in extra: url(loc, live[loc] or before.get(loc) or TODAY, 'monthly', '0.5')
     wr('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
        + '\n'.join(urls) + '\n</urlset>\n')
+    gone = [loc for loc in before if loc not in done]
+    report('Left out of sitemap.xml', [f'{SITE}{loc}: {page_state(loc) if page_state(loc) != "ok" else "not published yet"}' for loc in gone])
+    print(f'sitemap.xml: {len(urls)} addresses' + (f', {len(extra)} found by scanning the site' if extra else '') + (f', {len(gone)} left out (see warnings)' if gone else ''))
 
 def build_html_sitemap(published, live_cats):
     tpl = rd('blog/category/branding/index.html')
@@ -408,7 +427,7 @@ def build_html_sitemap(published, live_cats):
                lambda m: '<script type="application/ld+json">\n' + json.dumps({'@context': 'https://schema.org', '@type': 'WebPage', 'name': 'Sitemap | NMX Labs', 'url': f'{SITE}/sitemap/', 'description': desc}, indent=1) + '\n</script>', s, count=1, flags=re.S)
     cols = []
     cols.append('<div><h2>Studio</h2><ul>' + ''.join(f'<li><a href="{h}">{l}</a></li>' for h, l in [
-        ('/', 'Home'), ('/#services', 'Services and pricing'), ('/#clients', 'Clients'), ('/about/', 'About NMX Labs'),
+        ('/', 'Home'), ('/services/', 'Services and pricing'), ('/clients/', 'Clients'), ('/about/', 'About NMX Labs'),
         ('/contact/', 'Contact'), ('/#faq', 'FAQ'), ('/videos/', 'Videos'), ('/news/', 'News feed')]) + '</ul>'
         '<h2>Blog</h2><ul><li><a href="/blog/">All posts</a></li>'
         + ''.join(f'<li><a href="/blog/category/{c}/">{CATEGORIES[c][0]}</a></li>' for c in CATEGORIES if c in live_cats)
@@ -445,6 +464,7 @@ def build_llms(published, lessons, news):
     authors = (f'## Authors\n- [Neeraj]({SITE}/blog/author/neeraj/): AI design, Meta ads and platform growth.\n'
                f'- [Anisha]({SITE}/blog/author/anisha/): market research, branding and brand stories.\n\n')
     studio = ('## The studio\n'
+              f'- Every service, what it includes and its price: {SITE}/services/\n'
               '- Branding & Identity: starter brand system from Rs 25,000 (discovery, logo, colour and type system, social assets, mini guidelines).\n'
               '- Social Media Creative: Rs 8,000 a month for 8 custom static or carousel creatives (design only).\n'
               '- Campaign Creative: Rs 10,000 per campaign (concept, key visual, 3 to 5 adaptations).\n'
@@ -474,6 +494,121 @@ def build_public_json(published):
                              'author': p['author_name'], 'read_min': p['read_min'],
                              'image': f'{SITE}/assets/blog/{p["image"]}.jpg', 'thumb': f'{SITE}/assets/blog/{p["image"]}.jpg'})
     wr('blog/posts.json', json.dumps(out, ensure_ascii=False, indent=1) + '\n')
+
+# ------------------------------------------------------------------ v8: links, page discovery, sitemap that never loses pages, videos
+SERVICE_ANCHORS = {'Branding & Identity': 'branding', 'Social Media Creative': 'social', 'Campaign Creative': 'campaign',
+                   'Meta Ads Management': 'metaads', 'Creative + Meta Ads Bundle': 'bundle', 'Creative + Meta Ads': 'bundle',
+                   'Brand & Marketing Design': 'branddesign'}
+def fix_links(s):
+    """v8: Services has its own page (/services/) instead of a #services anchor that Google doesn't index, and every
+    /clients link points straight at /clients/ instead of a redirect."""
+    def svc(m):
+        a = SERVICE_ANCHORS.get(html.unescape(m.group(3)).strip())
+        return '<a' + (m.group(1) or ' ') + 'href="/services/' + ('#' + a if a else '') + '"' + m.group(2) + '>' + m.group(3) + '</a>'
+    s = re.sub(r'<a(\s[^>]*?)?href="(?:https://labsnmx\.com)?/?#m?services"([^>]*)>([^<]*)</a>', svc, s)
+    for old in ('href="https://labsnmx.com/#services"', 'href="/#services"', 'href="#services"', 'href="#mservices"', 'href="/#mservices"'):
+        s = s.replace(old, 'href="/services/"')
+    s = s.replace('"https://labsnmx.com/#services"', '"https://labsnmx.com/services/"')
+    s = re.sub(r'(<a\s[^>]*?href=")(?:https://labsnmx\.com)?/clients(")', r'\1/clients/\2', s)
+    s = s.replace('"https://labsnmx.com/clients"', '"https://labsnmx.com/clients/"')
+    return s
+
+SKIP_TOP = ('_scheduled', 'scripts', 'content', 'tools', 'dashboard', 'assets', 'email-previews', 'node_modules', 'offline', 'saved', 'unsubscribe')
+def page_state(loc):
+    """'ok', or why a sitemap address can't be listed (missing file, noindex, canonical points elsewhere)."""
+    p = loc.lstrip('/')
+    p = 'index.html' if p == '' else (p + 'index.html' if p.endswith('/') else p)
+    full = os.path.join(ROOT, p)
+    if not os.path.exists(full): return 'its file ' + p + ' is missing'
+    s = open(full, encoding='utf-8', errors='replace').read(80000)
+    if re.search(r'<meta name="robots" content="[^"]*noindex', s, re.I): return 'the page is set to noindex'
+    m = re.search(r'<link rel="canonical" href="([^"]+)"', s)
+    if not m: return 'the page has no canonical address'
+    if m.group(1) != SITE + loc: return 'its canonical address is ' + m.group(1)
+    return 'ok'
+
+def discover_pages():
+    """v8: every indexable page that is really in the repo, which is exactly what GitHub Pages serves: {address: lastmod}."""
+    found = {}
+    for dirpath, dirs, files in os.walk(ROOT):
+        rel = os.path.relpath(dirpath, ROOT).replace('\\', '/')
+        top = rel.split('/')[0]
+        if rel != '.' and (top in SKIP_TOP or top.startswith('.') or '/amp' in '/' + rel):
+            dirs[:] = []; continue
+        for f in files:
+            if not f.endswith('.html'): continue
+            p = f if rel == '.' else rel + '/' + f
+            loc = '/' + (p[:-10] if p.endswith('index.html') else p)
+            if page_state(loc) != 'ok': continue
+            s = open(os.path.join(ROOT, p), encoding='utf-8', errors='replace').read(80000)
+            mod = re.search(r'<meta property="article:modified_time" content="(\d{4}-\d{2}-\d{2})', s) or re.search(r'"dateModified":\s*"(\d{4}-\d{2}-\d{2})', s)
+            found[loc] = mod.group(1) if mod else ''
+    return found
+
+def old_sitemap():
+    p = os.path.join(ROOT, 'sitemap.xml')
+    if not os.path.exists(p): return {}
+    s = open(p, encoding='utf-8').read()
+    return {m.group(1)[len(SITE):]: m.group(2) for m in re.finditer(r'<loc>([^<]+)</loc>\s*<lastmod>([^<]*)</lastmod>', s) if m.group(1).startswith(SITE)}
+
+def report(title, lines):
+    if not lines: return
+    for l in lines: print('::warning title=' + title + '::' + l)
+    summary = os.environ.get('GITHUB_STEP_SUMMARY')
+    if summary:
+        with open(summary, 'a', encoding='utf-8') as f: f.write('### ' + title + '\n\n' + ''.join('- ' + l + '\n' for l in lines) + '\n')
+
+VIDEOS_CHANGED = False
+def video_frame(v):
+    vert = ' style="aspect-ratio:9/16;max-width:360px;margin:0 auto"' if v.get('vertical') else ''
+    t = esc(v.get('title') or 'Video'); k = v.get('kind')
+    if k == 'youtube':
+        inner = (f'<iframe src="https://www.youtube-nocookie.com/embed/{esc(v["id"])}" title="{t}" loading="lazy" allow="accelerometer; clipboard-write; '
+                 'encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>')
+    elif k == 'drive':
+        inner = f'<iframe src="https://drive.google.com/file/d/{esc(v["id"])}/preview" title="{t}" loading="lazy" allow="autoplay; fullscreen" allowfullscreen></iframe>'
+    else:
+        poster = f' poster="{esc(v["thumb"])}"' if v.get('thumb') else ''
+        inner = (f'<video controls preload="metadata" playsinline title="{t}"{poster} style="position:absolute;inset:0;width:100%;height:100%;background:#000" '
+                 f'src="{esc(v.get("src", ""))}"></video>')
+    return f'<div class="video-frame"{vert}>{inner}</div>'
+
+def build_videos():
+    """v8: the Videos page from content/videos.json (YouTube links, Google Drive links, uploaded files). Made with Content Blog Creator."""
+    global VIDEOS_CHANGED
+    vp = os.path.join(ROOT, 'content', 'videos.json')
+    if not os.path.exists(vp) or not os.path.exists(os.path.join(ROOT, 'videos', 'index.html')): return
+    try: data = json.load(open(vp, encoding='utf-8'))
+    except Exception as e: print('Videos page not rebuilt: content/videos.json is not valid JSON (' + str(e) + ')'); return
+    vids = [v for v in data.get('videos', []) if v.get('active', True) is not False and (v.get('id') or v.get('src'))
+            and (not v.get('show_from') or v['show_from'] <= TODAY)]
+    if not vids: return
+    cards = []
+    for v in vids:
+        cap = ''
+        if v.get('credit'):
+            cap = '<figcaption>' + esc(v['credit']) + (f' <a href="{esc(v["credit_url"])}" target="_blank" rel="noopener">(source)</a>' if v.get('credit_url') else '') + '</figcaption>'
+        more = f' <a href="{esc(v["related"])}" style="text-decoration:underline">{esc(v.get("related_label") or "Read our breakdown")}</a>' if v.get('related') else ''
+        idattr = f' id="{esc(v["slug"])}"' if v.get('slug') else ''
+        cards.append(f'<div{idattr}><figure class="video">\n  {video_frame(v)}\n  {cap}\n</figure><h2>{esc(v.get("title", ""))}</h2><p>{esc(v.get("description", ""))}{more}</p></div>')
+    grid = '<section class="video-grid" aria-label="' + esc(data.get('label') or 'Videos') + '">\n' + ''.join(cards) + '\n</section>'
+    s = rd('videos/index.html')
+    s2 = re.sub(r'<section class="video-grid"[^>]*>.*?</section>', lambda m: grid, s, count=1, flags=re.S)
+    s2 = re.sub(r'<script type="application/ld\+json">\s*\{\s*"@context": "https://schema.org",\s*"@type": "VideoObject".*?</script>\n?', '', s2, flags=re.S)
+    objs = []
+    for v in vids:
+        o = {'@context': 'https://schema.org', '@type': 'VideoObject', 'name': v.get('title', ''), 'description': v.get('description') or v.get('title', '')}
+        if v.get('kind') == 'youtube':
+            o.update(thumbnailUrl=f'https://i.ytimg.com/vi/{v["id"]}/hqdefault.jpg', embedUrl=f'https://www.youtube.com/embed/{v["id"]}', url=f'https://www.youtube.com/watch?v={v["id"]}')
+        elif v.get('kind') == 'drive':
+            o.update(embedUrl=f'https://drive.google.com/file/d/{v["id"]}/preview', thumbnailUrl=SITE + (v.get('thumb') or '/og-image.png'))
+        else:
+            src = v.get('src', ''); o.update(contentUrl=SITE + src if src.startswith('/') else src, thumbnailUrl=(SITE + v['thumb']) if str(v.get('thumb', '')).startswith('/') else (v.get('thumb') or SITE + '/og-image.png'))
+        if v.get('uploaded'): o['uploadDate'] = v['uploaded']
+        objs.append('<script type="application/ld+json">\n' + json.dumps(o, ensure_ascii=False, indent=1) + '\n</script>\n')
+    s2 = s2.replace('</head>', ''.join(objs) + '</head>', 1)
+    if s2 != s: VIDEOS_CHANGED = True
+    wr('videos/index.html', s2)
 
 # ------------------------------------------------------------------ main
 TODAY = None
@@ -520,6 +655,7 @@ def main():
         try: lessons = build_learn.build(today); CHANGED.extend(build_learn.WRITTEN)
         except SystemExit: print('Learn/Play not rebuilt: fix content/lessons.json (see the message above).')
     LESSON_LINKS = [(f"/learn/{x['slug']}/", x['title']) for x in lessons]
+    build_videos()                                                     # v8: Videos page from content/videos.json
     build_footers(published)
     build_feed(published)
     build_sitemap(published, live_cats)

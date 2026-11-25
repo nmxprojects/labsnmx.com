@@ -1,0 +1,51 @@
+{
+ "_how": "The Videos page (labsnmx.com/videos/). One entry per video, shown in this order. kind: youtube (id = the 11-character video id), drive (id = the Google Drive file id; the file must be shared as Anyone with the link) or file (src = /assets/video/<name>.mp4, or a full https link to an .mp4). uploaded: the date the video was first published (for Google). related: optional link to our own post. active: false hides it. Made with Content Blog Creator.html; the build writes the page.",
+ "label": "Videos",
+ "videos": [
+  {
+   "kind": "youtube",
+   "id": "z8CervZDrDU",
+   "slug": "adobe-max-2026-keynote-highlights",
+   "title": "Adobe MAX 2026 keynote highlights",
+   "description": "A short news recap of the opening keynote: the new MCP integrations, Premiere’s generative features and Color Mode, Photoshop and Firefly updates.",
+   "uploaded": "2026-11-11",
+   "credit": "",
+   "credit_url": "",
+   "related": "",
+   "related_label": "",
+   "vertical": false,
+   "active": true,
+   "added": "2026-11-24"
+  },
+  {
+   "kind": "youtube",
+   "id": "td5jTgnOigw",
+   "slug": "adobe-max-2026-everything-announced-in-under-20-minutes",
+   "title": "Adobe MAX 2026: everything announced in under 20 minutes",
+   "description": "The keynote demos condensed: creative agents, Premiere, After Effects, Topaz models, Photoshop and Illustrator.",
+   "uploaded": "2026-11-11",
+   "credit": "",
+   "credit_url": "",
+   "related": "",
+   "related_label": "",
+   "vertical": false,
+   "active": true,
+   "added": "2026-11-24"
+  },
+  {
+   "kind": "youtube",
+   "id": "ciY3ytKVzO8",
+   "slug": "creative-cloud-mcp-ai-agents-that-edit-your-files",
+   "title": "Creative Cloud MCP: AI agents that edit your files",
+   "description": "A creator’s on-site look at how third-party AI agents will edit Photoshop, Illustrator, Premiere and After Effects projects with layers intact.",
+   "uploaded": "2026-11-11",
+   "credit": "",
+   "credit_url": "",
+   "related": "",
+   "related_label": "",
+   "vertical": false,
+   "active": true,
+   "added": "2026-11-24"
+  }
+ ]
+}

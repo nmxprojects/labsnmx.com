@@ -11,7 +11,7 @@ v7, optional:
   - "image": "/assets/home/<file>.webp" (+ "image_alt") on a news item shows a picture at the top of its homepage card.
   - content/home-carousel.json adds graphic slides to the homepage carousel (made with Content Blog Creator.html):
     {"slides": [{"id": "diwali-offer", "image": "/assets/home/diwali-offer.webp", "width": 600, "height": 900,
-                 "alt": "...", "kicker": "Offer", "title": "...", "link": "/#services", "position": 2,
+                 "alt": "...", "kicker": "Offer", "title": "...", "link": "/services/", "position": 2,
                  "size": "tall|wide|xl|", "start": "2026-11-24", "end": "2026-12-31", "active": true}]}
     A slide shows from its start date to its end date (India time), at its position (1 = first card).
 
@@ -133,7 +133,7 @@ def home_news_html(items, posts, bar, today=None):
             f'<span class="hn-title">{esc(x["title"])}</span>'
             + (f'<span class="hn-sum">{esc(x["summary"])}</span>' if sh == 'xl' else '')
             + (f'<span class="hn-take"><em>NMX take</em>{esc(x["take"])}</span>' if big else '')
-            + f'<span class="hn-src">via {esc(x["source"])}</span></a>')
+            + f'<span class="hn-src">via {esc(x["source"])}{(" · Image: " + esc(x["image_credit"])) if x.get("image") and x.get("image_credit") else ""}</span></a>')
     for x in load_slides(today or (items[0]['date'] if items else '9999-12-31')):    # v7: graphic slides at their positions
         cards.insert(max(0, min(len(cards), int(x.get('position') or 99) - 1)), slide_html(x))
     upd = human(items[0]['date']) if items else ''

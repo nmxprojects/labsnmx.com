@@ -229,7 +229,7 @@ def build_hub(lessons):
 ''' for x in mine)
         side = ('<div class="side-card side-card--ink"><h2>Test yourself</h2><p>Quizzes on every lesson, a Daily five, a spin-the-wheel quiz and quick mind games.</p><a class="btn" href="/play/">Go to Play</a></div>'
                 '<div class="side-card"><h2>New lessons most weeks</h2><p>Get a notification when the next one is out. One tap to turn off.</p><button class="btn" type="button" data-follow="learn_hub">Notify me</button></div>'
-                '<div class="side-card"><h2>Need it done for your brand?</h2><p>We design brands, make the content and run the ads around it.</p><a class="btn btn--ghost" href="/#services">See our services</a></div>') if k == 0 else \
+                '<div class="side-card"><h2>Need it done for your brand?</h2><p>We design brands, make the content and run the ads around it.</p><a class="btn btn--ghost" href="/services/">See our services</a></div>') if k == 0 else \
                (f'<div class="side-card side-card--{c.get("tone", "y")}"><h2>Quiz yourself</h2><p>Questions from this course and our blog, with the answers explained.</p><a class="btn" href="/play/#{c.get("quiz", "daily")}">Take the quiz</a></div>')
         secs.append(f'''<section class="course" id="{c['slug']}" aria-labelledby="h-{c['slug']}">
   <div>
