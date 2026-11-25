@@ -2,6 +2,10 @@
 # Runs daily at 00:05 IST, whenever content/posts.json, _scheduled/ or the Learn lessons change, and on demand (Actions tab > Run workflow).
 # v5: the same run builds Learn and Play (scripts/build_learn.py) and adds Learn/Play links to every page's menu.
 # v6: also rebuilds the news page, the homepage wire and the "Latest in" bar (content/news.json), the short courses, llms.txt and llms-full.txt.
+# v8: also runs when content/videos.json changes (the Videos page), rewrites #services links to /services/ on every page
+#     and keeps every real page in sitemap.xml.
+# v7: also runs when content/home-carousel.json changes (homepage graphic slides), and warns in the run summary
+#     when a published post's page file is missing (the cause of 404s in Search Console).
 #
 # One-time setup in GitHub: Settings > Actions > General > Workflow permissions > "Read and write permissions".
 # Hosting:
@@ -15,7 +19,7 @@ on:
     - cron: '35 18 * * *'        # 18:35 UTC = 00:05 IST
   push:
     branches: [main, master]
-    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'scripts/build.py', 'scripts/build_learn.py', 'scripts/build_news.py']
+    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'scripts/build.py', 'scripts/build_learn.py', 'scripts/build_news.py']
   workflow_dispatch:
 
 permissions:
