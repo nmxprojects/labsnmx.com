@@ -4,6 +4,8 @@
 # v6: also rebuilds the news page, the homepage wire and the "Latest in" bar (content/news.json), the short courses, llms.txt and llms-full.txt.
 # v8: also runs when content/videos.json changes (the Videos page), rewrites #services links to /services/ on every page
 #     and keeps every real page in sitemap.xml.
+# v9: also runs when content/youtube.json or scripts/build_v9.py change (bento blog, most read, regions, YouTube tiles,
+#     sitemap_index.xml, 404 page). It reads the counts-only "most read" list, so it needs internet access (GitHub has it).
 # v7: also runs when content/home-carousel.json changes (homepage graphic slides), and warns in the run summary
 #     when a published post's page file is missing (the cause of 404s in Search Console).
 #
@@ -19,7 +21,7 @@ on:
     - cron: '35 18 * * *'        # 18:35 UTC = 00:05 IST
   push:
     branches: [main, master]
-    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'scripts/build.py', 'scripts/build_learn.py', 'scripts/build_news.py']
+    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'content/youtube.json', 'scripts/build.py', 'scripts/build_v9.py', 'scripts/build_learn.py', 'scripts/build_news.py']
   workflow_dispatch:
 
 permissions:
