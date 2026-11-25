@@ -1,7 +1,32 @@
 {
- "updated": "2026-11-25",
+ "updated": "2026-11-26",
  "site": "https://labsnmx.com",
  "posts": [
+  {
+   "slug": "rebrand-for-ai-agents-docker-futurebrand",
+   "title": "The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI",
+   "url": "https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/",
+   "date": "2026-11-26",
+   "dek": "In one week Docker swapped its box-carrying whale for “Run on Trust” and FutureBrand declared the static identity system over. Strip away the conference talk and there’s a real shift underneath: your brand now has to be readable by machines. Here’s what that means, with a checklist.",
+   "takeaways": [
+    "Docker’s new identity (19 November 2026) keeps a simplified whale, drops the containers, adds a new signature blue, #6172FF, and replaces “Build, Ship, Run” with “Run on Trust”.",
+    "FutureBrand argues static identity systems can’t keep up when AI makes more of a brand’s output, and proposes designing brand “behaviour” instead.",
+    "The practical shift: your guidelines will be read by AI tools, so they need written rules for judgement, voice examples and colour values, not just a logo PDF.",
+    "Sameness is the risk. If every brand in a category feeds AI the same safe rules, everything starts to look alike, which is already happening in electric cars."
+   ],
+   "category": "Global",
+   "track": "studio",
+   "author": "Neeraj",
+   "read_min": 6,
+   "image": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
+   "thumb": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand-640.webp",
+   "regions": [
+    "us",
+    "global"
+   ],
+   "most_read": 0
+  },
   {
    "slug": "john-lewis-christmas-ad-2026-backlash-vs-effectiveness",
    "title": "Everyone hated the John Lewis Christmas ad. The testers loved it. Who’s right?",
@@ -19,7 +44,13 @@
    "author": "Neeraj",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness-640.webp",
+   "regions": [
+    "uk",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "blogging-is-dead-why-are-you-reading-this",
@@ -38,7 +69,13 @@
    "author": "Neeraj",
    "read_min": 7,
    "image": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/blogging-is-dead-why-are-you-reading-this-640.webp",
+   "regions": [
+    "us",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "asia-cup-2026-cricket-sponsorship-brands",
@@ -56,7 +93,13 @@
    "author": "Anisha",
    "read_min": 5,
    "image": "https://labsnmx.com/assets/blog/asia-cup-2026-cricket-sponsorship-brands.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/asia-cup-2026-cricket-sponsorship-brands.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/asia-cup-2026-cricket-sponsorship-brands.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/asia-cup-2026-cricket-sponsorship-brands-640.webp",
+   "regions": [
+    "in",
+    "me"
+   ],
+   "most_read": 0
   },
   {
    "slug": "custom-brand-typefaces-india",
@@ -75,7 +118,12 @@
    "author": "Anisha",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/custom-brand-typefaces-india.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/custom-brand-typefaces-india-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "generative-video-d2c-ads-veo-firefly",
@@ -94,7 +142,13 @@
    "author": "Neeraj",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/generative-video-d2c-ads-veo-firefly-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "latest-adobe-ai-updates-november-2026",
@@ -113,7 +167,13 @@
    "author": "Neeraj",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/latest-adobe-ai-updates-november-2026-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "canva-figma-adobe-ai-design-war",
@@ -132,7 +192,12 @@
    "author": "Neeraj",
    "read_min": 7,
    "image": "https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/canva-figma-adobe-ai-design-war-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 1
   },
   {
    "slug": "swiggy-zomato-push-notification-copy-war",
@@ -151,7 +216,12 @@
    "author": "Anisha",
    "read_min": 7,
    "image": "https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/swiggy-zomato-push-notification-copy-war-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
@@ -170,7 +240,12 @@
    "author": "Anisha",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "cadbury-not-just-a-cadbury-ad-ai-personalisation",
@@ -189,7 +264,13 @@
    "author": "Neeraj",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "adobe-max-2026-sneaks-explained",
@@ -208,7 +289,12 @@
    "author": "Neeraj",
    "read_min": 5,
    "image": "https://labsnmx.com/assets/blog/adobe-max-2026-sneaks-explained.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/adobe-max-2026-sneaks-explained.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/adobe-max-2026-sneaks-explained.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/adobe-max-2026-sneaks-explained-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "campa-cola-comeback-price-war",
@@ -227,7 +313,12 @@
    "author": "Anisha",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/campa-cola-comeback-price-war.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/campa-cola-comeback-price-war-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "zomato-to-eternal-house-of-brands",
@@ -246,7 +337,12 @@
    "author": "Anisha",
    "read_min": 7,
    "image": "https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/zomato-to-eternal-house-of-brands-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "quick-commerce-brand-war-blinkit-zepto-instamart",
@@ -265,7 +361,12 @@
    "author": "Anisha",
    "read_min": 8,
    "image": "https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/quick-commerce-brand-war-blinkit-zepto-instamart-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 2
   },
   {
    "slug": "amul-topical-ads-moment-marketing",
@@ -284,7 +385,12 @@
    "author": "Anisha",
    "read_min": 7,
    "image": "https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/amul-topical-ads-moment-marketing-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "cred-against-type-celebrity-ads",
@@ -303,7 +409,12 @@
    "author": "Anisha",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/cred-against-type-celebrity-ads-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "adobe-max-2026-what-it-means-for-indian-brands",
@@ -322,7 +433,14 @@
    "author": "Neeraj",
    "read_min": 6,
    "image": "https://labsnmx.com/assets/blog/adobe-max-2026-what-it-means-for-indian-brands.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/adobe-max-2026-what-it-means-for-indian-brands.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/adobe-max-2026-what-it-means-for-indian-brands.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/adobe-max-2026-what-it-means-for-indian-brands-640.webp",
+   "regions": [
+    "in",
+    "us",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "meta-ai-info-labels-ai-creative",
@@ -341,7 +459,12 @@
    "author": "Anisha",
    "read_min": 3,
    "image": "https://labsnmx.com/assets/blog/meta-ai-info-labels-ai-creative.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/meta-ai-info-labels-ai-creative.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/meta-ai-info-labels-ai-creative.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/meta-ai-info-labels-ai-creative-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "whatsapp-business-pricing-click-to-whatsapp-ads",
@@ -360,7 +483,13 @@
    "author": "Neeraj",
    "read_min": 3,
    "image": "https://labsnmx.com/assets/blog/whatsapp-business-pricing-click-to-whatsapp-ads.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/whatsapp-business-pricing-click-to-whatsapp-ads.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/whatsapp-business-pricing-click-to-whatsapp-ads.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/whatsapp-business-pricing-click-to-whatsapp-ads-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "ai-design-workflow-for-brands",
@@ -379,7 +508,12 @@
    "author": "Anisha",
    "read_min": 5,
    "image": "https://labsnmx.com/assets/blog/ai-design-workflow-for-brands.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/ai-design-workflow-for-brands.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/ai-design-workflow-for-brands.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/ai-design-workflow-for-brands-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "meta-andromeda-creative-diversity",
@@ -398,7 +532,12 @@
    "author": "Neeraj",
    "read_min": 3,
    "image": "https://labsnmx.com/assets/blog/meta-andromeda-creative-diversity.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/meta-andromeda-creative-diversity.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/meta-andromeda-creative-diversity.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/meta-andromeda-creative-diversity-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "meta-ads-creative-system",
@@ -417,7 +556,12 @@
    "author": "Neeraj",
    "read_min": 5,
    "image": "https://labsnmx.com/assets/blog/meta-ads-creative-system.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/meta-ads-creative-system.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/meta-ads-creative-system.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/meta-ads-creative-system-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "packaging-label-rules-india-d2c",
@@ -436,7 +580,12 @@
    "author": "Anisha",
    "read_min": 3,
    "image": "https://labsnmx.com/assets/blog/packaging-label-rules-india-d2c.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/packaging-label-rules-india-d2c.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/packaging-label-rules-india-d2c.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/packaging-label-rules-india-d2c-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "meta-ads-budget-guide-india",
@@ -455,7 +604,13 @@
    "author": "Neeraj",
    "read_min": 5,
    "image": "https://labsnmx.com/assets/blog/meta-ads-budget-guide-india.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/meta-ads-budget-guide-india.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/meta-ads-budget-guide-india.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/meta-ads-budget-guide-india-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 3
   },
   {
    "slug": "trademark-registration-india-founders",
@@ -474,7 +629,12 @@
    "author": "Anisha",
    "read_min": 4,
    "image": "https://labsnmx.com/assets/blog/trademark-registration-india-founders.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/trademark-registration-india-founders.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/trademark-registration-india-founders.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/trademark-registration-india-founders-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 0
   },
   {
    "slug": "ai-product-photography-d2c",
@@ -493,7 +653,13 @@
    "author": "Anisha",
    "read_min": 4,
    "image": "https://labsnmx.com/assets/blog/ai-product-photography-d2c.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/ai-product-photography-d2c.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/ai-product-photography-d2c.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/ai-product-photography-d2c-640.webp",
+   "regions": [
+    "in",
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "brand-guidelines-what-to-include",
@@ -512,7 +678,12 @@
    "author": "Anisha",
    "read_min": 3,
    "image": "https://labsnmx.com/assets/blog/brand-guidelines-what-to-include.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/brand-guidelines-what-to-include.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/brand-guidelines-what-to-include.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/brand-guidelines-what-to-include-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0
   },
   {
    "slug": "logo-design-cost-india",
@@ -531,7 +702,12 @@
    "author": "Anisha",
    "read_min": 4,
    "image": "https://labsnmx.com/assets/blog/logo-design-cost-india.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/logo-design-cost-india.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/logo-design-cost-india.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/logo-design-cost-india-640.webp",
+   "regions": [
+    "in"
+   ],
+   "most_read": 4
   },
   {
    "slug": "startup-branding-checklist",
@@ -550,7 +726,12 @@
    "author": "Anisha",
    "read_min": 4,
    "image": "https://labsnmx.com/assets/blog/startup-branding-checklist.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/startup-branding-checklist.jpg"
+   "thumb": "https://labsnmx.com/assets/blog/startup-branding-checklist.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/startup-branding-checklist-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 5
   }
  ]
 }

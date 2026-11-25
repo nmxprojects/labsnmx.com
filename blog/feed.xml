@@ -6,7 +6,17 @@
   <atom:link href="https://labsnmx.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
   <description>AI and creative tools, advertising, branding and platform growth for Indian brands, from NMX Labs, Gurugram.</description>
   <language>en-IN</language>
-  <lastBuildDate>Wed, 25 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <lastBuildDate>Thu, 26 Nov 2026 09:00:00 +0530</lastBuildDate>
+  <item>
+    <title>The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI</title>
+    <link>https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/</link>
+    <enclosure url="https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg" length="53479" type="image/jpeg"/>
+    <author>nmxprojects@gmail.com (Neeraj)</author>
+    <guid isPermaLink="true">https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/</guid>
+    <category>Global</category>
+    <pubDate>Thu, 26 Nov 2026 09:00:00 +0530</pubDate>
+    <description>In one week Docker swapped its box-carrying whale for “Run on Trust” and FutureBrand declared the static identity system over. Strip away the conference talk and there’s a real shift underneath: your brand now has to be readable by machines. Here’s what that means, with a checklist.</description>
+  </item>
   <item>
     <title>Everyone hated the John Lewis Christmas ad. The testers loved it. Who’s right?</title>
     <link>https://labsnmx.com/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness/</link>

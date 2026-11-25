@@ -4,6 +4,16 @@
 
 Each entry: title, link, date, author, topic, the summary we wrote for it and its key takeaways. Quote freely with a link.
 
+## The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI
+https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/
+Published 26 November 2026 · Neeraj · Global · 6 min read
+
+In one week Docker swapped its box-carrying whale for “Run on Trust” and FutureBrand declared the static identity system over. Strip away the conference talk and there’s a real shift underneath: your brand now has to be readable by machines. Here’s what that means, with a checklist.
+- Docker’s new identity (19 November 2026) keeps a simplified whale, drops the containers, adds a new signature blue, #6172FF, and replaces “Build, Ship, Run” with “Run on Trust”.
+- FutureBrand argues static identity systems can’t keep up when AI makes more of a brand’s output, and proposes designing brand “behaviour” instead.
+- The practical shift: your guidelines will be read by AI tools, so they need written rules for judgement, voice examples and colour values, not just a logo PDF.
+- Sameness is the risk. If every brand in a category feeds AI the same safe rules, everything starts to look alike, which is already happening in electric cars.
+
 ## Everyone hated the John Lewis Christmas ad. The testers loved it. Who’s right?
 https://labsnmx.com/blog/john-lewis-christmas-ad-2026-backlash-vs-effectiveness/
 Published 25 November 2026 · Neeraj · Global · 6 min read

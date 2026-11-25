@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://labsnmx.com/videos/</loc>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/z8CervZDrDU/hqdefault.jpg</video:thumbnail_loc>
+      <video:title>Adobe MAX 2026 keynote highlights</video:title>
+      <video:description>A short news recap of the opening keynote: the new MCP integrations, Premiere’s generative features and Color Mode, Photoshop and Firefly updates.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/z8CervZDrDU</video:player_loc>
+      <video:publication_date>2026-11-11</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/td5jTgnOigw/hqdefault.jpg</video:thumbnail_loc>
+      <video:title>Adobe MAX 2026: everything announced in under 20 minutes</video:title>
+      <video:description>The keynote demos condensed: creative agents, Premiere, After Effects, Topaz models, Photoshop and Illustrator.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/td5jTgnOigw</video:player_loc>
+      <video:publication_date>2026-11-11</video:publication_date>
+    </video:video>
+    <video:video>
+      <video:thumbnail_loc>https://i.ytimg.com/vi/ciY3ytKVzO8/hqdefault.jpg</video:thumbnail_loc>
+      <video:title>Creative Cloud MCP: AI agents that edit your files</video:title>
+      <video:description>A creator’s on-site look at how third-party AI agents will edit Photoshop, Illustrator, Premiere and After Effects projects with layers intact.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/ciY3ytKVzO8</video:player_loc>
+      <video:publication_date>2026-11-11</video:publication_date>
+    </video:video>
+  </url>
+</urlset>
