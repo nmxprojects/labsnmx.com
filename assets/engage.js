@@ -340,7 +340,7 @@
 
   /* =========================================================== UI shell */
   if (!$('link[href^="/assets/engage.css"]')) {
-    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=12'; doc.head.appendChild(css);
+    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=13'; doc.head.appendChild(css);
   }
   // v11: flat icons (scripts/icons_v11.py). Same keys as before, so nothing else changes.
   var I = {

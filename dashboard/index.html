@@ -260,15 +260,15 @@
   [hidden]{display:none!important}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-  /* v11.1: flat icons and tiles (no gradient, gloss or shadow); light and dark themes */
-  :root{--ad-tile:#383b47;--ad-tile-ink:#fff}
-  :root[data-theme="dark"]{--ad-tile:#ecebe7;--ad-tile-ink:#17171a}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ad-tile:#ecebe7;--ad-tile-ink:#17171a}}
-  .ad-app{background:var(--ad-tile) !important;color:var(--ad-tile-ink) !important}
+  /* v11.2: flat glyphs, no tiles (one solid colour, details in negative space); orange when the channel is selected */
+  :root{--ad-ic:#383b47}
+  :root[data-theme="dark"]{--ad-ic:#e6e4de}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ad-ic:#e6e4de}}
+  .ad-app{width:26px;height:26px;background:none !important;color:var(--ad-ic) !important;-webkit-mask:none !important;mask:none !important}
   .ad-app::after{content:none !important;display:none !important}
-  .ad-app svg{fill:currentColor;stroke:none}
-  .ad-chc.sel .ad-app,.ad-chc:hover .ad-app{background:var(--orange,#ff5a2b) !important;color:#fff !important}
-  .ad-bm{display:block;width:56%;height:56%;background:currentColor;-webkit-mask:var(--bm) center/contain no-repeat;mask:var(--bm) center/contain no-repeat}
+  .ad-app svg{width:22px;height:22px;fill:currentColor;stroke:none}
+  .ad-chc.sel .ad-app,.ad-chc:hover .ad-app{background:none !important;color:var(--orange,#ff5a2b) !important}
+  .ad-bm{display:block;width:22px;height:22px;background:currentColor;-webkit-mask:var(--bm) center/contain no-repeat;mask:var(--bm) center/contain no-repeat}
   svg.nx-f{fill:currentColor;stroke:none}
 </style>
 </head>

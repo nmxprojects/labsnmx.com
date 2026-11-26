@@ -358,31 +358,31 @@ html.nx-lock{ overflow:hidden; }
 .nx-btn.nx-btn--ink svg{ width:18px; height:18px; }
 @media (max-width:620px){ .nx-sharerow .nx-btn{ width:100%; } }
 
-/* ---------- v11: flat icons (no gradient, gloss or shadow). Light and dark themes by CSS variables. ---------- */
-:root{ --nx-tile:#383b47; --nx-tile-ink:#ffffff; --nx-tile-soft:#ecebe7; --nx-tile-soft-ink:#383b47; --nx-accent:#ff5a2b; }
-:root[data-theme="dark"],.nx-root.nx-dark{ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; --nx-tile-soft:#2c2b28; --nx-tile-soft-ink:#ecebe7; }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; --nx-tile-soft:#2c2b28; --nx-tile-soft-ink:#ecebe7; } }
-.nx-app{ background:var(--nx-tile) !important; color:var(--nx-tile-ink) !important; box-shadow:none !important;
-  transition:transform .18s cubic-bezier(.2,.9,.25,1.2), background-color .15s ease, color .15s ease; }
+/* ---------- v11.2: flat glyphs, as in the reference set: one solid colour, details in negative space, no tiles,
+   gradients, gloss or shadows. Slate in the light theme, light grey in the dark theme, orange on hover. Names on hover. ---------- */
+:root{ --nx-ic:#383b47; --nx-accent:#ff5a2b; --nx-tip:#17171a; --nx-tip-ink:#ffffff; }
+:root[data-theme="dark"],.nx-root.nx-dark{ --nx-ic:#e6e4de; --nx-tip:#ecebe7; --nx-tip-ink:#17171a; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-ic:#e6e4de; --nx-tip:#ecebe7; --nx-tip-ink:#17171a; } }
+svg.nx-f,.nx-root svg.nx-f{ fill:currentColor; stroke:none; }
+.nx-app{ --s:40px; width:var(--s); height:var(--s); background:none !important; color:var(--nx-ic) !important; box-shadow:none !important;
+  -webkit-mask:none !important; mask:none !important; border-radius:10px; transition:color .12s ease; }
 .nx-app::after{ content:none !important; display:none !important; }
-.nx-app--soft{ background:var(--nx-tile-soft) !important; color:var(--nx-tile-soft-ink) !important; }
-.nx-app svg,.nx-root .nx-app svg{ width:54%; height:54%; filter:none !important; fill:currentColor; stroke:none; }
+.nx-app svg,.nx-root .nx-app svg{ width:22px; height:22px; filter:none !important; fill:currentColor; stroke:none; }
+.nx-app .nx-bm{ display:block; width:22px; height:22px; background:currentColor; -webkit-mask:var(--bm) center/contain no-repeat; mask:var(--bm) center/contain no-repeat; }
+.nx-app--soft{ background:none !important; color:var(--nx-ic) !important; }
+.nx-share-list .nx-app,.nx-share-list .nx-app--soft{ --s:24px; }
+.nx-share-list .nx-app svg{ width:18px; height:18px; }
 .nx-follow a:hover .nx-app,.nx-share-apps a:hover .nx-app,.nx-share-list button:hover .nx-app,
-.nx-follow a:focus-visible .nx-app,.nx-share-apps a:focus-visible .nx-app{ background:var(--nx-accent) !important; color:#fff !important; }
-svg.nx-f{ fill:currentColor; stroke:none; overflow:visible; }
-.nx-root svg.nx-f{ fill:currentColor; stroke:none; }
-#saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
-:root[data-theme="dark"] #saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
-@media (prefers-reduced-motion:reduce){ .nx-app{ transition:none; } }
-
-/* ---------- v11.1: official brand marks in tiles, and the network names as hover labels ---------- */
-.nx-app .nx-bm{ display:block; width:52%; height:52%; background:currentColor; -webkit-mask:var(--bm) center/contain no-repeat; mask:var(--bm) center/contain no-repeat; }
-.nx-follow,.nx-share-apps{ position:relative; }
-.nx-follow a,.nx-share-apps a{ position:relative; width:auto; gap:0; }
-.nx-follow a > span:last-child,.nx-share-apps a > span:last-child{ position:absolute; z-index:5; bottom:calc(100% + 8px); left:50%; transform:translate(-50%,4px);
-  white-space:nowrap; padding:5px 9px; border-radius:8px; background:var(--nx-tile); color:var(--nx-tile-ink); font-size:11.5px; font-weight:600; line-height:1.2;
-  opacity:0 !important; pointer-events:none; transition:opacity .15s ease, transform .15s ease; }
+.nx-follow a:focus-visible .nx-app,.nx-share-apps a:focus-visible .nx-app{ color:var(--nx-accent) !important; background:none !important; transform:none; }
+.nx-follow a:focus-visible,.nx-share-apps a:focus-visible{ outline:2px solid var(--nx-accent); outline-offset:2px; border-radius:10px; }
+.nx-share-apps{ display:flex; flex-wrap:wrap; justify-content:flex-start; gap:6px 10px; margin:0 0 18px; position:relative; }
+.nx-follow{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 10px; position:relative; }
+.nx-follow a,.nx-share-apps a{ position:relative; display:grid; place-items:center; width:auto; padding:0; gap:0; }
+/* the network name: a small label under the glyph, only on hover or keyboard focus (screen readers always read it) */
+.nx-follow a > span:last-child,.nx-share-apps a > span:last-child{ position:absolute; z-index:5; top:calc(100% + 2px); left:50%; transform:translateX(-50%);
+  white-space:nowrap; padding:4px 8px; border-radius:6px; background:var(--nx-tip); color:var(--nx-tip-ink); font-size:11.5px; font-weight:600; line-height:1.2;
+  opacity:0 !important; pointer-events:none; transition:opacity .1s ease; }
 .nx-follow a:hover > span:last-child,.nx-follow a:focus-visible > span:last-child,
-.nx-share-apps a:hover > span:last-child,.nx-share-apps a:focus-visible > span:last-child{ opacity:1 !important; transform:translate(-50%,0); }
-.nx-share-apps{ grid-template-columns:repeat(auto-fill, minmax(52px, 1fr)); row-gap:10px; margin:0 0 14px; }
-.nx-follow{ gap:10px; }
+.nx-share-apps a:hover > span:last-child,.nx-share-apps a:focus-visible > span:last-child{ opacity:1 !important; }
+#saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
+@media (prefers-reduced-motion:reduce){ .nx-app,.nx-follow a > span:last-child,.nx-share-apps a > span:last-child{ transition:none; } }

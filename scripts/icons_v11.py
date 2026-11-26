@@ -191,13 +191,24 @@ def write_files(root):
     return len(GLYPHS)
 
 
+def halo_svg(name, px=84, color=INK, halo='#ffffff', hw=2.4):
+    """v11.2: a bare flat glyph for emails (no tile), with a thin light edge so it stays visible when a mail app shows the
+    email on a dark background. On a white email the edge is invisible."""
+    import re
+    g = GLYPHS[name]
+    back = g.replace('fill="currentColor" stroke="none"', f'fill="{halo}" stroke="{halo}" stroke-width="{hw:g}" stroke-linejoin="round"')
+    back = re.sub(r'stroke="currentColor"(.*?)stroke-width="([\d.]+)"', lambda m: f'stroke="{halo}"{m.group(1)}stroke-width="{float(m.group(2)) + hw:g}"', back)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 28 28" width="{px}" height="{px}">'
+            f'<g>{back}</g><g>{g.replace("currentColor", color)}</g></svg>')
+
+
 def write_pngs(root):
     import cairosvg
     d = os.path.join(root, 'assets', 'email', 'icons'); os.makedirs(d, exist_ok=True)
     n = 0
-    for k, (g, _) in APPS.items():          # 132 x 132 tiles, shown at 44 x 44 in the emails
-        cairosvg.svg2png(bytestring=tile_svg(g, ring_w=1.1).encode(), write_to=os.path.join(d, k + '.png'), output_width=132, output_height=132); n += 1
-    for k in ('mail', 'chat', 'phone', 'globe', 'location'):   # small orange glyphs for the contact line (shown at 16 x 16)
+    for k, (g, _) in APPS.items():          # 84 x 84 bare glyphs, shown at 28 x 28 in the emails
+        cairosvg.svg2png(bytestring=halo_svg(g).encode(), write_to=os.path.join(d, k + '.png'), output_width=84, output_height=84); n += 1
+    for k in ('mail', 'chat', 'phone', 'globe', 'location'):   # small orange glyphs for the contact line (shown at 14 x 14)
         cairosvg.svg2png(bytestring=standalone(k, ACCENT).encode(), write_to=os.path.join(d, 'line-' + k + '.png'), output_width=48, output_height=48); n += 1
     return n
 
