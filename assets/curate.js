@@ -328,7 +328,7 @@
   $$('.site-footer .footer-col').forEach(function (col) {
     var h = $('h4', col); if (!h || !/Studio/.test(h.textContent)) return;
     var ul = $('ul', col); if (!ul || $('[data-personalise]', ul)) return;
-    var li = doc.createElement('li'); li.innerHTML = '<button class="foot-pf" type="button" data-personalise="footer">Personalise what you see</button>'; ul.appendChild(li);
+    var li = doc.createElement('li'); li.innerHTML = '<a class="foot-pf" href="#personalise" data-personalise="footer">Personalise what you see</a>';   // v11.1: styled like the other footer links ul.appendChild(li);
   });
 
   /* =========================================================== one-click unsubscribe links from emails */

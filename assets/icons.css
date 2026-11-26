@@ -30,3 +30,34 @@ h2.nx-h + p a:hover{ color:var(--nx-accent); }
 
 /* flat glyphs that replaced the older line icons (reading tools, player, theme switch, rails, search) */
 svg.nx-f{ fill:currentColor; stroke:none; }
+
+/* v11.1: official brand marks (assets/icons/brands/<name>.svg) drawn flat in the text colour */
+.nx-bm{ display:inline-block; flex:none; width:1.1em; height:1.1em; vertical-align:-.2em; margin-right:.5em; background:currentColor;
+  -webkit-mask:var(--bm) center/contain no-repeat; mask:var(--bm) center/contain no-repeat; }
+.nx-ti .nx-bm{ width:20px; height:20px; margin:0; vertical-align:0; }
+
+/* v11.1: footer "Get in touch" as a row of icon buttons; the name shows on hover or keyboard focus */
+.footer-col ul.nx-iconrow{ flex-direction:row; flex-wrap:wrap; align-items:center; gap:10px; max-width:220px; }
+.footer-col .nx-iconrow li{ display:block; }
+.footer-col .nx-iconrow a{ position:relative; display:inline-grid; place-items:center; width:40px; height:40px; padding:0; gap:0;
+  border-radius:12px; background:var(--nx-tile); color:var(--nx-tile-ink); transition:background-color .15s ease, color .15s ease, transform .15s ease; }
+.footer-col .nx-iconrow a > svg.nx-i,.footer-col .nx-iconrow a > .nx-bm{ width:20px; height:20px; margin:0; opacity:1; vertical-align:0; color:inherit; }
+.footer-col .nx-iconrow a:hover,.footer-col .nx-iconrow a:focus-visible{ background:var(--nx-accent); color:#fff; transform:translateY(-2px); }
+.footer-col .nx-iconrow a:hover > svg.nx-i{ color:#fff; }
+.nx-iconrow .nx-lbl{ position:absolute; z-index:5; bottom:calc(100% + 9px); left:50%; transform:translate(-50%,4px); white-space:nowrap;
+  padding:6px 10px; border-radius:8px; background:var(--nx-tip-bg,#17171a); color:var(--nx-tip-ink,#fff); font-size:12px; font-weight:500; line-height:1.2;
+  opacity:0; pointer-events:none; transition:opacity .15s ease, transform .15s ease; }
+.nx-iconrow .nx-lbl::after{ content:''; position:absolute; top:100%; left:50%; margin-left:-5px; border:5px solid transparent; border-top-color:var(--nx-tip-bg,#17171a); }
+.nx-iconrow a:hover .nx-lbl,.nx-iconrow a:focus-visible .nx-lbl{ opacity:1; transform:translate(-50%,0); }
+.nx-iconrow li:first-child .nx-lbl{ left:0; transform:translate(0,4px); }
+.nx-iconrow li:first-child .nx-lbl::after{ left:20px; }
+.nx-iconrow li:first-child a:hover .nx-lbl,.nx-iconrow li:first-child a:focus-visible .nx-lbl{ transform:translate(0,0); }
+:root[data-theme="dark"]{ --nx-tip-bg:#ecebe7; --nx-tip-ink:#17171a; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-tip-bg:#ecebe7; --nx-tip-ink:#17171a; } }
+@media (max-width:760px){ .footer-col ul.nx-iconrow{ justify-content:center; margin:0 auto; } }
+@media (prefers-reduced-motion:reduce){ .footer-col .nx-iconrow a,.nx-iconrow .nx-lbl{ transition:none; } }
+
+/* v11.1: "Personalise what you see" reads like the other footer links */
+.footer-col .foot-pf{ background:none; border:0; padding:0; font:inherit; font-size:12.5px; line-height:inherit; color:var(--muted,#8c8a84);
+  text-decoration:none; text-align:left; cursor:pointer; }
+.footer-col .foot-pf:hover{ color:var(--ink,#111110); }

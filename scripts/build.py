@@ -734,6 +734,9 @@ def main():
     if build_v10:                                                      # v10: Play arcade, Pinterest on the blog and home pages
         try: build_v10.pages()
         except Exception as e: print('v10 pages not rebuilt: ' + str(e))
+    if build_v11:                                                      # v11.1: which official brand files exist
+        try: build_v11.sync_brands()
+        except Exception as e: print('v11 brand marks skipped: ' + str(e))
     build_footers(published)
     if build_v11:                                                      # v11: /clients links in AMP and scheduled pages
         try: build_v11.fix_hidden_links(fix_links)

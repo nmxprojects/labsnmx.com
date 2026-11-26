@@ -105,6 +105,8 @@ GLYPHS = {
     'arrow': line('M4.5 12h15M13.5 6l6 6-6 6', 2.4),
     'chevL': line('M15 5l-7 7 7 7', 2.6),
     'chevR': line('M9 5l7 7-7 7', 2.6),
+    'tag': fill('M3 4.6A1.6 1.6 0 0 1 4.6 3h6.6c.4 0 .8.2 1.1.5l8.3 8.3a1.6 1.6 0 0 1 0 2.3l-6.6 6.6a1.6 1.6 0 0 1-2.3 0L3.5 12.4a1.6 1.6 0 0 1-.5-1.1z' + circ(7.8, 7.8, 1.7), True),
+    'refresh': line('M4.6 11a7.5 7.5 0 0 1 13.2-4.3L20 9M20 4v5h-5M19.4 13a7.5 7.5 0 0 1-13.2 4.3L4 15M4 20v-5h5', 2.3),
     'sun': fill(circ(12, 12, 4.4)) + line('M12 2.4v2.2M12 19.4v2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M5.2 18.8l1.6-1.6M17.2 6.8l1.6-1.6', 2.2),
     'moon': fill('M20.6 14.6A8.6 8.6 0 0 1 9.4 3.4a8.6 8.6 0 1 0 11.2 11.2z'),
 }
@@ -119,6 +121,28 @@ APPS = {
     'like': ('heart', 'Like'), 'comment': ('comment', 'Comment'), 'print': ('print', 'Print'), 'download': ('download', 'Download'),
     'send': ('send', 'Send'), 'link': ('link', 'Link'), 'calendar': ('calendar', 'Book'),
 }
+
+# v11.1: official brand marks, if you add them. Save each network's own single-colour (black) logo file from its brand
+# resources page as assets/icons/brands/<key>.svg. The site then shows it flat in the theme colour (CSS mask, so the
+# file's own colours are ignored), the dashboard and share tiles use it, and the GitHub Action makes the email PNG from it.
+# Until a file is there, the generic symbol below is used.
+BRAND_OF = {'camera': 'instagram', 'chat': 'whatsapp', 'briefcase': 'linkedin', 'pin': 'pinterest', 'play': 'youtube',
+            'people': 'facebook', 'at': 'x', 'bubbles': 'threads', 'plane': 'telegram'}
+BRAND_KEYS = ['instagram', 'whatsapp', 'linkedin', 'pinterest', 'facebook', 'youtube', 'x', 'threads', 'telegram', 'google']
+
+
+def brands(root):
+    d = os.path.join(root, 'assets', 'icons', 'brands')
+    return [k for k in BRAND_KEYS if os.path.exists(os.path.join(d, k + '.svg'))]
+
+
+def mark(name, root, cls='nx-i'):
+    """The icon for a page: the official brand file (as a flat mask) when present, otherwise the generic glyph."""
+    b = BRAND_OF.get(name)
+    if b and b in brands(root):
+        return f'<span class="{cls} nx-bm" style="--bm:url(/assets/icons/brands/{b}.svg)" aria-hidden="true"></span>'
+    return svg(name, cls)
+
 
 INK = '#383b47'        # slate, the colour of the glyphs in the reference set
 ACCENT = '#ff5a2b'     # NMX orange, one accent only

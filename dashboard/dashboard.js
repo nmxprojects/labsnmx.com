@@ -520,14 +520,13 @@
   // The five channels shown as cards. Instagram and Facebook include Meta ads (counted separately as "from ads").
   var CH = [['instagram', 'Instagram', 'camera', '#a689f5', '#6b46d6'], ['google', 'Google Search', 'search', '#93a986', '#62785a'],
     ['facebook', 'Facebook', 'people', '#5fc6ba', '#2a8a80'], ['pinterest', 'Pinterest', 'pin', '#ffdb6e', '#ffb21a'], ['linkedin', 'LinkedIn', 'briefcase', '#78a3ea', '#3d68c2']];
-  var GLYPH = {
-    camera: '<path d="M3.6 9.2a2.4 2.4 0 0 1 2.4-2.4h2.1l1.3-2h5.2l1.3 2H18a2.4 2.4 0 0 1 2.4 2.4v8.4A2.4 2.4 0 0 1 18 20H6a2.4 2.4 0 0 1-2.4-2.4z"/><circle cx="12" cy="13.2" r="3.5"/>',
-    search: '<circle cx="10.6" cy="10.6" r="6"/><path d="m15.2 15.2 4.9 4.9"/>',
-    people: '<circle cx="9" cy="8.8" r="3.2"/><path d="M3.4 19.2a5.6 5.6 0 0 1 11.2 0"/><circle cx="16.9" cy="9.6" r="2.5"/><path d="M15.7 14.1a4.7 4.7 0 0 1 4.9 4.9"/>',
-    pin: '<path d="M8.8 3.8h6.4l-1.1 5.3 3.1 3.6H6.8l3.1-3.6z"/><path d="M12 12.7v7.8"/>',
-    briefcase: '<rect x="3.5" y="7.5" width="17" height="12" rx="2.6"/><path d="M9 7.5V6.1A1.6 1.6 0 0 1 10.6 4.5h2.8A1.6 1.6 0 0 1 15 6.1v1.4M3.5 12.6h17M10.5 12.6v1.6h3v-1.6"/>'
-  };
-  function chTile(c) { return '<span class="ad-app" style="--a1:' + c[3] + ';--a2:' + c[4] + (c[0] === 'pinterest' ? ';color:#111110' : '') + '" aria-hidden="true"><svg viewBox="0 0 24 24">' + GLYPH[c[2]] + '</svg></span>'; }
+  // v11.1: flat glyphs from scripts/icons_v11.py; the official brand file replaces a glyph when it is in assets/icons/brands/
+  var GLYPH = {"camera": "<path fill=\"currentColor\" stroke=\"none\" d=\"M9.1 4.3h5.8a1.3 1.3 0 0 1 1.1.6L17.3 7H6.7l1.3-2.1a1.3 1.3 0 0 1 1.1-.6z\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M6.5 6.6h11a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-11a4 4 0 0 1 -4 -4v-6a4 4 0 0 1 4 -4zM7.5 13.6a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0zM9.4 13.6a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0zM16.95 10.1a1.05 1.05 0 1 0 2.1 0a1.05 1.05 0 1 0 -2.1 0z\"/>", "search": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.4\" d=\"M4 10.6a6.6 6.6 0 1 0 13.2 0a6.6 6.6 0 1 0 -13.2 0z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.8\" d=\"M15.6 15.6 20.6 20.6\"/>", "people": "<path fill=\"currentColor\" stroke=\"none\" d=\"M5.4 8a3.6 3.6 0 1 0 7.2 0a3.6 3.6 0 1 0 -7.2 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M2.6 19.6c0-3.7 2.9-6.4 6.4-6.4s6.4 2.7 6.4 6.4a.9.9 0 0 1-.9.9H3.5a.9.9 0 0 1-.9-.9z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M14.1 8.9a2.8 2.8 0 1 0 5.6 0a2.8 2.8 0 1 0 -5.6 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M16.2 13.6c3 0 5.2 2.2 5.2 5.4a.9.9 0 0 1-.9.9h-3.3c0-2.5-.8-4.6-2.3-6.1.4-.1.8-.2 1.3-.2z\"/>", "pin": "<path fill=\"currentColor\" stroke=\"none\" d=\"M8.3 3.4h7.4a1.1 1.1 0 0 1 .9 1.7l-1.5 2.4v3.2l3 2.9a1.1 1.1 0 0 1-.8 1.9H6.7a1.1 1.1 0 0 1-.8-1.9l3-2.9V7.5L7.4 5.1a1.1 1.1 0 0 1 .9-1.7z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M12 15.6v5.4\"/>", "briefcase": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.1\" d=\"M8.9 6.9V5.6a1.8 1.8 0 0 1 1.8-1.8h2.6a1.8 1.8 0 0 1 1.8 1.8v1.3\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M5.7 6.8h12.6a3.2 3.2 0 0 1 3.2 3.2v7.2a3.2 3.2 0 0 1 -3.2 3.2h-12.6a3.2 3.2 0 0 1 -3.2 -3.2v-7.2a3.2 3.2 0 0 1 3.2 -3.2zM2.5 11.9h19v1.5h-19z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M11.1 10.9h1.8a0.9 0.9 0 0 1 0.9 0.9v1.7a0.9 0.9 0 0 1 -0.9 0.9h-1.8a0.9 0.9 0 0 1 -0.9 -0.9v-1.7a0.9 0.9 0 0 1 0.9 -0.9z\"/>"};
+  var BRANDS = [];   // v11.1: set by scripts/build_v11.py from assets/icons/brands/
+  function chTile(c) {
+    var face = BRANDS.indexOf(c[0]) > -1 ? '<i class="ad-bm" style="--bm:url(/assets/icons/brands/' + c[0] + '.svg)"></i>' : '<svg class="nx-f" viewBox="0 0 24 24">' + GLYPH[c[2]] + '</svg>';
+    return '<span class="ad-app ad-app--' + c[0] + '" aria-hidden="true">' + face + '</span>';   // v11.1: flat tile, colours in index.html
+  }
   function channelOf(tc, td, br) {
     td = String(td || ''); br = String(br || '');
     var meta = /^Facebook or Instagram/.test(td);

@@ -374,3 +374,15 @@ svg.nx-f{ fill:currentColor; stroke:none; overflow:visible; }
 #saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
 :root[data-theme="dark"] #saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
 @media (prefers-reduced-motion:reduce){ .nx-app{ transition:none; } }
+
+/* ---------- v11.1: official brand marks in tiles, and the network names as hover labels ---------- */
+.nx-app .nx-bm{ display:block; width:52%; height:52%; background:currentColor; -webkit-mask:var(--bm) center/contain no-repeat; mask:var(--bm) center/contain no-repeat; }
+.nx-follow,.nx-share-apps{ position:relative; }
+.nx-follow a,.nx-share-apps a{ position:relative; width:auto; gap:0; }
+.nx-follow a > span:last-child,.nx-share-apps a > span:last-child{ position:absolute; z-index:5; bottom:calc(100% + 8px); left:50%; transform:translate(-50%,4px);
+  white-space:nowrap; padding:5px 9px; border-radius:8px; background:var(--nx-tile); color:var(--nx-tile-ink); font-size:11.5px; font-weight:600; line-height:1.2;
+  opacity:0 !important; pointer-events:none; transition:opacity .15s ease, transform .15s ease; }
+.nx-follow a:hover > span:last-child,.nx-follow a:focus-visible > span:last-child,
+.nx-share-apps a:hover > span:last-child,.nx-share-apps a:focus-visible > span:last-child{ opacity:1 !important; transform:translate(-50%,0); }
+.nx-share-apps{ grid-template-columns:repeat(auto-fill, minmax(52px, 1fr)); row-gap:10px; margin:0 0 14px; }
+.nx-follow{ gap:10px; }

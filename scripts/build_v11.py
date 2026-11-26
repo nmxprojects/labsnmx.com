@@ -20,7 +20,8 @@ NMX Labs v11, called by scripts/build.py on every run (nightly, and whenever con
      switch back to "index" by themselves once they have enough posts. The HTML sitemap /sitemap/ is "noindex, follow"
      (people and crawlers can still follow every link on it; it just isn't offered as a search result).
 
-3. Flat icons (scripts/icons_v11.py) in the footer "Get in touch" column, the homepage socials, the contact page and
+3. Flat icons (scripts/icons_v11.py) in the footer "Get in touch" column (v11.1: an icon-only row whose names show on
+   hover or keyboard focus; official brand marks from assets/icons/brands/ when you add them), the homepage socials, the contact page and
    the blog's Instagram card, with /assets/icons.css. Safe to run on any page, any number of times.
 """
 import datetime as dt, json, os, re
@@ -163,18 +164,43 @@ def icon_for(href):
 
 
 A_RE = re.compile(r'(<a\b[^>]*\bhref="([^"]*)"[^>]*>)(.*?)(</a>)', re.S)
+LEAD_RE = re.compile(r'\s*(<svg\b.*?</svg>|<span class="nx-i nx-bm"[^>]*></span>)', re.S)
 
 
-def iconise_links(block):
+def iconise_links(block, labels=False):
+    """Puts the flat icon at the start of each contact/social link (replacing any older icon). With labels=True the
+    text becomes a label that only shows on hover or keyboard focus (screen readers still read it)."""
     def one(m):
         open_, href, inner, close = m.groups()
         name = icon_for(href)
-        if not name or 'nx-i' in inner: return m.group(0)
-        ic = IC.svg(name)
-        lead = re.match(r'\s*<svg\b.*?</svg>', inner, re.S)
-        inner = ic + inner[lead.end():] if lead else ic + inner
-        return open_ + inner + close
+        if not name: return m.group(0)
+        lead = LEAD_RE.match(inner)
+        rest = inner[lead.end():] if lead else inner
+        if labels:
+            txt = rest.strip()
+            mm = re.fullmatch(r'<span class="nx-lbl">(.*)</span>', txt, re.S)
+            rest = '<span class="nx-lbl">' + (mm.group(1) if mm else txt) + '</span>'
+        return open_ + IC.mark(name, ROOT) + rest + close
     return A_RE.sub(one, block)
+
+
+def iconrow(m):
+    """The footer "Get in touch" list as a row of icon buttons."""
+    head, attrs, body, end = m.group(1), m.group(2), m.group(3), m.group(4)
+    if 'nx-iconrow' not in attrs:
+        attrs = re.sub(r'class="([^"]*)"', lambda c: 'class="' + c.group(1) + ' nx-iconrow"', attrs) if 'class="' in attrs else attrs + ' class="nx-iconrow"'
+    return head + attrs + '>' + iconise_links(body, True) + end
+
+
+def sync_brands():
+    """Tells assets/engage.js and the dashboard which official brand files exist (one generated line in each)."""
+    line = '  var BRANDS = ' + json.dumps(IC.brands(ROOT)) + ';   // v11.1: set by scripts/build_v11.py from assets/icons/brands/'
+    for p in ('assets/engage.js', 'dashboard/dashboard.js'):
+        s = rd(p)
+        if not s: continue
+        t = re.sub(r'^  var BRANDS = .*$', lambda m: line, s, count=1, flags=re.M)
+        if t != s: wr(p, t)
+    if IC.brands(ROOT): NOTES.append('official brand marks in use: ' + ', '.join(IC.brands(ROOT)))
 
 
 CONTACT_H = {'WhatsApp': 'chat', 'Email': 'mail', 'Phone': 'phone', 'Instagram': 'camera', 'LinkedIn': 'briefcase',
@@ -214,16 +240,18 @@ def icons(s, rel=''):
     if '/amp' in '/' + rel or rel.startswith(('tools', 'dashboard')): return s
     t = swap_icons(s)
     # footer: "Get in touch" column (one-line markup on most pages, multi-line on the homepage)
-    t = re.sub(r'(<h4>Get in touch</h4>\s*<ul>)(.*?)(</ul>)', lambda m: m.group(1) + iconise_links(m.group(2)) + m.group(3), t, flags=re.S)
+    t = re.sub(r'(<h4>Get in touch</h4>\s*<ul)([^>]*)>(.*?)(</ul>)', iconrow, t, flags=re.S)
     # homepage: mobile menu socials and the hero Instagram button
     t = re.sub(r'(<div class="mobile-menu-social">)(.*?)(</div>)', lambda m: m.group(1) + iconise_links(m.group(2)) + m.group(3), t, flags=re.S)
     t = re.sub(r'<a\b[^>]*data-pixel-source="hero"[^>]*>.*?</a>', lambda m: iconise_links(m.group(0)), t, flags=re.S)
     # blog page: Instagram card
-    t = t.replace('<div class="social-head"><strong>Instagram</strong>', '<div class="social-head"><strong>' + IC.svg('camera') + 'Instagram</strong>')
+    t = re.sub(r'<div class="social-head"><strong>(?:<svg\b.*?</svg>|<span class="nx-i nx-bm"[^>]*></span>)Instagram</strong>', '<div class="social-head"><strong>Instagram</strong>', t, flags=re.S)
+    t = t.replace('<div class="social-head"><strong>Instagram</strong>', '<div class="social-head"><strong>' + IC.mark('camera', ROOT) + 'Instagram</strong>')
     # contact page: one icon per channel heading
     if rel.startswith('contact'):
+        t = re.sub(r'<h2 class="nx-h"><span class="nx-ti">.*?</span>(\w+)</h2>', lambda m: '<h2>' + m.group(1) + '</h2>', t, flags=re.S)
         t = re.sub(r'<h2>(WhatsApp|Email|Phone|Instagram|LinkedIn|Pinterest|YouTube|Studio)</h2>',
-                   lambda m: '<h2 class="nx-h"><span class="nx-ti">' + IC.svg(CONTACT_H[m.group(1)]) + '</span>' + m.group(1) + '</h2>', t)
+                   lambda m: '<h2 class="nx-h"><span class="nx-ti">' + IC.mark(CONTACT_H[m.group(1)], ROOT) + '</span>' + m.group(1) + '</h2>', t)
     if t != s and '/assets/icons.css' not in t:
         t = t.replace('</head>', '<link rel="stylesheet" href="/assets/icons.css">\n</head>', 1)
     return t
