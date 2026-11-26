@@ -11,8 +11,9 @@ NMX Labs v9 layer, called by scripts/build.py. If anything here breaks, build.py
     If the counts can't be read, the last saved file is used; with no file at all, posts marked "popular" are used.
   - Country curation: every post, news story and card gets a data-region tag (in, uk, us, me, global), worked out from
     its words. Add "regions": ["in", "uk"] to a post in content/posts.json to set it by hand.
-  - YouTube: videos from content/videos.json are matched to posts by their words or their "related" link; posts with no
-    match get a link to the channel (content/youtube.json) or to a YouTube search for the topic.
+  - YouTube: a post's own video ("youtube" in content/posts.json, set in the Creator) comes first; then videos from
+    content/videos.json matched by their words or their "related" link; then a YouTube search for the topic (the post's
+    "youtube_query", else content/youtube.json, else words from the title), with the channel (content/youtube.json).
   - Sitemaps: sitemap.xml stays exactly as before (the Creator reads it). New: sitemap_index.xml pointing at
     sitemap-pages.xml, sitemap-posts.xml, sitemap-learn.xml, sitemap-news.xml (Google News) and sitemap-video.xml.
   - 404.html that suggests (and, for a near-exact match, opens) the right page, and redirect pages for old addresses.
@@ -154,7 +155,7 @@ def video_for(p):
 
 LEAD_WORDS = re.compile(r'^(why|how|what|when|the|a|an|our|your|everyone|latest)\s+', re.I)
 def yt_query(p):
-    q = YT['queries'].get(p['slug'])
+    q = str(p.get('youtube_query') or '').strip() or YT['queries'].get(p['slug'])   # the Creator's search phrase, then content/youtube.json
     if q: return q
     q = re.split(r'[:?(.]', p['title'])[0].strip()
     for _ in range(3): q = LEAD_WORDS.sub('', q)
@@ -166,7 +167,8 @@ PLAY = '<svg class="yt-play" viewBox="0 0 68 48" aria-hidden="true"><path d="M66
 
 def watch_tile(p, cls):
     """A YouTube tile for a post: a matched video, else the channel, else a search for the topic."""
-    v = video_for(p)
+    v = ({'id': p['youtube'], 'title': p.get('youtube_title') or 'Watch the video for this post'}
+         if re.fullmatch(r'[\w-]{11}', str(p.get('youtube') or '')) else video_for(p))   # a video set in the Creator comes first
     if v:
         return (f'<li class="{cls} {cls}--video"><a href="https://www.youtube.com/watch?v={esc(v["id"])}" target="_blank" rel="noopener" data-yt="{esc(v["id"])}">'
                 f'<span class="{cls}-img"><img src="https://i.ytimg.com/vi/{esc(v["id"])}/hqdefault.jpg" alt="" width="480" height="360" loading="lazy" decoding="async">{PLAY}</span>'
