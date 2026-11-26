@@ -38,6 +38,10 @@ All of it lives in scripts/build_v9.py: if that file is missing or fails, the v8
 v10: LinkedIn and Pinterest next to Instagram on every page, the arcade visuals on /play/, the newest Pinterest pins on the
 blog and home pages (read from the profile's public RSS feed, no API), and blog/pinterest.xml for Pinterest's Auto-publish.
 All of it lives in scripts/build_v10.py: if that file is missing or fails, the v9 behaviour runs.
+v11: new posts are announced and listed as the latest whatever their date (live_at in content/posts.json, blog/posts.json
+and the "new_posts" Actions output), category pages with fewer than 3 posts and /sitemap/ are noindex (and out of the
+sitemaps), /clients links in AMP and scheduled pages are fixed, and the flat icon set (scripts/icons_v11.py) is added
+to the footer, homepage and contact page. All of it lives in scripts/build_v11.py: if it's missing or fails, v10 runs.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -57,6 +61,11 @@ try:
 except Exception as _e:
     build_v10 = None
     print('v10 layer skipped: ' + str(_e))
+try:
+    import build_v11   # v11: live_at, newest-first on the same date, thin-page noindex, link fixes, flat icons.
+except Exception as _e:
+    build_v11 = None
+    print('v11 layer skipped: ' + str(_e))
 try:
     import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
 except Exception as _e:
@@ -382,6 +391,9 @@ def build_footers(published):
             if WIRE_BAR and build_news: s = build_news.add_bar(s, WIRE_BAR, rel)                                  # v6: "Latest in" bar
             s = v6_copy(s)
             s = fix_links(s)                                                                      # v8: /services/ and /clients/
+            if build_v11:                                                                         # v11: flat icons
+                try: s = build_v11.icons(s, rel)
+                except Exception as e: print(f'Icons not added to {p}: {e}')
             if build_v10:                                                                         # v10: LinkedIn and Pinterest
                 try: s = build_v10.socials(s)
                 except Exception as e: print(f'Follow links not added to {p}: {e}')
@@ -434,7 +446,8 @@ def build_sitemap(published, live_cats):
         else: lm = before.get(loc) or live.get(loc) or TODAY
         url(loc, lm, freq, prio)
     for c in CATEGORIES:
-        if c in live_cats: url(f'/blog/category/{c}/', max(p['date'] for p in published if p['category'] == c), 'weekly', '0.6')
+        if c in live_cats and page_state(f'/blog/category/{c}/') == 'ok':                  # v11: thin (noindex) categories stay out
+            url(f'/blog/category/{c}/', max(p['date'] for p in published if p['category'] == c), 'weekly', '0.6')
     for a in AUTHORS:
         mine = [p['date'] for p in published if p['author'] == a]
         if mine: url(f'/blog/author/{a}/', max(mine), 'weekly', '0.5')
@@ -521,13 +534,18 @@ def build_llms(published, lessons, news):
 
 def build_public_json(published):
     out = {'updated': published[0]['date'], 'site': SITE, 'posts': []}
-    for p in published[:40]:
+    rows = published[:40]
+    if build_v11:                                                       # v11: back-dated posts that just went live, too
+        try: rows = rows + build_v11.recent_backdated(published, {p['slug'] for p in rows})
+        except Exception as e: print('v11 recent posts skipped: ' + str(e))
+    for p in rows:
         out['posts'].append({'slug': p['slug'], 'title': p['title'], 'url': f'{SITE}/blog/{p["slug"]}/', 'date': p['date'],
                              'dek': p['dek'], 'takeaways': p['takeaways'][:4], 'category': p['category_label'], 'track': p['track'],
                              'author': p['author_name'], 'read_min': p['read_min'],
                              'image': f'{SITE}/assets/blog/{p["image"]}.jpg', 'thumb': f'{SITE}/assets/blog/{p["image"]}.jpg',
                              'thumb_small': f'{SITE}/assets/blog/{p["image"]}-640.webp', 'regions': p.get('regions', ['global']),
                              'most_read': (build_v9.pop_rank(p['slug']) if V9_OK else 0)})
+        if build_v11: out['posts'][-1].update(build_v11.public_extra(p))  # v11: live_at (and notify: false)
     wr('blog/posts.json', json.dumps(out, ensure_ascii=False, indent=1) + '\n')
 
 # ------------------------------------------------------------------ v8: links, page discovery, sitemap that never loses pages, videos
@@ -649,6 +667,7 @@ def build_videos():
 
 # ------------------------------------------------------------------ main
 TODAY = None
+NEW_LIVE = []
 V9_OK = False
 LESSON_LINKS = []
 WIRE_BAR = ''
@@ -677,6 +696,10 @@ def main():
     published = [p for p in posts if p['status'] == 'published' and p['date'] <= today
                  and os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))]
     published.sort(key=lambda p: order[p['slug']]); published.sort(key=lambda p: p['date'], reverse=True)
+    NEW_LIVE[:] = []
+    if build_v11:                                                      # v11: live_at, and newest upload first on the same date
+        try: NEW_LIVE[:] = build_v11.stamp_live(posts, published, MANIFEST, today); build_v11.sort_published(published, order)
+        except Exception as e: print('v11 live_at skipped: ' + str(e))
     live_cats = {p['category'] for p in published}
     global V9_OK
     if build_v9:                                                       # v9: regions, reader counts, YouTube matches
@@ -689,6 +712,9 @@ def main():
     for c in CATEGORIES:
         if c in live_cats: build_category(c, [p for p in published if p['category'] == c], live_cats)
     for a_ in AUTHORS: build_author(a_, [p for p in published if p['author'] == a_])
+    if build_v11:                                                      # v11: thin category pages and /sitemap/ are noindex
+        try: build_v11.thin_pages(published, CATEGORIES)
+        except Exception as e: print('v11 noindex step skipped: ' + str(e))
     for p in published: build_post(p, published)
     global WIRE_BAR
     news, news_home = [], ''
@@ -709,6 +735,9 @@ def main():
         try: build_v10.pages()
         except Exception as e: print('v10 pages not rebuilt: ' + str(e))
     build_footers(published)
+    if build_v11:                                                      # v11: /clients links in AMP and scheduled pages
+        try: build_v11.fix_hidden_links(fix_links)
+        except Exception as e: print('v11 link fix skipped: ' + str(e))
     build_feed(published)
     if build_v10:                                                      # v10: blog/pinterest.xml for Pinterest's Auto-publish
         try: print('blog/pinterest.xml: %d Pins' % build_v10.pinterest_feed(published))
@@ -722,7 +751,7 @@ def main():
     build_llms(published, lessons, news)
     if V9_OK:
         CHANGED.extend(build_v9.WRITTEN)
-        fresh = [f'{SITE}/blog/{p["slug"]}/' for p in published if p['modified'] >= today or p['date'] >= today]
+        fresh = [f'{SITE}/blog/{p["slug"]}/' for p in published if p['modified'] >= today or p['date'] >= today or p['slug'] in NEW_LIVE]
         if fresh:
             n = build_v9.indexnow(fresh + [f'{SITE}/blog/', f'{SITE}/', f'{SITE}/sitemap.xml'])
             if n: print(f'IndexNow: told Bing and others about {n} addresses')
@@ -731,6 +760,9 @@ def main():
     if build_v10:
         CHANGED.extend(build_v10.WRITTEN)
         for note in build_v10.NOTES: print('v10: ' + note)
+    if build_v11:
+        CHANGED.extend(build_v11.WRITTEN)
+        for note in build_v11.NOTES: print('v11: ' + note)
     print(f'{today}: {len(published)} posts live, {len(CHANGED)} files updated.')
 
 if __name__ == '__main__':

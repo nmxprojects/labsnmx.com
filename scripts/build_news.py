@@ -20,6 +20,9 @@ Builds:
   - the homepage "The wire" bento carousel (between <!--HOME-NEWS--> markers in index.html)
   - the "Latest in" bar under the menu on blog, news and learn pages (between <!--WIRE-BAR--> markers)
   - news/latest.json    the same headlines as JSON, for anything else that wants them
+v11: a story can carry "added_at" (when it was added, UTC) and "notify": true (Content Blog Creator: "Send a browser
+notification"). Stories with the same date are listed newest-added first, and Code-Blog.gs v11 sends one browser
+notification for each new story marked notify (no emails for news).
 A "deep" link to one of our posts only appears once that post is published, so scheduled posts never leak.
 """
 import datetime as dt, html, json, os, re
@@ -60,6 +63,7 @@ def load(today, live_slugs):
         if x.get('topic') not in TONE: x['topic'] = 'Marketing'
         m = re.match(r'^/blog/([a-z0-9-]+)/$', x.get('deep') or '')
         if m and m.group(1) not in live_slugs: x['deep'] = ''          # don't link a post that isn't live yet
+    items.sort(key=lambda x: x.get('added_at') or '', reverse=True)   # v11: same date: the story added last comes first
     items.sort(key=lambda x: x['date'], reverse=True)
     return items
 
@@ -194,7 +198,9 @@ def news_page(items, posts):
     return s
 
 def latest_json(items, posts):
-    return json.dumps({'updated': items[0]['date'] if items else '', 'news': [{k: x.get(k, '') for k in ('id', 'date', 'topic', 'region', 'title', 'summary', 'take', 'source', 'url')} | {'link': f'{SITE}/news/#{x["id"]}'} for x in items[:30]],
+    return json.dumps({'updated': items[0]['date'] if items else '', 'news': [{k: x.get(k, '') for k in ('id', 'date', 'topic', 'region', 'title', 'summary', 'take', 'source', 'url')} | {'link': f'{SITE}/news/#{x["id"]}'}
+                                | ({'added_at': x['added_at']} if x.get('added_at') else {}) | ({'notify': True} if x.get('notify') else {})   # v11: for news notifications
+                                | ({'image': SITE + x['image']} if str(x.get('image') or '').startswith('/') else {}) for x in items[:30]],
                        'posts': [{'title': p['title'], 'url': f'{SITE}/blog/{p["slug"]}/', 'date': p['date'], 'category': p['category_label']} for p in posts[:12]]},
                       ensure_ascii=False, indent=1) + '\n'
 

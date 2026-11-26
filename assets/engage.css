@@ -31,8 +31,8 @@
 .nx-sep{ width:1px; height:22px; background:currentColor; opacity:.18; }
 .nx-dot{ position:absolute; top:8px; right:9px; width:8px; height:8px; border-radius:50%; background:var(--nx-yellow); box-shadow:0 0 0 2px var(--nx-pill); }
 .nx-bell.is-on .nx-dot,.nx-bell.is-blocked .nx-dot{ display:none; }
-.nx-bell.is-on svg{ fill:var(--nx-yellow); stroke:var(--nx-yellow); }
-.nx-bell.is-on[aria-expanded="true"] svg{ fill:#111110; stroke:#111110; }
+.nx-bell.is-on svg{ fill:var(--nx-yellow); stroke:var(--nx-yellow); color:var(--nx-yellow); }
+.nx-bell.is-on[aria-expanded="true"] svg{ fill:#111110; stroke:#111110; color:#111110; }
 .nx-ring svg{ animation:nx-ring 1.2s cubic-bezier(.36,.07,.19,.97); transform-origin:50% 12%; }
 @keyframes nx-ring{ 0%,100%{transform:rotate(0)} 12%{transform:rotate(16deg)} 26%{transform:rotate(-14deg)} 40%{transform:rotate(10deg)} 54%{transform:rotate(-7deg)} 68%{transform:rotate(4deg)} 82%{transform:rotate(-2deg)} }
 body:has(.player:not([hidden])) .nx-root{ --nx-bottom:calc(84px + env(safe-area-inset-bottom, 0px) + var(--nx-lift, 0px)); }
@@ -357,3 +357,20 @@ html.nx-lock{ overflow:hidden; }
 .nx-btn.nx-btn--ink{ background:var(--ink, #111110); color:var(--bg, #fff); }
 .nx-btn.nx-btn--ink svg{ width:18px; height:18px; }
 @media (max-width:620px){ .nx-sharerow .nx-btn{ width:100%; } }
+
+/* ---------- v11: flat icons (no gradient, gloss or shadow). Light and dark themes by CSS variables. ---------- */
+:root{ --nx-tile:#383b47; --nx-tile-ink:#ffffff; --nx-tile-soft:#ecebe7; --nx-tile-soft-ink:#383b47; --nx-accent:#ff5a2b; }
+:root[data-theme="dark"],.nx-root.nx-dark{ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; --nx-tile-soft:#2c2b28; --nx-tile-soft-ink:#ecebe7; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; --nx-tile-soft:#2c2b28; --nx-tile-soft-ink:#ecebe7; } }
+.nx-app{ background:var(--nx-tile) !important; color:var(--nx-tile-ink) !important; box-shadow:none !important;
+  transition:transform .18s cubic-bezier(.2,.9,.25,1.2), background-color .15s ease, color .15s ease; }
+.nx-app::after{ content:none !important; display:none !important; }
+.nx-app--soft{ background:var(--nx-tile-soft) !important; color:var(--nx-tile-soft-ink) !important; }
+.nx-app svg,.nx-root .nx-app svg{ width:54%; height:54%; filter:none !important; fill:currentColor; stroke:none; }
+.nx-follow a:hover .nx-app,.nx-share-apps a:hover .nx-app,.nx-share-list button:hover .nx-app,
+.nx-follow a:focus-visible .nx-app,.nx-share-apps a:focus-visible .nx-app{ background:var(--nx-accent) !important; color:#fff !important; }
+svg.nx-f{ fill:currentColor; stroke:none; overflow:visible; }
+.nx-root svg.nx-f{ fill:currentColor; stroke:none; }
+#saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
+:root[data-theme="dark"] #saveBtn[aria-pressed="true"] svg{ color:var(--nx-accent); }
+@media (prefers-reduced-motion:reduce){ .nx-app{ transition:none; } }
