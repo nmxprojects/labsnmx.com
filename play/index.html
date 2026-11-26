@@ -24,9 +24,11 @@
 <meta property="og:title" content="Play: quizzes and mind games for creators | NMX Labs">
 <meta property="og:description" content="Quick quizzes and games about design, branding, ads and AI search: spin the wheel, hex hunch, brief roulette, a Daily five, topic quizzes, memory match, pattern recall, word scramble and odd one out. Free, no sign-up.">
 <meta property="og:url" content="https://labsnmx.com/play/">
-<meta property="og:image" content="https://labsnmx.com/favicon-512.png">
+<meta property="og:image" content="https://labsnmx.com/assets/play/game-brain-1x1.jpg">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1080">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://labsnmx.com/favicon-512.png">
+<meta name="twitter:image" content="https://labsnmx.com/assets/play/game-brain-1x1.jpg">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -252,6 +254,28 @@ src="https://www.facebook.com/tr?id=730249939578083&ev=PageView&noscript=1"
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><button type="button" class="btn" data-game="daily" data-daily-go>Play today’s five</button><span class="streak"></span></div>
   </div>
 </section>
+<!--ARCADE--><section class="arcade" aria-label="Start playing"><style>
+.arcade{margin:28px 0 4px}
+.arcade-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,22px);align-items:start}
+.arcade-cab{appearance:none;border:0;margin:0;padding:0;width:100%;display:block;position:relative;cursor:pointer;border-radius:26px;overflow:hidden;background:#12082e;color:inherit;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 22px 44px -24px var(--glow);transition:transform .28s cubic-bezier(.2,.9,.25,1.12),box-shadow .28s ease}
+.arcade-cab--brain{--glow:rgba(118,56,240,.85)}
+.arcade-cab--create{--glow:rgba(122,255,24,.6);background:#000}
+.arcade-cab img{display:block;width:100%;height:auto;border-radius:0;margin:0}
+.arcade-cab::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 1px,transparent 1px 3px)}
+.arcade-cab:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 30px 60px -22px var(--glow)}
+.arcade-cab:hover::after{opacity:1}
+.arcade-cab:active{transform:scale(.985)}
+.arcade-cab:focus-visible{outline:3px solid var(--orange,#ff5a2b);outline-offset:4px}
+.arcade-hint{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
+@media (max-width:1099px){.arcade-row{grid-template-columns:minmax(0,4fr) minmax(0,5fr)}}
+@media (max-width:699px){
+  .arcade-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(-1 * clamp(20px,5vw,64px));padding:6px clamp(20px,5vw,64px) 18px;scrollbar-width:none}
+  .arcade-row::-webkit-scrollbar{display:none}
+  .arcade-cab{flex:0 0 min(74vw,330px);scroll-snap-align:center;border-radius:22px}
+}
+@media (prefers-reduced-motion:reduce){.arcade-cab,.arcade-cab::after{transition:none}.arcade-cab:hover{transform:none}}
+</style><div class="arcade-row"><button type="button" class="arcade-cab arcade-cab--brain" data-game="daily" aria-label="How sharp is your game brain? Play today’s Daily five"><picture><source media="(max-width: 699px)" type="image/webp" srcset="/assets/play/game-brain-9x16-540.webp 540w, /assets/play/game-brain-9x16-941.webp 941w" sizes="74vw" width="941" height="1672"><source media="(max-width: 1099px)" type="image/webp" srcset="/assets/play/game-brain-4x5-640.webp 640w, /assets/play/game-brain-4x5-1080.webp 1080w" sizes="44vw" width="1080" height="1350"><source type="image/webp" srcset="/assets/play/game-brain-1x1-640.webp 640w, /assets/play/game-brain-1x1-1080.webp 1080w" sizes="(min-width: 1180px) 540px, 46vw" width="1080" height="1080"><img src="/assets/play/game-brain-1x1.jpg" width="1080" height="1080" alt="How sharp is your game brain? Quick quizzes and games for creative minds: two minutes, multiple games, keep a streak." loading="lazy" decoding="async"></picture></button><button type="button" class="arcade-cab arcade-cab--create" data-game="wheel" data-arcade-shuffle aria-label="Play, create, challenge: open a random game"><picture><source media="(max-width: 699px)" type="image/webp" srcset="/assets/play/play-create-9x16-540.webp 540w, /assets/play/play-create-9x16-941.webp 941w" sizes="74vw" width="941" height="1672"><source media="(max-width: 1099px)" type="image/webp" srcset="/assets/play/play-create-1x1-640.webp 640w, /assets/play/play-create-1x1-1080.webp 1080w" sizes="55vw" width="1080" height="1080"><source type="image/webp" srcset="/assets/play/play-create-1x1-640.webp 640w, /assets/play/play-create-1x1-1080.webp 1080w" sizes="(min-width: 1180px) 540px, 46vw" width="1080" height="1080"><img src="/assets/play/play-create-1x1.jpg" width="1080" height="1080" alt="Play, create, challenge. Quick quizzes and games for creative minds." loading="lazy" decoding="async"></picture></button></div><script>(function(){var b=document.querySelector("[data-arcade-shuffle]");if(!b)return;b.addEventListener("click",function(){var g=[].slice.call(document.querySelectorAll(".game-card[data-game]")).map(function(x){return x.getAttribute("data-game")});if(g.length)b.setAttribute("data-game",g[Math.floor(Math.random()*g.length)]);});})();</script></section><!--/ARCADE-->
 <section class="play-sec" aria-labelledby="gamesH">
   <h2 id="gamesH">Quizzes and games</h2>
   <p>Every quiz explains its answers. Your best scores stay in this browser.</p>
@@ -273,9 +297,9 @@ src="https://www.facebook.com/tr?id=730249939578083&ev=PageView&noscript=1"
     <div class="footer-brand"><a href="/"><img src="/assets/logo.png" alt="NMX Labs" width="97" height="18"></a><p>Creative &amp; performance marketing studio, D3B, Shyam Kunj, Gurugram, Haryana, India. Serving clients worldwide.</p></div>
     <div class="footer-col"><h4>Services</h4><ul><li><a href="/services/#branding">Branding &amp; Identity</a></li><li><a href="/services/#social">Social Media Creative</a></li><li><a href="/services/#campaign">Campaign Creative</a></li><li><a href="/services/#metaads">Meta Ads Management</a></li><li><a href="/services/#bundle">Creative + Meta Ads Bundle</a></li><li><a href="/services/#branddesign">Brand &amp; Marketing Design</a></li></ul></div>
     <div class="footer-col"><h4>Blog</h4><ul><li><a href="/blog/">All posts</a></li><li><a href="/blog/category/design-news/">Design news</a></li><li><a href="/blog/category/ai-design/">AI design</a></li><li><a href="/blog/category/adobe/">Adobe</a></li><li><a href="/blog/category/meta-ads/">Meta ads</a></li><li><a href="/blog/category/branding/">Branding</a></li><li><a href="/blog/category/brand-stories/">Brand stories</a></li></ul></div>
-    <div class="footer-col"><h4>Popular reads</h4><ul><!--POPULAR--><li><a href="/blog/adobe-max-2026-sneaks-explained/">Adobe MAX 2026 Sneaks</a></li><li><a href="/blog/latest-adobe-ai-updates-november-2026/">Latest Adobe AI updates, 21 November 2026</a></li><li><a href="/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/">Cadbury’s “Not Just a Cadbury Ad”</a></li><li><a href="/blog/asia-cup-2026-cricket-sponsorship-brands/">Why brands are signing up for cricket beyond…</a></li><li><a href="/blog/canva-figma-adobe-ai-design-war/">Canva vs Figma vs Adobe</a></li><!--/POPULAR--></ul></div>
+    <div class="footer-col"><h4>Popular reads</h4><ul><!--POPULAR--><li><a href="/blog/adobe-max-2026-sneaks-explained/">Adobe MAX 2026 Sneaks</a></li><li><a href="/blog/latest-adobe-ai-updates-november-2026/">Latest Adobe AI updates, 21 November 2026</a></li><li><a href="/blog/cadbury-not-just-a-cadbury-ad-ai-personalisation/">Cadbury’s “Not Just a Cadbury Ad”</a></li><li><a href="/blog/swiggy-zomato-push-notification-copy-war/">Swiggy vs Zomato</a></li><li><a href="/blog/asia-cup-2026-cricket-sponsorship-brands/">Why brands are signing up for cricket beyond…</a></li><!--/POPULAR--></ul></div>
     <div class="footer-col"><h4>Studio</h4><ul><li><a href="/about/">About</a></li><li><a href="/editorial-standards/">Editorial standards</a></li><li><a href="/clients/">Clients</a></li><li><a href="/videos/">Videos</a></li><li><a href="/news/">News</a></li><li><a href="/#faq">FAQ</a></li><li><a href="/contact/">Contact</a></li><li><a href="/blog/author/neeraj/">Neeraj (author)</a></li><li><a href="/blog/author/anisha/">Anisha (author)</a></li><li><a href="/saved/">Saved posts</a></li><li><a href="/learn/">Creator school</a></li><li><a href="/play/">Games and quizzes</a></li></ul></div>
-    <div class="footer-col"><h4>Get in touch</h4><ul><li><a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a></li><li><a href="tel:+918810438717">+91 88104 38717</a></li><li><a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li></ul></div>
+    <div class="footer-col"><h4>Get in touch</h4><ul><li><a href="mailto:nmxprojects@gmail.com">nmxprojects@gmail.com</a></li><li><a href="tel:+918810438717">+91 88104 38717</a></li><li><a href="https://wa.me/918810438717" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="https://www.instagram.com/_nmxlabs/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.linkedin.com/company/nmxlabs" target="_blank" rel="noopener" title="Follow NMX Labs on LinkedIn">LinkedIn</a></li><li><a href="https://in.pinterest.com/nmxlabs/" target="_blank" rel="noopener" title="Follow NMX Labs on Pinterest">Pinterest</a></li><li><a href="https://wa.me/918810438717?text=Hi%20NMX%20Labs%2C%20I%27d%20like%20to%20book%20a%201%3A1%20session%20to%20discuss%20my%20project." target="_blank" rel="noopener">Book a 1:1 session</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 NMX Labs. All rights reserved.</span>

@@ -5,8 +5,8 @@
  "items": [
   {
    "slug": "adobe-max-2026-sneaks-explained",
-   "readers": 21,
-   "views": 22
+   "readers": 22,
+   "views": 24
   },
   {
    "slug": "latest-adobe-ai-updates-november-2026",
@@ -15,13 +15,18 @@
   },
   {
    "slug": "cadbury-not-just-a-cadbury-ad-ai-personalisation",
+   "readers": 4,
+   "views": 4
+  },
+  {
+   "slug": "swiggy-zomato-push-notification-copy-war",
    "readers": 3,
    "views": 3
   },
   {
    "slug": "asia-cup-2026-cricket-sponsorship-brands",
    "readers": 2,
-   "views": 4
+   "views": 7
   },
   {
    "slug": "canva-figma-adobe-ai-design-war",
@@ -29,9 +34,9 @@
    "views": 3
   },
   {
-   "slug": "swiggy-zomato-push-notification-copy-war",
+   "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
    "readers": 2,
-   "views": 2
+   "views": 3
   },
   {
    "slug": "john-lewis-christmas-ad-2026-backlash-vs-effectiveness",
@@ -40,6 +45,16 @@
   },
   {
    "slug": "cred-against-type-celebrity-ads",
+   "readers": 2,
+   "views": 2
+  },
+  {
+   "slug": "amul-topical-ads-moment-marketing",
+   "readers": 2,
+   "views": 2
+  },
+  {
+   "slug": "rebrand-for-ai-agents-docker-futurebrand",
    "readers": 2,
    "views": 2
   },
@@ -64,17 +79,7 @@
    "views": 1
   },
   {
-   "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
-   "readers": 1,
-   "views": 1
-  },
-  {
    "slug": "quick-commerce-brand-war-blinkit-zepto-instamart",
-   "readers": 1,
-   "views": 1
-  },
-  {
-   "slug": "amul-topical-ads-moment-marketing",
    "readers": 1,
    "views": 1
   },
