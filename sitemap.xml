@@ -55,12 +55,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://labsnmx.com/sitemap/</loc>
-    <lastmod>2026-11-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
     <loc>https://labsnmx.com/privacy-policy.html</loc>
     <lastmod>2026-11-24</lastmod>
     <changefreq>yearly</changefreq>
@@ -73,20 +67,8 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://labsnmx.com/blog/category/design-news/</loc>
-    <lastmod>2026-11-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://labsnmx.com/blog/category/ai-design/</loc>
     <lastmod>2026-11-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/category/adobe/</loc>
-    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -104,18 +86,6 @@
   </url>
   <url>
     <loc>https://labsnmx.com/blog/category/brand-stories/</loc>
-    <lastmod>2026-11-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/category/growth/</loc>
-    <lastmod>2026-11-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/category/global/</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
