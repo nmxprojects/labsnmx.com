@@ -1,4 +1,8 @@
-/* NMX Labs engage layer (v9, 26 Nov 2026). Loaded by /assets/nmx.js on every page.
+/* NMX Labs engage layer (v10, 26 Nov 2026). Loaded by /assets/nmx.js on every page.
+   v10: the reading prompt is a centred card with a coffee cup (notifications, or follow links where notifications can't
+   work), a Share button on every post and lesson (the phone's own share menu, or a share sheet on computers), follow links
+   for LinkedIn and Pinterest, and reading time per page (event page_end: active seconds and how far down the page they got)
+   plus email sign-ups (event email_subscribe) for the dashboard's reader journeys.
    - Browser notifications (standard Web Push, self-hosted, free): a "Follow" button, a small prompt once a reader is a
      few lines into a post, an end-of-post card, a test notification and step-by-step fixes when notifications are blocked.
    - "Ask NMX Labs" assistant: instant answers from the studio facts below, an AI answer for anything else, and a hand-off
@@ -222,21 +226,27 @@
   (function () {
     var of = window.fetch; if (!of || of.nmxTraffic) return;
     var wrapped = function (input, init) {
+      var isSub = false;
       try {
         var b = init && init.body;
-        if (b && typeof URLSearchParams !== 'undefined' && b instanceof URLSearchParams && b.get('action') === 'subscribe' && !b.has('tc') &&
+        if (b && typeof URLSearchParams !== 'undefined' && b instanceof URLSearchParams && b.get('action') === 'subscribe' &&
             CFG.BACKEND_URL && String(input && input.url || input).indexOf(String(CFG.BACKEND_URL)) === 0) {
-          b.append('tc', SES.tc || ''); b.append('td', SES.td || ''); b.append('vid', VID);
+          isSub = true;
+          if (!b.has('tc')) { b.append('tc', SES.tc || ''); b.append('td', SES.td || ''); b.append('vid', VID); }
         }
       } catch (e) {}
-      return of.apply(this, arguments);
+      var res = of.apply(this, arguments);
+      // v10: a visitor event for each email sign-up, so the dashboard can show what led to it.
+      if (isSub && res && res.then) res.then(function (r) { return r.clone().json(); })
+        .then(function (d) { if (d && d.ok) logEvent('email_subscribe', (d.already ? 'already' : 'new') + '|' + path); }).catch(function () {});
+      return res;
     };
     wrapped.nmxTraffic = true; window.fetch = wrapped;
   })();
 
   /* =========================================================== first-party statistics */
   function logEvent(type, detail) {
-    if (!READY || BOT || (NO_TRACK && type === 'pageview')) return;
+    if (!READY || BOT || (NO_TRACK && (type === 'pageview' || type === 'page_end'))) return;
     var body = new URLSearchParams({ action: 'event', t: type, vid: VID, sid: SES.id, path: path.slice(0, 200), title: doc.title.slice(0, 150),
       ref: type === 'pageview' ? refHost : '', us: SES.us || '', um: SES.um || '', uc: SES.uc || '', dev: U.dev, br: U.br, os: U.os, co: COUNTRY,
       lang: navigator.language || '', d: String(detail || '').slice(0, 200), tc: SES.tc || '', td: SES.td || '',
@@ -249,6 +259,22 @@
   if (!window.NMX_NO_CURATE && !/\/amp\/?$/.test(path)) { var cj = doc.createElement('script'); cj.src = '/assets/curate.js?v=9'; cj.defer = true; doc.head.appendChild(cj); }
   if (doc.readyState === 'complete') setTimeout(function () { logEvent('pageview'); }, 600);
   else addEventListener('load', function () { setTimeout(function () { logEvent('pageview'); }, 600); });
+
+  // v10: time actually spent on the page. Counts only while the tab is visible and the reader has scrolled, tapped or
+  // typed in the last 90 seconds. Sent when the page is hidden or closed as "page_end" with "seconds|deepest scroll %";
+  // coming back and leaving again sends the extra seconds only.
+  (function readingTime() {
+    if (!READY || BOT || NO_TRACK) return;
+    var active = 0, lastAct = Date.now(), deepest = 0;
+    function depth() { var h = doc.documentElement, room = Math.max(1, h.scrollHeight - innerHeight); return Math.max(0, Math.min(100, Math.round(scrollY / room * 100))); }
+    function poke() { lastAct = Date.now(); }
+    ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function (t) { addEventListener(t, poke, { passive: true }); });
+    addEventListener('scroll', function () { poke(); var d = depth(); if (d > deepest) deepest = d; }, { passive: true });
+    setInterval(function () { if (doc.visibilityState === 'visible' && Date.now() - lastAct < 90000) active++; }, 1000);
+    function flush() { var sec = Math.min(3600, active); if (sec < 1) return; active = 0; logEvent('page_end', sec + '|' + Math.max(deepest, depth())); }
+    doc.addEventListener('visibilitychange', function () { if (doc.visibilityState === 'hidden') flush(); else poke(); });
+    addEventListener('pagehide', flush);
+  })();
 
   /* =========================================================== "Learn" and "Play" in the menu */
   // scripts/build.py writes these links into every page on its next run; until then (and on any page it skips) add them here.
@@ -314,7 +340,7 @@
 
   /* =========================================================== UI shell */
   if (!$('link[href^="/assets/engage.css"]')) {
-    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=5'; doc.head.appendChild(css);
+    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=10'; doc.head.appendChild(css);
   }
   var I = {
     bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
@@ -326,6 +352,31 @@
     check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
     phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>'
   };
+  // v10: app-style tiles (rounded squares, simple line symbols) for follow and share links.
+  var GLYPH = {"camera": "<path d=\"M3.6 9.2a2.4 2.4 0 0 1 2.4-2.4h2.1l1.3-2h5.2l1.3 2H18a2.4 2.4 0 0 1 2.4 2.4v8.4A2.4 2.4 0 0 1 18 20H6a2.4 2.4 0 0 1-2.4-2.4z\"/><circle cx=\"12\" cy=\"13.2\" r=\"3.5\"/>", "briefcase": "<rect x=\"3.5\" y=\"7.5\" width=\"17\" height=\"12\" rx=\"2.6\"/><path d=\"M9 7.5V6.1A1.6 1.6 0 0 1 10.6 4.5h2.8A1.6 1.6 0 0 1 15 6.1v1.4M3.5 12.6h17M10.5 12.6v1.6h3v-1.6\"/>", "pin": "<path d=\"M8.8 3.8h6.4l-1.1 5.3 3.1 3.6H6.8l3.1-3.6z\"/><path d=\"M12 12.7v7.8\"/>", "play": "<circle cx=\"12\" cy=\"12\" r=\"8.6\"/><path d=\"M10.3 8.7v6.6l5.3-3.3z\" fill=\"currentColor\"/>", "chat": "<path d=\"M4.5 6.6a2.1 2.1 0 0 1 2.1-2.1h10.8a2.1 2.1 0 0 1 2.1 2.1v7.8a2.1 2.1 0 0 1-2.1 2.1H10.4l-4 3.4v-3.4h.2a2.1 2.1 0 0 1-2.1-2.1z\"/><path d=\"M8.6 10.5h.01M12 10.5h.01M15.4 10.5h.01\"/>", "at": "<circle cx=\"12\" cy=\"12\" r=\"3.5\"/><path d=\"M15.5 12v1.3a2.6 2.6 0 0 0 5.2 0V12a8.7 8.7 0 1 0-3.4 6.9\"/>", "people": "<circle cx=\"9\" cy=\"8.8\" r=\"3.2\"/><path d=\"M3.4 19.2a5.6 5.6 0 0 1 11.2 0\"/><circle cx=\"16.9\" cy=\"9.6\" r=\"2.5\"/><path d=\"M15.7 14.1a4.7 4.7 0 0 1 4.9 4.9\"/>", "mail": "<rect x=\"3.5\" y=\"5.6\" width=\"17\" height=\"12.8\" rx=\"2.6\"/><path d=\"m4.6 7.2 7.4 5.9 7.4-5.9\"/>", "link": "<path d=\"M10.2 13.8a3.6 3.6 0 0 0 5.1 0l3-3a3.6 3.6 0 0 0-5.1-5.1l-1 1\"/><path d=\"M13.8 10.2a3.6 3.6 0 0 0-5.1 0l-3 3a3.6 3.6 0 0 0 5.1 5.1l1-1\"/>", "more": "<circle cx=\"6.5\" cy=\"12\" r=\"1.5\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"12\" r=\"1.5\" fill=\"currentColor\"/><circle cx=\"17.5\" cy=\"12\" r=\"1.5\" fill=\"currentColor\"/>", "share": "<path d=\"M12 3.6v11M8.2 7.4 12 3.6l3.8 3.8\"/><path d=\"M8.6 10.4H6.9a2.4 2.4 0 0 0-2.4 2.4v5.3a2.4 2.4 0 0 0 2.4 2.4h10.2a2.4 2.4 0 0 0 2.4-2.4v-5.3a2.4 2.4 0 0 0-2.4-2.4h-1.7\"/>", "feed": "<path d=\"M5.6 11a7.4 7.4 0 0 1 7.4 7.4M5.6 5.4a13 13 0 0 1 13 13\"/><circle cx=\"6.6\" cy=\"17.4\" r=\"1.5\" fill=\"currentColor\"/>"};
+  var APPS = {"instagram": ["camera", "#a689f5", "#6b46d6", "#fff", "Instagram"], "whatsapp": ["chat", "#9fbb8c", "#668556", "#fff", "WhatsApp"], "youtube": ["play", "#ff7a66", "#e0352b", "#fff", "YouTube"], "linkedin": ["briefcase", "#78a3ea", "#3d68c2", "#fff", "LinkedIn"], "pinterest": ["pin", "#ffdb6e", "#ffb21a", "#111110", "Pinterest"], "x": ["at", "#55524d", "#171716", "#fff", "X"], "facebook": ["people", "#5fc6ba", "#2a8a80", "#fff", "Facebook"], "email": ["mail", "#ffa15c", "#ff6326", "#fff", "Email"], "copy": ["link", "#f6f5f2", "#e1dfd8", "#111110", "Copy link"], "more": ["more", "#f6f5f2", "#e1dfd8", "#111110", "More"]};
+  function tile(k, size) {
+    var a = APPS[k] || APPS.more;
+    return '<span class="nx-app" style="--a1:' + a[1] + ';--a2:' + a[2] + ';color:' + a[3] + (size ? ';--s:' + size + 'px' : '') + '" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24">' + GLYPH[a[0]] + '</svg></span>';
+  }
+  var FOLLOW = [['instagram', 'Instagram', 'https://www.instagram.com/_nmxlabs/'], ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/nmxlabs'],
+    ['pinterest', 'Pinterest', 'https://in.pinterest.com/nmxlabs/'], ['youtube', 'YouTube', 'https://www.youtube.com/channel/UC-Y-8OmJ7tm285GW8VNRBwQ']];
+  window.NMX_FOLLOW = FOLLOW;
+  function followRow(where) {
+    return '<div class="nx-follow" role="list">' + FOLLOW.map(function (f) {
+      return '<a role="listitem" href="' + f[2] + '" target="_blank" rel="noopener" data-nx-followlink="' + f[0] + '" data-where="' + where + '" title="Follow NMX Labs on ' + f[1] + '">' +
+        tile(f[0]) + '<span>' + f[1] + '</span></a>';
+    }).join('') + '</div>';
+  }
+  doc.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-nx-followlink]'); if (!a) return;
+    var net = a.getAttribute('data-nx-followlink'), where = a.getAttribute('data-where') || '';
+    logEvent('follow_click', net + '|' + where); track('FollowClick', { network: net, placement: where, page_path: path });
+    var f = readJSON('nmx-followed', []); if (f.indexOf(net) < 0) { f.push(net); store('nmx-followed', JSON.stringify(f)); }
+    if (where === 'cafe') setTimeout(hideSheet, 150);
+  });
+
   var rootEl = doc.createElement('div');
   rootEl.className = 'nx-root'; rootEl.setAttribute('data-nx', '');
   rootEl.innerHTML =
@@ -376,7 +427,7 @@
     hideSheet();
     openKind = kind; panel.hidden = false; panel.setAttribute('data-kind', kind);
     setExpanded();
-    if (kind === 'alerts') renderAlerts(); else if (kind === 'guide') renderGuide(arg); else renderAsk();
+    if (kind === 'alerts') renderAlerts(); else if (kind === 'guide') renderGuide(arg); else if (kind === 'share') renderShare(); else renderAsk();
     var f = $('[data-nx-focus]', panel) || $('button, input, textarea', panel); if (f) setTimeout(function () { f.focus(); }, 30);
   }
   if (bellBtn) bellBtn.addEventListener('click', function () {
@@ -391,7 +442,7 @@
     if (openKind) { var k = openKind; closePanel(); (k === 'ask' ? askBtn : bellBtn || askBtn).focus(); }
     else if (!sheet.hidden) dismissSheet();
   });
-  doc.addEventListener('pointerdown', function (e) { if (openKind && !rootEl.contains(e.target) && !(e.target.closest && e.target.closest('.nx-endcard'))) closePanel(); });
+  doc.addEventListener('pointerdown', function (e) { if (openKind && !rootEl.contains(e.target) && !(e.target.closest && e.target.closest('.nx-endcard,[data-nx-share]'))) closePanel(); });
 
   function toast(html, ms) {
     toastEl.innerHTML = html; toastEl.hidden = false;
@@ -742,66 +793,109 @@
   /* =========================================================== notifications: asking at the right moment */
   // The reading prompt: a small card once a reader is a few lines into a post or lesson and scrolling on. It never opens
   // on arrival, never twice in a visit, and "Not now" keeps it away for 3, then 10, then 30 days.
-  function canPrompt() {
-    return PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL) && !INAPP && permission() === 'default' && !pushState() && !snoozed() &&
-      !ssGet('nmx-prompted') && !openKind && sheet.hidden && !(doc.activeElement && /INPUT|TEXTAREA|SELECT/.test(doc.activeElement.tagName)) &&
+  /* =========================================================== v10: the coffee card (asking at the right moment) */
+  // A centred card with a steaming coffee cup, once a reader is a few lines into a post or lesson and scrolling on. It
+  // never opens on arrival, never twice in a visit, and "Maybe later" keeps it away for 3, then 10, then 30 days.
+  // Where notifications can work it offers them (plus follow links); where they can't (in-app browsers, blocked or
+  // unsupported browsers) it offers the follow links on their own. Headlines rotate so regulars don't see a joke twice.
+  function quietNow() {
+    return !snoozed() && !ssGet('nmx-prompted') && !openKind && sheet.hidden && !(doc.activeElement && /INPUT|TEXTAREA|SELECT/.test(doc.activeElement.tagName)) &&
       !$('.player:not([hidden])') && !doc.querySelector('[data-game-active]');
   }
+  function cafeMode() {
+    if (!quietNow() || isOn()) return '';
+    if (PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL) && !INAPP && permission() === 'default' && !pushState()) return IOS_NEEDS_INSTALL ? 'ios' : 'push';
+    return readJSON('nmx-followed', []).length >= 2 ? '' : 'follow';
+  }
+  function canPrompt() { var m = cafeMode(); return m === 'push' || m === 'ios'; }
   function lesson() { return /^\/learn\/[^/]+\//.test(path); }
-  // v6: a half-screen sheet (50% of the screen) with an animated bell. The headline rotates, so regulars don't see the
-  // same joke twice in a row. It still only opens after ~4 lines of reading and a scroll, and only once per visit.
   var QUIPS = [
-    ['You read four whole lines. In 2026 that’s basically a commitment.', 'So let’s make it official. We publish 3–4 new articles a week, and your browser can give you one quiet ping when each goes live.'],
-    ['Liking this? Imagine not having to remember us.', 'One ping when a new {noun} drops. No inbox, no “URGENT”, no guilt trips. We post 3–4 times a week.'],
-    ['Psst. There’s more where this came from.', 'Three or four new articles a week on design, AI and marketing, written by actual humans. Want a tap on the shoulder when the next one lands?'],
-    ['Good taste detected. Want the next one first?', 'Notifications beat refreshing our homepage like it owes you money. One ping per new {noun}, off in one tap.'],
-    ['We’d rather ring a bell than chase you on LinkedIn.', 'Allow notifications and the next {noun} finds you. We post 3–4 times a week and never send anything else.']
+    ['Four lines in. That’s basically a coffee date.', 'Let’s make it a regular thing: one quiet ping when a new {noun} is out of the pot. We brew 3–4 a week.'],
+    ['Don’t let the next {noun} go cold.', 'Get a ping the moment it’s served. No inbox, no account, off in one tap.'],
+    ['Fresh posts, freshly brewed.', 'Design, AI and marketing, 3–4 times a week. Want a ping when the next one’s poured?'],
+    ['We roast brands, not readers.', 'One ping per new {noun}. Zero spam, zero guilt trips, gone whenever you like.'],
+    ['This {noun} pairs well with coffee.', 'The next one pairs well with a notification. Allow it and we’ll ring when it’s ready.'],
+    ['Running low on brain fuel?', 'Free refills every week: one ping when a new {noun} lands. Decaf on spam, promise.']
   ];
-  var BELL = '<svg class="nx-hb-svg" viewBox="0 0 120 120" aria-hidden="true">' +
-    '<g class="nx-hb-waves" fill="none" stroke-linecap="round"><path d="M24 44a40 40 0 0 0 0 32"/><path d="M14 38a52 52 0 0 0 0 44"/><path d="M96 44a40 40 0 0 1 0 32"/><path d="M106 38a52 52 0 0 1 0 44"/></g>' +
-    '<g class="nx-hb-bell"><path class="nx-hb-body" d="M60 22c-14 0-24 11-24 26v16l-7 11h62l-7-11V48c0-15-10-26-24-26z"/><path class="nx-hb-lip" d="M27 75h66a3 3 0 0 1 0 6H27a3 3 0 0 1 0-6z"/>' +
-    '<circle class="nx-hb-knob" cx="60" cy="19" r="5"/><path class="nx-hb-shine" d="M46 50c0-8 4-14 10-16" fill="none" stroke-linecap="round"/></g>' +
-    '<circle class="nx-hb-clap" cx="60" cy="88" r="7"/>' +
-    '<g class="nx-hb-spark"><path d="M98 18l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/><path d="M20 96l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/></g></svg>';
+  var FOLLOW_QUIPS = [
+    ['Want seconds?', 'Follow NMX Labs and the next {noun} turns up in your feed, still warm.'],
+    ['Same beans, different cup.', 'Catch every new {noun} on LinkedIn, Pinterest, Instagram or YouTube. We brew 3–4 a week.'],
+    ['Don’t let the next {noun} go cold.', 'Follow NMX Labs where you already scroll. One tap, no sign-up.']
+  ];
+  function bean(cls, x, y, r) {
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')"><g class="nx-bean ' + cls + '"><ellipse class="nx-bean-b" rx="6.6" ry="9.2"/><path class="nx-bean-c" d="M.6-8.2c-3.6 4.4 3 11-.6 16.4"/></g></g>';
+  }
+  var CUP = '<svg class="nx-cup" viewBox="0 0 200 160" aria-hidden="true">' +
+    '<defs><clipPath id="nxMug"><path d="M54 70h92v26c0 25-19 42-46 42s-46-17-46-42z"/></clipPath>' +
+    '<linearGradient id="nxMugG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fffdf8"/><stop offset=".7" stop-color="#fff"/><stop offset="1" stop-color="#e9e2d4"/></linearGradient></defs>' +
+    '<g class="nx-steam"><path class="s1" d="M84 56c-7-7 7-12 0-21s7-14 0-22"/><path class="s2" d="M100 52c-7-7 7-12 0-21s7-14 0-23"/><path class="s3" d="M116 56c-7-7 7-12 0-21s7-14 0-22"/></g>' +
+    '<ellipse class="nx-saucer-sh" cx="100" cy="149" rx="66" ry="7"/><ellipse class="nx-saucer" cx="100" cy="142" rx="74" ry="13"/><ellipse class="nx-saucer-in" cx="100" cy="139" rx="48" ry="7.5"/>' +
+    '<path class="nx-handle" d="M143 86c17-3 26 5 24 18s-13 20-28 19"/>' +
+    '<path class="nx-mug" d="M54 70h92v26c0 25-19 42-46 42s-46-17-46-42z"/>' +
+    '<g clip-path="url(#nxMug)"><path class="nx-band" d="M50 92h100v13H50z"/><path class="nx-band-dot" d="M96 98.5h8"/></g>' +
+    '<ellipse class="nx-rim" cx="100" cy="70" rx="46" ry="9.5"/><ellipse class="nx-coffee" cx="100" cy="71" rx="40" ry="7"/>' +
+    '<ellipse class="nx-ripple" cx="100" cy="71" rx="10" ry="2"/>' +
+    '<path class="nx-crema" d="M92 70.6c2.4-3.4 7.2-3.4 8 0 .8-3.4 5.6-3.4 8 0-2.4 2.6-5.4 4.2-8 5-2.6-.8-5.6-2.4-8-5z"/>' +
+    bean('b1', 38, 134, -24) + bean('b2', 160, 131, 28) + bean('b3', 146, 148, 82) + bean('b4', 100, 12, 0) +
+    '</svg>';
+  var lastFocus = null;
   function showSheet(reason) {
-    if (!canPrompt()) return;
+    var mode = cafeMode(); if (!mode) return;
     ssSet('nmx-prompted', '1');
-    var ios = IOS_NEEDS_INSTALL, noun = lesson() ? 'lesson' : 'post';
-    var n = (Number(read('nmx-quip') || -1) + 1) % QUIPS.length; store('nmx-quip', String(n));
-    var q = QUIPS[n], body = q[1].replace(/\{noun\}/g, noun);
-    sheet.classList.add('nx-sheet--half');
-    sheet.innerHTML = '<button class="nx-x" type="button" aria-label="Close" data-sheet="no" data-no-track>' + I.x + '</button>' +
-      '<div class="nx-hs-in">' +
-        '<div class="nx-hs-art" aria-hidden="true">' + (ios ? '<span class="nx-hs-phone">' + I.phone + '</span>' : BELL) + '<span class="nx-hs-badge">3–4 new a week</span></div>' +
-        '<div class="nx-hs-txt"><p class="nx-hs-kick">' + (ios ? 'iPhone readers, one quick step' : 'Enjoying this ' + noun + '?') + '</p>' +
-          '<h2 id="nxSheetT">' + (ios ? 'Get new ' + noun + 's on your iPhone' : esc(q[0])) + '</h2>' +
-          '<p>' + (ios ? 'Add NMX Labs to your Home Screen, then tap Follow. Apple only allows website notifications that way. Takes ten seconds, promise.' : esc(body)) + '</p>' +
-          (ios ? '' : '<ul class="nx-hs-pts"><li>One ping per new ' + noun + '</li><li>No email, no account</li><li>Off in one tap</li></ul>') +
-          '<div class="nx-sheet-acts">' + (ios ? '<button type="button" class="nx-btn" data-sheet="ios">Show me how</button>' : '<button type="button" class="nx-btn nx-btn--big" data-sheet="yes">' + I.bell + '<span>Ring me when there’s more</span></button>') +
-          '<button type="button" class="nx-link" data-sheet="no">I’ll risk missing out</button></div>' +
-        '</div>' +
+    var noun = lesson() ? 'lesson' : 'post', list = mode === 'follow' ? FOLLOW_QUIPS : QUIPS, key = mode === 'follow' ? 'nmx-quip-f' : 'nmx-quip';
+    var n = (Number(read(key) || -1) + 1) % list.length; store(key, String(n));
+    var q = list[n], h = q[0].replace(/\{noun\}/g, noun), body = q[1].replace(/\{noun\}/g, noun);
+    if (mode === 'ios') { h = 'Get new ' + noun + 's on your iPhone'; body = 'Add NMX Labs to your Home Screen, then tap Follow. Apple only allows website notifications that way. Ten seconds, tops.'; }
+    var sub = $('.subscribe'), primary = mode === 'push' ? '<button type="button" class="nx-cafe-go" data-sheet="yes">' + I.bell + '<span>Ping me when it’s fresh</span></button>'
+      : mode === 'ios' ? '<button type="button" class="nx-cafe-go" data-sheet="ios">' + I.phone + '<span>Show me how</span></button>' : '';
+    lastFocus = doc.activeElement;
+    sheet.className = 'nx-sheet nx-sheet--cafe'; sheet.setAttribute('aria-modal', 'true');
+    sheet.innerHTML = '<div class="nx-cafe" data-mode="' + mode + '" tabindex="-1">' +
+      '<button class="nx-x" type="button" aria-label="Close" data-sheet="no" data-no-track>' + I.x + '</button>' +
+      '<div class="nx-cafe-art">' + CUP + '</div>' +
+      '<p class="nx-cafe-kick">' + (mode === 'ios' ? 'iPhone readers, one quick step' : 'Enjoying this ' + noun + '?') + '</p>' +
+      '<h2 id="nxSheetT">' + esc(h) + '</h2><p class="nx-cafe-body">' + esc(body) + '</p>' + primary +
+      (primary ? '<p class="nx-cafe-or"><span>or follow NMX Labs</span></p>' : '') + followRow('cafe') +
+      (mode === 'follow' && sub ? '<button type="button" class="nx-cafe-alt" data-sheet="email">Get new posts by email instead</button>' : '') +
+      '<button type="button" class="nx-cafe-later" data-sheet="no">Maybe later</button>' +
       '</div>';
-    sheet.hidden = false; sheet.setAttribute('data-reason', reason);
-    if (!REDUCED) { sheet.classList.remove('nx-ringing'); void sheet.offsetWidth; sheet.classList.add('nx-ringing'); }
-    logEvent('prompt_shown', reason + ':q' + n); track('PushPromptShown', { reason: reason, page_path: path, quip: n });
+    sheet.hidden = false; sheet.setAttribute('data-reason', mode === 'follow' ? 'social_card' : mode === 'ios' ? reason + '_ios' : reason);
+    doc.documentElement.classList.add('nx-lock');
+    var card = $('.nx-cafe', sheet); setTimeout(function () { try { card.focus({ preventScroll: true }); } catch (e) { card.focus(); } }, 60);   // Tab moves on to the buttons
+    logEvent('prompt_shown', sheet.getAttribute('data-reason') + ':q' + n);
+    track(mode === 'follow' ? 'FollowPromptShown' : 'PushPromptShown', { reason: reason, mode: mode, page_path: path, quip: n });
   }
   function hideSheet() {
-    if (sheet.hidden) return;
-    if (REDUCED || !sheet.classList.contains('nx-sheet--half')) { sheet.hidden = true; sheet.innerHTML = ''; return; }
-    sheet.classList.add('nx-sheet--out');
-    setTimeout(function () { sheet.hidden = true; sheet.innerHTML = ''; sheet.classList.remove('nx-sheet--out', 'nx-ringing'); }, 260);
+    if (sheet.hidden || sheet.classList.contains('nx-sheet--out')) return;
+    doc.documentElement.classList.remove('nx-lock');
+    var done = function () { sheet.hidden = true; sheet.innerHTML = ''; sheet.className = 'nx-sheet'; sheet.setAttribute('aria-modal', 'false'); };
+    if (REDUCED) done(); else { sheet.classList.add('nx-sheet--out'); setTimeout(done, 230); }
+    if (lastFocus && lastFocus.focus && doc.contains(lastFocus)) { try { lastFocus.focus({ preventScroll: true }); } catch (e) {} }
+    lastFocus = null;
   }
-  function dismissSheet() { snooze(); logEvent('prompt_later', sheet.getAttribute('data-reason') || ''); hideSheet(); }
-  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) dismissSheet(); });
+  function dismissSheet() {
+    if (sheet.hidden || sheet.classList.contains('nx-sheet--out')) return;
+    snooze(); logEvent('prompt_later', sheet.getAttribute('data-reason') || ''); hideSheet();
+  }
   sheet.addEventListener('click', function (e) {
+    if (e.target === sheet) { dismissSheet(); return; }                          // tapped the dimmed background
     var b = e.target.closest('[data-sheet]'); if (!b) return;
     var a = b.getAttribute('data-sheet');
     if (a === 'yes') { hideSheet(); enable('blog,youtube', 'read_prompt'); }
     else if (a === 'ios') { hideSheet(); openPanel('alerts'); }
+    else if (a === 'email') {
+      logEvent('prompt_yes', 'social_card:email'); hideSheet();
+      var box = $('.subscribe'); if (box) { box.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); var inp = $('input[type="email"]', box); if (inp) setTimeout(function () { inp.focus({ preventScroll: true }); }, 500); }
+    }
     else dismissSheet();
   });
+  sheet.addEventListener('keydown', function (e) {                                // keep Tab inside the card while it's open
+    if (e.key !== 'Tab' || sheet.hidden) return;
+    var f = $$('button, a[href]', sheet); if (!f.length) return;
+    if (e.shiftKey && doc.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && doc.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+  });
   (function watchReading() {
-    if (!(PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL)) || INAPP) return;
     var prose = $('#article .prose'); if (!prose) return;
     var first = $('p', prose) || prose;
     var lh = parseFloat(getComputedStyle(first).lineHeight) || 28, t0 = Date.now(), startY = scrollY, moved = 0, lastY = scrollY, timer;
@@ -1038,6 +1132,80 @@
     });
   }
 
+  /* =========================================================== v10: share */
+  // A Share button in the article tools and at the end of every post and lesson. Phones and tablets get their own share
+  // menu; computers get a share sheet with the usual apps, Copy link and (where the browser has one) More options.
+  // Shared links carry utm tags, so visits from them show under the right source on the dashboard.
+  var SHARE_NETS = [['whatsapp', 'WhatsApp'], ['linkedin', 'LinkedIn'], ['x', 'X'], ['facebook', 'Facebook'], ['pinterest', 'Pinterest'], ['email', 'Email']];
+  var SHARE_IC = '<svg viewBox="0 0 24 24" aria-hidden="true">' + GLYPH.share + '</svg>';
+  function shareInfo() {
+    var canon = $('link[rel="canonical"]'), meta = function (sel) { var m = $(sel); return m ? m.getAttribute('content') || '' : ''; };
+    var h1 = $('#article .article-head h1') || $('main h1');
+    return { url: canon ? canon.href : location.origin + path, title: ((h1 && h1.textContent) || meta('meta[property="og:title"]') || doc.title).trim(),
+      dek: meta('meta[name="description"]'), img: meta('meta[property="og:image"]') };
+  }
+  function tagged(u, net) { return u + (u.indexOf('?') > -1 ? '&' : '?') + 'utm_source=' + net + '&utm_medium=' + (net === 'email' ? 'email' : 'social') + '&utm_campaign=share'; }
+  function shareHref(net, s) {
+    var u = encodeURIComponent(tagged(s.url, net)), t = encodeURIComponent(s.title);
+    if (net === 'whatsapp') return 'https://wa.me/?text=' + encodeURIComponent(s.title + ' ' + tagged(s.url, net));
+    if (net === 'linkedin') return 'https://www.linkedin.com/sharing/share-offsite/?url=' + u;
+    if (net === 'x') return 'https://x.com/intent/tweet?text=' + t + '&url=' + u;
+    if (net === 'facebook') return 'https://www.facebook.com/sharer/sharer.php?u=' + u;
+    if (net === 'pinterest') return 'https://www.pinterest.com/pin/create/button/?url=' + u + (s.img ? '&media=' + encodeURIComponent(s.img) : '') + '&description=' + t;
+    return 'mailto:?subject=' + t + '&body=' + encodeURIComponent((s.dek ? s.dek + '\n\n' : '') + tagged(s.url, net));
+  }
+  function shareLog(how) { logEvent('share', how + '|' + path); track('Share', { method: how, content_type: lesson() ? 'lesson' : 'post', item_id: path }); }
+  function shareNow(from) {
+    var s = shareInfo();
+    if (navigator.share && (U.dev !== 'Desktop' || from === 'more')) {
+      navigator.share({ title: s.title, url: s.url }).then(function () { shareLog('device'); })
+        .catch(function (e) { if (e && e.name !== 'AbortError' && from !== 'more') openPanel('share'); });
+      return;
+    }
+    openPanel('share');
+  }
+  function renderShare() {
+    var s = shareInfo();
+    panel.innerHTML = head('Share') + '<div class="nx-body nx-share">' +
+      '<div class="nx-share-card">' + (s.img ? '<img src="' + esc(s.img) + '" alt="" width="64" height="64">' : '') + '<div><b>' + esc(s.title) + '</b><span>' + esc(s.url.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</span></div></div>' +
+      '<div class="nx-share-apps">' + SHARE_NETS.map(function (n) {
+        return '<a href="' + esc(shareHref(n[0], s)) + '"' + (n[0] === 'email' ? '' : ' target="_blank" rel="noopener"') + ' data-share-net="' + n[0] + '">' + tile(n[0]) + '<span>' + n[1] + '</span></a>';
+      }).join('') + '</div>' +
+      '<div class="nx-share-list"><button type="button" data-share-copy data-nx-focus>' + tile('copy', 30) + '<span>Copy link</span></button>' +
+      (navigator.share ? '<button type="button" data-share-more>' + tile('more', 30) + '<span>More options</span></button>' : '') + '</div>' +
+      '<p class="nx-share-follow">Follow NMX Labs on <a href="' + FOLLOW[1][2] + '" target="_blank" rel="noopener" data-nx-followlink="linkedin" data-where="share">LinkedIn</a> and ' +
+      '<a href="' + FOLLOW[2][2] + '" target="_blank" rel="noopener" data-nx-followlink="pinterest" data-where="share">Pinterest</a>.</p></div>';
+    panel.querySelector('.nx-share-apps').addEventListener('click', function (e) {
+      var a = e.target.closest('[data-share-net]'); if (!a) return; shareLog(a.getAttribute('data-share-net')); setTimeout(closePanel, 200);
+    });
+    var cp = $('[data-share-copy]', panel);
+    cp.addEventListener('click', function () {
+      var done = function () { $('span', cp).textContent = 'Copied'; cp.classList.add('is-done'); shareLog('copy'); setTimeout(closePanel, 900); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(s.url).then(done, function () { $('span', cp).textContent = s.url; });
+      else { $('span', cp).textContent = s.url; }
+    });
+    var more = $('[data-share-more]', panel);
+    if (more) more.addEventListener('click', function () { closePanel(); shareNow('more'); });
+  }
+  (function shareButtons() {
+    var art = $('#article'), prose = art && $('.prose', art); if (!prose) return;
+    var noun = lesson() ? 'lesson' : 'post';
+    var tl = $('.tools[aria-label="Article tools"]', art);
+    if (tl && !$('[data-nx-share]', tl)) {
+      var b = doc.createElement('button'); b.type = 'button'; b.className = 'tool'; b.setAttribute('data-nx-share', ''); b.setAttribute('data-no-track', '');
+      b.innerHTML = SHARE_IC + '<span>Share</span>'; tl.appendChild(b);
+    }
+    var row = doc.createElement('aside'); row.className = 'nx-sharerow'; row.setAttribute('aria-label', 'Share and follow');
+    row.innerHTML = '<div><h2>Know someone who’d like this?</h2><p>Send it their way. And follow NMX Labs on <a href="' + FOLLOW[1][2] + '" target="_blank" rel="noopener" data-nx-followlink="linkedin" data-where="post_end">LinkedIn</a> and ' +
+      '<a href="' + FOLLOW[2][2] + '" target="_blank" rel="noopener" data-nx-followlink="pinterest" data-where="post_end">Pinterest</a> for the next one.</p></div>' +
+      '<button type="button" class="nx-btn nx-btn--ink" data-nx-share data-no-track>' + SHARE_IC + '<span>Share this ' + noun + '</span></button>';
+    prose.parentNode.insertBefore(row, prose.nextSibling);
+  })();
+  doc.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-nx-share]'); if (!b) return;
+    e.preventDefault(); if (openKind === 'share') { closePanel(); return; } shareNow('button');
+  });
+
   /* =========================================================== install as an app */
   var installEvt = null;
   addEventListener('beforeinstallprompt', function (e) { installEvt = e; $$('[data-install-app]').forEach(function (b) { b.hidden = false; }); });
@@ -1050,5 +1218,5 @@
   $$('[data-install-app]').forEach(function (b) { b.addEventListener('click', install); });
   if (STANDALONE && !ssGet('nmx-app-open')) { ssSet('nmx-app-open', '1'); logEvent('app_open'); }
 
-  window.NMX_ENGAGE = { open: openPanel, close: closePanel, pushState: pushState, ready: READY, pushOn: PUSH_ON, follow: enable, fix: function (r) { openPanel('guide', r || 'system'); }, version: 'v5' };
+  window.NMX_ENGAGE = { open: openPanel, close: closePanel, pushState: pushState, ready: READY, pushOn: PUSH_ON, follow: enable, fix: function (r) { openPanel('guide', r || 'system'); }, share: function () { shareNow('api'); }, version: 'v10' };
 })();

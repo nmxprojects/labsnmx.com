@@ -35,6 +35,9 @@ author pages use the same tiles; every post's "Related reading" becomes bento ca
 month's most-read posts; posts and news carry a region tag so /assets/curate.js can pick posts for each reader's country;
 sitemap_index.xml with section sitemaps (pages, posts, learn, Google News, video); 404.html and redirect pages; IndexNow.
 All of it lives in scripts/build_v9.py: if that file is missing or fails, the v8 behaviour runs.
+v10: LinkedIn and Pinterest next to Instagram on every page, the arcade visuals on /play/, the newest Pinterest pins on the
+blog and home pages (read from the profile's public RSS feed, no API), and blog/pinterest.xml for Pinterest's Auto-publish.
+All of it lives in scripts/build_v10.py: if that file is missing or fails, the v9 behaviour runs.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -49,6 +52,11 @@ try:
 except Exception as _e:
     build_v9 = None
     print('v9 layer skipped: ' + str(_e))
+try:
+    import build_v10   # v10: follow links, Play arcade, Pinterest feed and pins. If it breaks, v9 behaviour runs.
+except Exception as _e:
+    build_v10 = None
+    print('v10 layer skipped: ' + str(_e))
 try:
     import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
 except Exception as _e:
@@ -374,6 +382,9 @@ def build_footers(published):
             if WIRE_BAR and build_news: s = build_news.add_bar(s, WIRE_BAR, rel)                                  # v6: "Latest in" bar
             s = v6_copy(s)
             s = fix_links(s)                                                                      # v8: /services/ and /clients/
+            if build_v10:                                                                         # v10: LinkedIn and Pinterest
+                try: s = build_v10.socials(s)
+                except Exception as e: print(f'Follow links not added to {p}: {e}')
             wr(p, s)
 
 def build_feed(published):
@@ -494,7 +505,8 @@ def build_llms(published, lessons, news):
               '- Brand & Marketing Design: from Rs 7,500 (decks, brochures, collateral).\n'
               '- Who we work with: D2C brands, EV and energy, SaaS, hospitality and creator-led businesses, from pre-launch to post-Series A, in India, the UK, the US and elsewhere.\n'
               '- Pricing is fixed upfront; small senior team, no account layer. Prices are in Indian rupees (INR).\n\n'
-              f'## Contact\n- Website: {SITE}/\n- Instagram: https://www.instagram.com/_nmxlabs/\n- WhatsApp: https://wa.me/918810438717\n- Email: nmxprojects@gmail.com\n')
+              f'## Contact\n- Website: {SITE}/\n- Instagram: https://www.instagram.com/_nmxlabs/\n- LinkedIn: https://www.linkedin.com/company/nmxlabs\n'
+              '- Pinterest: https://in.pinterest.com/nmxlabs/\n- WhatsApp: https://wa.me/918810438717\n- Email: nmxprojects@gmail.com\n')
     wr('llms.txt', head + pub + latest + cats + authors + studio.rstrip('\n') + '\n')
     full = [head.replace('# NMX Labs', '# NMX Labs: every article, summarised'),
             'Each entry: title, link, date, author, topic, the summary we wrote for it and its key takeaways. Quote freely with a link.\n\n']
@@ -670,6 +682,9 @@ def main():
     if build_v9:                                                       # v9: regions, reader counts, YouTube matches
         try: build_v9.prepare(published, fetch=a.fetch or bool(os.environ.get('GITHUB_ACTIONS'))); V9_OK = True
         except Exception as e: print('v9 layer skipped: ' + str(e))
+    if build_v10:                                                      # v10: Pinterest pins (read on GitHub, cached in content/)
+        try: build_v10.prepare(fetch=a.fetch or bool(os.environ.get('GITHUB_ACTIONS')))
+        except Exception as e: print('Pinterest pins not refreshed: ' + str(e))
     build_blog_index(published, live_cats)
     for c in CATEGORIES:
         if c in live_cats: build_category(c, [p for p in published if p['category'] == c], live_cats)
@@ -690,8 +705,14 @@ def main():
     if V9_OK:                                                          # v9: 404 page and redirect pages, before the footer pass
         try: build_v9.redirects(); build_v9.page_404()
         except Exception as e: print('404/redirects not rebuilt: ' + str(e))
+    if build_v10:                                                      # v10: Play arcade, Pinterest on the blog and home pages
+        try: build_v10.pages()
+        except Exception as e: print('v10 pages not rebuilt: ' + str(e))
     build_footers(published)
     build_feed(published)
+    if build_v10:                                                      # v10: blog/pinterest.xml for Pinterest's Auto-publish
+        try: print('blog/pinterest.xml: %d Pins' % build_v10.pinterest_feed(published))
+        except Exception as e: print('Pinterest feed not rebuilt: ' + str(e))
     build_sitemap(published, live_cats)
     if V9_OK:                                                          # v9: sitemap_index.xml + section sitemaps
         try: print('v9 sitemaps: %d posts, %d pages, %d learn, %d news, %d videos' % build_v9.sitemaps(published, today))
@@ -707,6 +728,9 @@ def main():
             if n: print(f'IndexNow: told Bing and others about {n} addresses')
         else: build_v9.indexnow([])                                     # keeps the key file in place
         for note in build_v9.NOTES: print('v9: ' + note)
+    if build_v10:
+        CHANGED.extend(build_v10.WRITTEN)
+        for note in build_v10.NOTES: print('v10: ' + note)
     print(f'{today}: {len(published)} posts live, {len(CHANGED)} files updated.')
 
 if __name__ == '__main__':

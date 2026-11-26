@@ -186,6 +186,77 @@
   .ad-ch small.ok{color:var(--good)} .ad-ch small.warn{color:var(--bad)}
   .ad-link{appearance:none;background:none;border:0;padding:0;color:var(--ink);font:600 12.5px var(--font-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
   @media (max-width:760px){.ad-post{grid-template-columns:1fr}}
+
+  /* v10: long lists scroll inside their own box, with the header row kept in view */
+  .ad-scroll{overflow:auto;max-height:520px;overscroll-behavior:contain;border-radius:12px}
+  .ad-scroll thead th{position:sticky;top:0;z-index:1;background:var(--surface);box-shadow:inset 0 -1px 0 var(--line)}
+  .ad-feed{overscroll-behavior:contain}
+  #camps td:first-child,#mails td:first-child,#recent td:first-child,#leads td:first-child,#asks td:first-child{white-space:nowrap}
+  #camps td:nth-child(2){min-width:180px}
+  #readers td:nth-child(7){white-space:nowrap}
+  /* v10: custom date range */
+  .ad-range{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted)}
+  .ad-range input{font:600 12.5px/1 var(--font-body);color:var(--ink);background:var(--surface);border:1px solid var(--ink);border-radius:999px;padding:7px 10px;color-scheme:light dark}
+  /* v10: channel cards */
+  .ad-chcard{margin-top:16px}
+  .ad-chs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  @media (max-width:1100px){.ad-chs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media (max-width:640px){.ad-chs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .ad-chc{appearance:none;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:14px;border-radius:18px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-family:var(--font-body);min-width:0}
+  .ad-chc:hover{border-color:var(--ink)}
+  .ad-chc.sel{background:var(--yellow);border-color:var(--ink);color:#111110}
+  .ad-chc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;min-width:0}
+  .ad-chc-name{font-size:13.5px;font-weight:700;line-height:1.2}
+  .ad-chc-name small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+  .ad-chc b{font-size:30px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .ad-chc-sub{font-size:12px;color:var(--muted)}
+  .ad-chc-sub em{font-style:normal;font-weight:700;margin-left:6px}.ad-chc-sub em.up{color:var(--good)}.ad-chc-sub em.down{color:var(--bad)}
+  .ad-chc.sel .ad-chc-sub,.ad-chc.sel .ad-chc-meta,.ad-chc.sel .ad-chc-name small{color:#4a4840}
+  .ad-chc-meta{font-size:11.5px;line-height:1.45;color:var(--muted);margin-top:4px}
+  .ad-spark{width:100%;height:26px;margin-top:6px}
+  .ad-spark polyline{fill:none;stroke:var(--orange);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .ad-app{width:34px;height:34px;flex-shrink:0;display:grid;place-items:center;color:#fff;position:relative;background:linear-gradient(180deg,var(--a1),var(--a2));
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100.00,50.00 L99.96,66.80 L99.83,72.14 L99.61,76.01 L99.31,79.12 L98.92,81.75 L98.44,84.05 L97.87,86.08 L97.20,87.89 L96.44,89.52 L95.58,91.00 L94.61,92.33 L93.53,93.53 L92.33,94.61 L91.00,95.58 L89.52,96.44 L87.89,97.20 L86.08,97.87 L84.05,98.44 L81.75,98.92 L79.12,99.31 L76.01,99.61 L72.14,99.83 L66.80,99.96 L50.00,100.00 L33.20,99.96 L27.86,99.83 L23.99,99.61 L20.88,99.31 L18.25,98.92 L15.95,98.44 L13.92,97.87 L12.11,97.20 L10.48,96.44 L9.00,95.58 L7.67,94.61 L6.47,93.53 L5.39,92.33 L4.42,91.00 L3.56,89.52 L2.80,87.89 L2.13,86.08 L1.56,84.05 L1.08,81.75 L0.69,79.12 L0.39,76.01 L0.17,72.14 L0.04,66.80 L0.00,50.00 L0.04,33.20 L0.17,27.86 L0.39,23.99 L0.69,20.88 L1.08,18.25 L1.56,15.95 L2.13,13.92 L2.80,12.11 L3.56,10.48 L4.42,9.00 L5.39,7.67 L6.47,6.47 L7.67,5.39 L9.00,4.42 L10.48,3.56 L12.11,2.80 L13.92,2.13 L15.95,1.56 L18.25,1.08 L20.88,0.69 L23.99,0.39 L27.86,0.17 L33.20,0.04 L50.00,0.00 L66.80,0.04 L72.14,0.17 L76.01,0.39 L79.12,0.69 L81.75,1.08 L84.05,1.56 L86.08,2.13 L87.89,2.80 L89.52,3.56 L91.00,4.42 L92.33,5.39 L93.53,6.47 L94.61,7.67 L95.58,9.00 L96.44,10.48 L97.20,12.11 L97.87,13.92 L98.44,15.95 L98.92,18.25 L99.31,20.88 L99.61,23.99 L99.83,27.86 L99.96,33.20 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100.00,50.00 L99.96,66.80 L99.83,72.14 L99.61,76.01 L99.31,79.12 L98.92,81.75 L98.44,84.05 L97.87,86.08 L97.20,87.89 L96.44,89.52 L95.58,91.00 L94.61,92.33 L93.53,93.53 L92.33,94.61 L91.00,95.58 L89.52,96.44 L87.89,97.20 L86.08,97.87 L84.05,98.44 L81.75,98.92 L79.12,99.31 L76.01,99.61 L72.14,99.83 L66.80,99.96 L50.00,100.00 L33.20,99.96 L27.86,99.83 L23.99,99.61 L20.88,99.31 L18.25,98.92 L15.95,98.44 L13.92,97.87 L12.11,97.20 L10.48,96.44 L9.00,95.58 L7.67,94.61 L6.47,93.53 L5.39,92.33 L4.42,91.00 L3.56,89.52 L2.80,87.89 L2.13,86.08 L1.56,84.05 L1.08,81.75 L0.69,79.12 L0.39,76.01 L0.17,72.14 L0.04,66.80 L0.00,50.00 L0.04,33.20 L0.17,27.86 L0.39,23.99 L0.69,20.88 L1.08,18.25 L1.56,15.95 L2.13,13.92 L2.80,12.11 L3.56,10.48 L4.42,9.00 L5.39,7.67 L6.47,6.47 L7.67,5.39 L9.00,4.42 L10.48,3.56 L12.11,2.80 L13.92,2.13 L15.95,1.56 L18.25,1.08 L20.88,0.69 L23.99,0.39 L27.86,0.17 L33.20,0.04 L50.00,0.00 L66.80,0.04 L72.14,0.17 L76.01,0.39 L79.12,0.69 L81.75,1.08 L84.05,1.56 L86.08,2.13 L87.89,2.80 L89.52,3.56 L91.00,4.42 L92.33,5.39 L93.53,6.47 L94.61,7.67 L95.58,9.00 L96.44,10.48 L97.20,12.11 L97.87,13.92 L98.44,15.95 L98.92,18.25 L99.31,20.88 L99.61,23.99 L99.83,27.86 L99.96,33.20 Z'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+  .ad-app::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0) 55%)}
+  .ad-app svg{position:relative;z-index:1;width:58%;height:58%;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  /* v10: returning readers and journeys */
+  .ad-rdtools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 12px}
+  .ad-rdtools input{font:500 13px/1 var(--font-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:9px 13px;min-width:220px}
+  tr.ad-rd{cursor:pointer}
+  tr.ad-rd:hover td,tr.ad-rd:focus td{background:var(--cream)}
+  tr.ad-rd:focus{outline:none}
+  tr.ad-rd small{color:var(--muted)}
+  .ad-rid{font-variant-numeric:tabular-nums;letter-spacing:.02em}
+  html.ad-noscroll{overflow:hidden}
+  .ad-drawer{position:fixed;inset:0;z-index:90;background:rgba(17,17,16,.32);display:flex;justify-content:flex-end;animation:adFade .2s ease}
+  .ad-drawer-in{width:min(640px,100%);height:100%;background:var(--surface);box-shadow:-24px 0 60px rgba(17,17,16,.2);display:flex;flex-direction:column;animation:adSlide .32s var(--ease)}
+  .ad-drawer-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line)}
+  .ad-drawer-top p{font-size:13px;font-weight:700}
+  #drBody{overflow:auto;padding:20px 22px 40px;flex:1;overscroll-behavior:contain}
+  @keyframes adFade{from{opacity:0}to{opacity:1}} @keyframes adSlide{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}
+  .ad-jhead{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+  .ad-jhead h2{font-family:var(--font-display);font-size:30px;line-height:1;letter-spacing:-.02em}
+  .ad-jhead p{color:var(--muted);font-size:13px;margin-top:4px}
+  .ad-avatar{width:46px;height:46px;border-radius:50%;background:var(--yellow);color:#111110;display:grid;place-items:center;font-weight:700;font-size:15px;flex-shrink:0}
+  .ad-why{margin:18px 0 6px;padding:16px 18px;border-radius:16px;background:var(--yellow);color:#111110}
+  .ad-why h3{margin:0 0 8px;font-size:15px}
+  .ad-why ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:13.5px;line-height:1.45}
+  .ad-why u,.ad-steps u{text-decoration:none;word-break:break-all}
+  .ad-visits{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:12px}
+  .ad-visit{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .ad-vh{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding:10px 14px;background:var(--cream);font-size:12.5px;color:var(--muted)}
+  .ad-vh b{color:var(--ink);font-size:13.5px}
+  .ad-steps{list-style:none;margin:0;padding:6px 14px 10px}
+  .ad-steps li{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .ad-steps li:last-child{border-bottom:0}
+  .ad-steps time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+  .ad-steps a{color:var(--ink);text-decoration:none;word-break:break-all}
+  .ad-steps a:hover{text-decoration:underline}
+  .ad-steps em{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .ad-steps li.ev{grid-template-columns:62px minmax(0,1fr)}
+  .ad-steps li.ev span{color:var(--muted);font-style:italic}
+  .ad-steps li.sub span{color:var(--ink);font-style:normal;font-weight:700}
+  .ad-steps li.sub span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin-right:7px}
   [hidden]{display:none!important}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -232,8 +303,9 @@
 
   <div class="ad-filters" id="filters" role="group" aria-label="Filters">
     <div class="ad-seg" id="period" role="group" aria-label="Period">
-      <button type="button" data-p="today">Today</button><button type="button" data-p="7">7 days</button><button type="button" data-p="30" aria-pressed="true">30 days</button><button type="button" data-p="90">90 days</button><button type="button" data-p="all">All</button>
+      <button type="button" data-p="today">Today</button><button type="button" data-p="7">7 days</button><button type="button" data-p="30" aria-pressed="true">30 days</button><button type="button" data-p="90">90 days</button><button type="button" data-p="all">All</button><button type="button" data-p="custom">Custom</button>
     </div>
+    <span class="ad-range" id="range" hidden><input type="date" id="rFrom" aria-label="From"> to <input type="date" id="rTo" aria-label="To"></span>
     <select data-f="dev" aria-label="Device"></select>
     <select data-f="br" aria-label="Browser"></select>
     <select data-f="co" aria-label="Country"></select>
@@ -246,6 +318,8 @@
   </div>
 
   <div class="ad-kpis" id="kpis"></div>
+
+  <div class="ad-card ad-chcard"><h2>Channels</h2><p class="ad-sub" id="chSub">Visits that arrived from each channel. Tap one to filter the whole dashboard.</p><div class="ad-chs" id="chs"></div></div>
 
   <div class="ad-grid ad-g21">
     <div class="ad-card ad-chart"><h2>Visitors and page views</h2><p class="ad-sub" id="visitSub"></p><div class="ad-chartwrap" id="visits"></div>
@@ -351,6 +425,14 @@
     <div class="ad-card"><h2>How email subscribers found you</h2><p class="ad-sub">People who signed up before this update show as Unknown.</p><ul class="ad-bars" id="tsEmail"></ul></div>
   </div>
 
+  <h2 class="ad-h">Returning readers</h2>
+  <div class="ad-card" style="margin-top:16px"><h2>Who comes back, and how often</h2><p class="ad-sub" id="rdSub">Each reader is a browser that has visited, without names or IP addresses.</p>
+    <div class="ad-chips" id="rdChips"></div>
+    <div class="ad-rdtools"><div class="ad-seg" id="rdMode" role="group" aria-label="Which readers"><button type="button" data-m="returning" aria-pressed="true">Came back</button><button type="button" data-m="all" aria-pressed="false">Everyone</button><button type="button" data-m="subs" aria-pressed="false">Subscribed</button></div>
+      <input type="search" id="rdQ" placeholder="Find by ID, country, device or source" aria-label="Find a reader"></div>
+    <div class="ad-scroll"><table class="ad-table"><thead><tr><th>Reader</th><th class="n">Visits</th><th class="n">Days</th><th class="n">Time on site</th><th class="n">Pages</th><th>First came from</th><th>Last seen</th><th>Subscribed</th></tr></thead><tbody id="readers"></tbody></table></div>
+  </div>
+
   <h2 class="ad-h">Subscribers</h2>
   <div class="ad-grid ad-g3">
     <div class="ad-card"><h2>Browsers</h2><ul class="ad-bars" id="pBrowser"></ul></div>
@@ -374,6 +456,7 @@
     <div class="ad-card"><h2>What visitors ask the assistant</h2><p class="ad-sub" id="askSub"></p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Question</th><th>Page</th></tr></thead><tbody id="asks"></tbody></table></div></div>
   </div>
 </section>
+<aside class="ad-drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drH" hidden><div class="ad-drawer-in"><div class="ad-drawer-top"><p>Reader journey</p><button class="ad-btn" id="drClose" type="button">Close</button></div><div id="drBody"></div></div></aside>
 </main>
 <script src="/dashboard/dashboard.js" defer></script>
 </body>

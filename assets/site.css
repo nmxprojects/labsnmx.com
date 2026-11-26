@@ -830,3 +830,7 @@ img{max-width:100%;display:block}
   :root:not([data-theme="light"]) .sv-end .btn{background:#111110;color:#fff}
 }
 @media (prefers-reduced-motion:reduce){.pf-back,.pf,.pf-offer{transition:none}}
+
+/* v10: related-reading cards stay inside the screen on phones (a long title or link could push the single column wider than the page) */
+.prose .rb-grid > li{min-width:0}
+@media (max-width:640px){.prose .rb-grid{grid-template-columns:minmax(0,1fr)}}

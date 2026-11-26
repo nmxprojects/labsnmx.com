@@ -1,4 +1,7 @@
-/* NMX Labs dashboard (v9: plain-English traffic sources and notifications by topic or region. v7: traffic source classification on every chart and filter, and a "Latest blog post" card that
+/* NMX Labs dashboard (v10: a custom date range, channel cards for Instagram, Google Search (organic), Facebook, Pinterest
+   and LinkedIn, returning readers with how often they come back, and each reader's journey: every visit, its source, the
+   pages read, time on each page and what led them to subscribe. Long tables scroll inside their own box.
+   v9: plain-English traffic sources and notifications by topic or region. v7: traffic source classification on every chart and filter, and a "Latest blog post" card that
    sends a post by email and/or notification without doubling up on the automatic hourly sender).
    v6: lives at /dashboard/; sends newsletters, offers and updates by email and/or notification). Was v5: Signs in with ADMIN_KEY, loads row-level data from Code-Blog.gs v5 (admin op "raw") and
    counts everything in the browser, so filters and period changes are instant. With a v4 backend it falls back to the
@@ -111,7 +114,7 @@
     return d;
   }
   var CFG, KEY = '', RAW = null, STATS = null, MODEL = null, liveTimer = null;
-  var F = { period: '30', dev: '', br: '', co: '', src: '', sec: '', topic: '', ts: '' };
+  var F = { period: '30', dev: '', br: '', co: '', src: '', sec: '', topic: '', ts: '', ch: '', from: '', to: '' };
   var TS = ['Organic Search', 'Paid Search', 'Social', 'Direct', 'Referral', 'Unknown'];
   var TS_COLOR = { 'Organic Search': '#7f9471', 'Paid Search': '#ffc530', 'Social': '#ff5a2b', 'Direct': '#111110', 'Referral': '#8aa7d6', 'Unknown': '#c9c4b8' };
   var DAY = 864e5, IST = 19800000, REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -144,9 +147,8 @@
   /* ---------------- the model: everything the page shows, from raw rows + filters ---------------- */
   function buildModel() {
     var now = Date.now(), d = RAW.dict, D = function (i) { return d[i] || ''; };
-    var len = F.period === 'today' ? 1 : F.period === 'all' ? RAW.days : Number(F.period);
-    var start = istMidnight(now) - (len - 1) * DAY, prevStart = start - len * DAY;
-    var days = []; for (var t = start; t <= now; t += DAY) days.push(dk(t));
+    var RG = range(now), len = RG.len, start = RG.start, end = RG.end, prevStart = start - len * DAY;   // v10: custom ranges
+    var days = []; for (var t = start; t <= end; t += DAY) days.push(dk(t));
     var zero = function () { var o = {}; days.forEach(function (x) { o[x] = 0; }); return o; };
     var bump = function (o, k) { k = String(k == null ? '' : k).trim() || 'Unknown'; o[k] = (o[k] || 0) + 1; };
     var top = function (o, n) { return Object.keys(o).map(function (k) { return [k, o[k]]; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, n || 8); };
@@ -160,9 +162,13 @@
     RAW.visits.forEach(function (r) { if (D(r[1]) === 'pageview' && !(r[3] in sesTs)) sesTs[r[3]] = [D(r[14]) || 'Unknown', D(r[15])]; });
     function tsOf(r) { return (sesTs[r[3]] || [D(r[14]) || 'Unknown'])[0]; }
     function tsDetOf(r) { return relabelTraffic(tsOf(r), (sesTs[r[3]] || [0, D(r[15])])[1]); }   // v9: plain-English source names, old rows too
-    function visitOk(r) {
+    indexRaw(); var SX = RAW._s;                                                                  // v10: channels and readers
+    function chOf(r) { var x = SX[r[3]]; return x ? x.ch || '' : ''; }
+    var CHS = {}; CH.forEach(function (c) { CHS[c[0]] = { ses: {}, prev: {}, people: {}, days: zero() }; });
+    var RD_P = {};
+    function visitOk(r, skipCh) {
       return !(F.dev && D(r[9]) !== F.dev) && !(F.br && D(r[10]) !== F.br) && !(F.co && D(r[12]) !== F.co) &&
-        !(F.src && srcOf(r) !== F.src) && !(F.sec && section(D(r[4])) !== F.sec) && !(F.ts && tsOf(r) !== F.ts);
+        !(F.src && srcOf(r) !== F.src) && !(F.sec && section(D(r[4])) !== F.sec) && !(F.ts && tsOf(r) !== F.ts) && (skipCh || !(F.ch && chOf(r) !== F.ch));
     }
     function subOk(r) {
       return !(F.dev && D(r[6]) !== F.dev) && !(F.br && D(r[4]) !== F.br) && !(F.co && D(r[7]) !== F.co) &&
@@ -177,11 +183,16 @@
     RAW.visits.forEach(function (r) {
       var ms = r[0] * 1000, type = D(r[1]), vid = D(r[2]);
       if (vid && !(vid in V.firstSeen)) V.firstSeen[vid] = ms;
-      if (type === 'push_click') { var c = D(r[13]); clicks[c] = (clicks[c] || 0) + 1; if (ms >= start) taps++; else if (ms >= prevStart) prevTaps++; return; }
+      if (type === 'push_click') { var c = D(r[13]); clicks[c] = (clicks[c] || 0) + 1; if (ms >= start && ms <= end) taps++; else if (ms >= prevStart && ms < start) prevTaps++; return; }
+      if (type === 'pageview' && ms >= prevStart && ms <= end && visitOk(r, true)) {                // v10: channel cards ignore their own filter
+        var cc = chOf(r); if (cc) { var cs = CHS[cc]; if (ms < start) cs.prev[r[3]] = 1; else { if (!cs.ses[r[3]]) { cs.ses[r[3]] = 1; var cd = dk(ms); if (cd in cs.days) cs.days[cd]++; } cs.people[r[2]] = 1; } }
+      }
       if (!visitOk(r)) return;
       if (ms < start) { if (ms >= prevStart && type === 'pageview') { V.prevPv++; if (vid) V.prevUniq[vid] = 1; } return; }
+      if (ms > end) return;
       if (type === 'pageview') {
         var day = dk(ms), p = D(r[4]); V.pv++; if (day in V.views) V.views[day]++;
+        if (vid && D(r[3])) { var rp = RD_P[r[2]] || (RD_P[r[2]] = { ses: {}, days: {}, pv: 0, last: 0, r: r }); rp.ses[r[3]] = 1; rp.days[day] = 1; rp.pv++; if (r[0] >= rp.last) { rp.last = r[0]; rp.r = r; } }
         if (vid) { if (!(vid in V.uniq)) { V.uniq[vid] = 1; bump(V.dev, D(r[9])); bump(V.co, D(r[12])); } dayPeople[day + '|' + vid] = day; }
         if (D(r[3]) && !V.ses[D(r[3])]) { var tc = tsOf(r); V.ts[tc] = (V.ts[tc] || 0) + 1; if (!F.ts || F.ts === tc) bump(V.tsDet, (F.ts ? '' : tc + ' · ') + (tsDetOf(r) || (tc === 'Direct' ? 'typed, bookmarked or shared in an app' : 'not recorded'))); }
         if (D(r[3])) V.ses[D(r[3])] = 1;
@@ -226,22 +237,37 @@
         D(r[3]).split(',').forEach(function (x) { if (x === 'blog') P.blog++; if (x === 'youtube') P.yt++; });
         if (D(r[10])) P.withEmail++; if (r[11]) P.installed++;
       }
-      if (sub >= start) { P.newIn++; var g = dk(sub); if (g in P.gained) P.gained[g]++; } else if (sub >= prevStart) P.prevNew++;
-      if (st !== 'Active' && upd >= start) { P.lostIn++; var l = dk(upd); if (l in P.lost) P.lost[l]++; }
+      if (sub >= start && sub <= end) { P.newIn++; var g = dk(sub); if (g in P.gained) P.gained[g]++; } else if (sub >= prevStart && sub < start) P.prevNew++;
+      if (st !== 'Active' && upd >= start && upd <= end) { P.lostIn++; var l = dk(upd); if (l in P.lost) P.lost[l]++; }
     });
     var recent = subs.slice().sort(function (a, b) { return b[0] - a[0]; }).slice(0, 15).map(function (r) {
       return { at: r[0], status: D(r[2]), topics: D(r[3]), browser: D(r[4]), os: D(r[5]), device: D(r[6]), country: D(r[7]), page: D(r[8]),
         source: (D(r[14]) ? D(r[14]) + (D(r[15]) ? ' · ' + relabelTraffic(D(r[14]), D(r[15])) : '') : D(r[9])), email: D(r[10]), received: r[12] };
     });
 
-    var camps = RAW.campaigns.filter(function (c) { return Date.parse(c.at) >= start; }), delivered = 0;
+    var camps = RAW.campaigns.filter(function (c) { var ct = Date.parse(c.at); return ct >= start && ct <= end; }), delivered = 0;
     camps.forEach(function (c) { if (c.type !== 'test') delivered += Number(c.delivered || 0); });
-    var emailActive = RAW.email.filter(function (r) { return r[1]; }).length, emailNew = RAW.email.filter(function (r) { return r[1] && r[0] * 1000 >= start; }).length;
+    var emailActive = RAW.email.filter(function (r) { return r[1]; }).length, emailNew = RAW.email.filter(function (r) { return r[1] && r[0] * 1000 >= start && r[0] * 1000 <= end; }).length;
     var uniq = Object.keys(V.uniq).length, sesN = Object.keys(V.ses).length;
     var emTs = {}; RAW.email.forEach(function (r) { if (r[1] && (!F.ts || D(r[3]) === F.ts)) bump(emTs, D(r[3]) || 'Unknown'); });
+    var chOut = {};                                                                               // v10: channels and readers
+    CH.forEach(function (c) {
+      var cs = CHS[c[0]], sids = Object.keys(cs.ses), secs = 0, paid = 0, subs = 0;
+      sids.forEach(function (x) { var q = SX[x]; secs += sesTime(q); if (q && q.paid) paid++; if (q && q.sub) subs++; });
+      chOut[c[0]] = { ses: sids.length, prev: Object.keys(cs.prev).length, people: Object.keys(cs.people).length, secs: secs, paid: paid, subs: subs, days: days.map(function (x) { return cs.days[x]; }) };
+    });
+    var readers = Object.keys(RD_P).map(function (k) {
+      var p = RD_P[k], j = RAW._j[k] || { ses: [], subs: [] }, sids = Object.keys(p.ses), secs = 0, types = {};
+      sids.forEach(function (x) { secs += sesTime(SX[x]); });
+      (j.subs || []).forEach(function (i) { types[D(RAW.visits[i][1])] = 1; });
+      var f = SX[j.ses[0]] || {};
+      return { vid: Number(k), id: D(k), visits: sids.length, days: Object.keys(p.days).length, pv: p.pv, secs: secs, last: p.last, co: D(p.r[12]), dev: D(p.r[9]), br: D(p.r[10]),
+        src: f.td || f.tc || 'Direct', every: every(j),
+        sub: types.push_subscribe && types.email_subscribe ? 'Notifications + email' : types.push_subscribe ? 'Notifications' : types.email_subscribe ? 'Email' : '' };
+    }).sort(function (a, b) { return b.visits - a.visits || b.last - a.last; });
     var tsRows = function (o) { var tot = 0; TS.forEach(function (k) { tot += o[k] || 0; }); return TS.map(function (k) { return [k + (tot ? ' · ' + Math.round((o[k] || 0) / tot * 100) + '%' : ''), o[k] || 0]; }); };
     return {
-      compat: false, days: days,
+      compat: false, days: days, ch: chOut, readers: readers, prevLabel: len === 1 ? 'day' : len + ' days',
       kpi: [
         { v: P.active, label: 'Notification subscribers', sub: '+' + num(P.newIn) + ' new, −' + num(P.lostIn) + ' lost', d: [P.newIn, P.prevNew] },
         { v: uniq, label: 'Visitors', sub: num(Object.keys(V.uniq).filter(function (x) { return V.firstSeen[x] >= start; }).length) + ' new', d: [uniq, Object.keys(V.prevUniq).length] },
@@ -268,7 +294,7 @@
     var len = F.period === '7' ? 7 : 30, cut = 30 - len, sl = function (a) { return (a || []).slice(cut); };
     var p = s.push, v = s.visitors, f = v.funnel;
     return {
-      compat: true, days: s.days.slice(cut),
+      compat: true, days: s.days.slice(cut), ch: null, readers: null,
       kpi: [
         { v: p.active, label: 'Notification subscribers', sub: '+' + num(p.new7) + ' this week' },
         { v: v.visitors, label: 'Visitors, 30 days', sub: num(v.newVisitors) + ' new' },
@@ -297,7 +323,7 @@
       var c = box.children[i], d = '';
       if (k.d && !m.compat && F.period !== 'all') {
         var a = k.d[0], b = k.d[1];
-        if (b) { var ch = Math.round((a - b) / b * 100); d = '<em class="' + (ch >= 0 ? 'up' : 'down') + '" title="vs the previous ' + (F.period === 'today' ? 'day' : F.period + ' days') + '">' + (ch >= 0 ? '▲' : '▼') + Math.abs(ch) + '%</em>'; }
+        if (b) { var ch = Math.round((a - b) / b * 100); d = '<em class="' + (ch >= 0 ? 'up' : 'down') + '" title="vs the previous ' + (m.prevLabel || 'period') + '">' + (ch >= 0 ? '▲' : '▼') + Math.abs(ch) + '%</em>'; }
         else if (a) d = '<em class="up">new</em>';
       }
       c.querySelector('span').textContent = k.label;
@@ -433,7 +459,10 @@
       s.innerHTML = list.map(function (v, i) { return '<option value="' + (i ? esc(v) : '') + '">' + esc(i && k === 'topic' ? (v === 'blog' ? 'Posts and lessons' : 'YouTube videos') : v) + '</option>'; }).join('');
       s.value = F[k]; s.disabled = compat; s.classList.toggle('on', !!F[k]);
     });
-    $('reset').hidden = !['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts'].some(function (k) { return F[k]; });
+    $('reset').hidden = !['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts', 'ch'].some(function (k) { return F[k]; });
+    var today = dk(Date.now()), oldest = dk(Date.now() - ((RAW ? RAW.days : 30) - 1) * DAY);
+    $('range').hidden = F.period !== 'custom';
+    ['rFrom', 'rTo'].forEach(function (id) { var el = $(id); el.min = oldest; el.max = today; el.value = id === 'rFrom' ? F.from : F.to; });
     document.querySelectorAll('#period button').forEach(function (b) { var p = b.getAttribute('data-p'); b.setAttribute('aria-pressed', String(p === F.period)); b.disabled = compat && p !== '7' && p !== '30'; });
   }
   function render() {
@@ -444,7 +473,7 @@
     growthChart('growth', MODEL.days, MODEL.series.gained, MODEL.series.lost);
     funnel(MODEL); heat(MODEL); school(MODEL); camps(MODEL);
     Object.keys(MODEL.bars).forEach(function (k) { bars(k, MODEL.bars[k], k === 'pTopics' ? Math.max(1, MODEL.active) : 0); });
-    trafficHead(MODEL);
+    trafficHead(MODEL); drawChannels(MODEL); drawReaders(MODEL);
     $('recentSub').textContent = MODEL.recentSub;
     $('recent').innerHTML = MODEL.recent.length ? MODEL.recent.map(function (r) {
       return '<tr><td>' + when(r.at) + '</td><td>' + esc(r.status) + '</td><td>' + esc(r.topics) + '</td><td>' + esc(r.browser) + '</td><td>' + esc(r.device) + ' · ' + esc(r.os) + '</td><td>' + esc(r.country) + '</td><td>' + esc(r.page) + '</td><td>' + esc(r.source) + '</td><td>' + esc(r.email) + '</td><td class="n">' + num(r.received) + '</td></tr>';
@@ -476,11 +505,206 @@
     $('asks').innerHTML = asks.length ? asks.map(function (a) { return '<tr><td>' + when(a.at) + '</td><td>' + esc(a.q) + '</td><td>' + esc(a.page) + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="ad-empty">No questions yet.</td></tr>';
   }
 
+
+  /* ---------------- v10: date range, channels and reader journeys ---------------- */
+  // The period: Today / 7 / 30 / 90 days / All, or a custom From–To range (India dates, within the 120 days the Sheet keeps).
+  function range(now) {
+    if (F.period === 'custom' && F.from && F.to) {
+      var a = Date.parse(F.from + 'T00:00:00+05:30'), z = Date.parse(F.to + 'T00:00:00+05:30');
+      if (z < a) { var x = a; a = z; z = x; }
+      return { start: a, end: Math.min(now, z + DAY - 1), len: Math.round((z - a) / DAY) + 1 };
+    }
+    var len = F.period === 'today' ? 1 : F.period === 'all' ? RAW.days : (Number(F.period) || 30);
+    return { start: istMidnight(now) - (len - 1) * DAY, end: now, len: len };
+  }
+  // The five channels shown as cards. Instagram and Facebook include Meta ads (counted separately as "from ads").
+  var CH = [['instagram', 'Instagram', 'camera', '#a689f5', '#6b46d6'], ['google', 'Google Search', 'search', '#93a986', '#62785a'],
+    ['facebook', 'Facebook', 'people', '#5fc6ba', '#2a8a80'], ['pinterest', 'Pinterest', 'pin', '#ffdb6e', '#ffb21a'], ['linkedin', 'LinkedIn', 'briefcase', '#78a3ea', '#3d68c2']];
+  var GLYPH = {
+    camera: '<path d="M3.6 9.2a2.4 2.4 0 0 1 2.4-2.4h2.1l1.3-2h5.2l1.3 2H18a2.4 2.4 0 0 1 2.4 2.4v8.4A2.4 2.4 0 0 1 18 20H6a2.4 2.4 0 0 1-2.4-2.4z"/><circle cx="12" cy="13.2" r="3.5"/>',
+    search: '<circle cx="10.6" cy="10.6" r="6"/><path d="m15.2 15.2 4.9 4.9"/>',
+    people: '<circle cx="9" cy="8.8" r="3.2"/><path d="M3.4 19.2a5.6 5.6 0 0 1 11.2 0"/><circle cx="16.9" cy="9.6" r="2.5"/><path d="M15.7 14.1a4.7 4.7 0 0 1 4.9 4.9"/>',
+    pin: '<path d="M8.8 3.8h6.4l-1.1 5.3 3.1 3.6H6.8l3.1-3.6z"/><path d="M12 12.7v7.8"/>',
+    briefcase: '<rect x="3.5" y="7.5" width="17" height="12" rx="2.6"/><path d="M9 7.5V6.1A1.6 1.6 0 0 1 10.6 4.5h2.8A1.6 1.6 0 0 1 15 6.1v1.4M3.5 12.6h17M10.5 12.6v1.6h3v-1.6"/>'
+  };
+  function chTile(c) { return '<span class="ad-app" style="--a1:' + c[3] + ';--a2:' + c[4] + (c[0] === 'pinterest' ? ';color:#111110' : '') + '" aria-hidden="true"><svg viewBox="0 0 24 24">' + GLYPH[c[2]] + '</svg></span>'; }
+  function channelOf(tc, td, br) {
+    td = String(td || ''); br = String(br || '');
+    var meta = /^Facebook or Instagram/.test(td);
+    if (/^Instagram/.test(td) || (meta && /^Instagram/.test(br))) return 'instagram';
+    if ((/^Facebook/.test(td) && !meta) || (meta && /^Facebook/.test(br))) return 'facebook';
+    if (/^Pinterest/.test(td)) return 'pinterest';
+    if (/^LinkedIn/.test(td)) return 'linkedin';
+    if (tc === 'Organic Search' && /^Google/.test(td)) return 'google';
+    return '';
+  }
+  // One pass over every row, once per load: visits (sessions) and readers (visitor IDs), across all the data.
+  function indexRaw() {
+    if (RAW._s) return;
+    var d = RAW.dict, D = function (i) { return d[i] || ''; }, S = {}, J = {};
+    RAW.visits.forEach(function (r, i) {
+      var t = D(r[1]), sid = r[3], vid = r[2];
+      if (D(sid)) {
+        var s = S[sid] || (S[sid] = { a: r[0], b: r[0], secs: 0, sub: 0, pv: 0 });
+        if (r[0] < s.a) s.a = r[0]; if (r[0] > s.b) s.b = r[0];
+        if (t === 'pageview') {
+          s.pv++;
+          if (!s.page) { s.page = D(r[4]); s.tc = D(r[14]) || 'Unknown'; s.td = relabelTraffic(s.tc, D(r[15])); s.br = D(r[10]); s.ch = channelOf(s.tc, s.td, s.br); s.paid = /Meta ads|paid|Google Ads|Microsoft Ads/.test(s.td); }
+        } else if (t === 'page_end') s.secs += parseInt(D(r[13]), 10) || 0;
+        else if (t === 'push_subscribe' || (t === 'email_subscribe' && !/^already/.test(D(r[13])))) s.sub = 1;
+      }
+      if (D(vid)) {
+        var j = J[vid] || (J[vid] = { rows: [], ses: [], seen: {}, sub: null, subs: [] });
+        j.rows.push(i);
+        if (D(sid) && !j.seen[sid]) { j.seen[sid] = 1; j.ses.push(sid); }
+        if (t === 'push_subscribe' || (t === 'email_subscribe' && !/^already/.test(D(r[13])))) { j.subs.push(i); if (!j.sub) j.sub = i; }
+      }
+    });
+    RAW._s = S; RAW._j = J;
+  }
+  function sesTime(s) { return s ? (s.secs || (s.b - s.a)) : 0; }
+  function dur(sec) {
+    sec = Math.round(sec || 0); if (sec < 60) return sec + 's';
+    if (sec < 3600) return Math.floor(sec / 60) + 'm' + (sec % 60 >= 10 ? ' ' + (sec % 60) + 's' : '');
+    return Math.floor(sec / 3600) + 'h ' + Math.round(sec % 3600 / 60) + 'm';
+  }
+  function shortId(v) { return String(v || '').slice(0, 8) || 'unknown'; }
+  function every(j) {
+    var S = RAW._s, t = j.ses.map(function (s) { return S[s] ? S[s].a : 0; }).filter(Boolean);
+    if (t.length < 2) return '';
+    var g = (t[t.length - 1] - t[0]) / 86400 / (t.length - 1);
+    return g < 1 ? 'more than once a day' : g < 1.5 ? 'about daily' : 'about every ' + Math.round(g) + ' days';
+  }
+
+  function drawChannels(m) {
+    var box = $('chs'); if (!box) return;
+    if (!m.ch) { box.innerHTML = '<p class="ad-empty">Shows up with Code-Blog.gs v5 or later.</p>'; return; }
+    var tot = m.tsTotal || 0;
+    box.innerHTML = CH.map(function (c) {
+      var x = m.ch[c[0]], sel = F.ch === c[0], n = x.ses, prev = x.prev, delta = '';
+      if (F.period !== 'all' && prev) { var p = Math.round((n - prev) / prev * 100); delta = '<em class="' + (p >= 0 ? 'up' : 'down') + '">' + (p >= 0 ? '▲' : '▼') + Math.abs(p) + '%</em>'; }
+      else if (F.period !== 'all' && n) delta = '<em class="up">new</em>';
+      var max = Math.max(1, Math.max.apply(null, x.days)), w = 120, h = 26, k = x.days.length;
+      var pts = x.days.map(function (v, i) { return (k > 1 ? i * w / (k - 1) : w / 2).toFixed(1) + ',' + (h - 2 - v / max * (h - 4)).toFixed(1); }).join(' ');
+      return '<button type="button" class="ad-chc' + (sel ? ' sel' : '') + '" data-ch="' + c[0] + '" aria-pressed="' + sel + '" title="' + (sel ? 'Clear this filter' : 'Show only visits from ' + c[1]) + '">' +
+        '<span class="ad-chc-top">' + chTile(c) + '<span class="ad-chc-name">' + c[1] + (c[0] === 'google' ? ' <small>organic</small>' : '') + '</span></span>' +
+        '<b>' + num(n) + '</b><span class="ad-chc-sub">visits' + delta + '</span>' +
+        '<svg class="ad-spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '"/></svg>' +
+        '<span class="ad-chc-meta">' + num(x.people) + ' people · ' + (tot ? Math.round(n / tot * 100) : 0) + '% of visits<br>' +
+        (n ? dur(x.secs / n) + ' a visit' : 'no visits yet') + (x.paid ? ' · ' + num(x.paid) + ' from ads' : '') + (x.subs ? ' · ' + num(x.subs) + ' subscribed' : '') + '</span></button>';
+    }).join('');
+    $('chSub').textContent = F.ch ? 'Showing only visits from ' + CH.filter(function (c) { return c[0] === F.ch; })[0][1] + '. Tap it again to see everything.'
+      : 'Visits that arrived from each channel in this view, against the same length of time before it. Tap one to filter the whole dashboard.';
+  }
+
+  var RD = { mode: 'returning', q: '' };
+  function drawReaders(m) {
+    var body = $('readers'); if (!body) return;
+    if (!m.readers) { body.innerHTML = '<tr><td colspan="8" class="ad-empty">Shows up with Code-Blog.gs v5 or later.</td></tr>'; return; }
+    var q = RD.q.toLowerCase(), list = m.readers.filter(function (r) {
+      if (RD.mode === 'returning' && r.visits < 2) return false;
+      if (RD.mode === 'subs' && !r.sub) return false;
+      return !q || (r.id + ' ' + r.co + ' ' + r.dev + ' ' + r.br + ' ' + r.src).toLowerCase().indexOf(q) > -1;
+    });
+    var ret = m.readers.filter(function (r) { return r.visits >= 2; }), subRet = ret.filter(function (r) { return r.sub; }).length, avgV = 0, avgT = 0;
+    ret.forEach(function (r) { avgV += r.visits; avgT += r.secs / r.visits; });
+    $('rdChips').innerHTML = [[num(ret.length), 'returning readers (2+ visits)'], [m.readers.length ? Math.round(ret.length / m.readers.length * 100) + '%' : '–', 'of readers came back'],
+      [ret.length ? (Math.round(avgV / ret.length * 10) / 10) : '–', 'visits each, on average'], [ret.length ? dur(avgT / ret.length) : '–', 'per visit, returning readers'],
+      [num(subRet), 'of them subscribed']].map(function (x) { return '<span class="ad-chip"><b>' + x[0] + '</b>' + x[1] + '</span>'; }).join('');
+    $('rdSub').textContent = num(list.length) + ' readers in this view' + (list.length > 300 ? ', the 300 most frequent shown' : '') + '. Tap a reader to see their whole journey.';
+    body.innerHTML = list.length ? list.slice(0, 300).map(function (r) {
+      return '<tr class="ad-rd" data-vid="' + r.vid + '" tabindex="0"><td><b class="ad-rid">' + esc(shortId(r.id)) + '</b><br><small>' + esc([r.dev, r.br, r.co].filter(Boolean).join(' · ')) + '</small></td>' +
+        '<td class="n"><b>' + num(r.visits) + '</b>' + (r.every ? '<br><small>' + esc(r.every) + '</small>' : '') + '</td><td class="n">' + num(r.days) + '</td><td class="n">' + dur(r.secs) + '</td><td class="n">' + num(r.pv) + '</td>' +
+        '<td>' + esc(r.src) + '</td><td>' + when(r.last) + '</td><td>' + (r.sub ? '<span class="ad-pill ok">' + esc(r.sub) + '</span>' : '<span class="ad-pill">Not yet</span>') + '</td></tr>';
+    }).join('') : '<tr><td colspan="8" class="ad-empty">' + (RD.mode === 'returning' ? 'Nobody has come back more than once in this view yet.' : 'No readers match this view.') + '</td></tr>';
+  }
+
+  // The journey of one reader, across everything the Sheet still holds (up to 120 days), whatever the period.
+  var JLABEL = { prompt_shown: 'Saw the reading pop-up', prompt_yes: 'Tapped to turn on notifications', prompt_later: 'Said “Maybe later”', prompt_dismissed: 'Closed the browser’s permission prompt',
+    push_subscribe: 'Turned on notifications', email_subscribe: 'Subscribed by email', push_denied: 'Blocked notifications', push_unsubscribe: 'Turned notifications off',
+    follow_open: 'Opened Follow', follow_click: 'Tapped a follow link', share: 'Shared the page', save: 'Saved the post', unsave: 'Removed a saved post', quiz_complete: 'Finished a quiz',
+    game_end: 'Finished a game', lesson_done: 'Finished the lesson', ask: 'Asked the assistant', assistant_open: 'Opened the assistant', lead: 'Sent an enquiry',
+    endcard_seen: 'Reached the end of the post', push_click: 'Tapped a notification', app_installed: 'Installed the app', app_open: 'Opened the installed app',
+    push_check_yes: 'Confirmed notifications arrive', push_check_no: 'Said a test notification didn’t show', push_guide: 'Opened the fix-it steps' };
+  var VIA = { read_prompt: 'the coffee pop-up while reading', end_card: 'the “Get the next post” card at the end of a post', follow: 'the Follow button', bell: 'the Follow button',
+    custom: 'a Follow link on the page', api: 'a Follow link on the page', social_card: 'the follow pop-up' };
+  function evText(t, det) {
+    var p = String(det || '').split('|'), name = { whatsapp: 'WhatsApp', linkedin: 'LinkedIn', x: 'X', facebook: 'Facebook', pinterest: 'Pinterest', email: 'email', copy: 'Copy link', device: 'the phone’s share menu', instagram: 'Instagram', youtube: 'YouTube' };
+    if (t === 'follow_click') return 'Tapped Follow on ' + (name[p[0]] || p[0]);
+    if (t === 'share') return 'Shared it via ' + (name[p[0]] || p[0]);
+    if (t === 'prompt_shown') return /social_card/.test(p[0]) ? 'Saw the follow pop-up' : 'Saw the reading pop-up';
+    if (t === 'push_subscribe') return 'Turned on notifications' + (p[1] ? ' from ' + (VIA[p[1]] || p[1]) : '');
+    if (t === 'email_subscribe') return /^already/.test(p[0]) ? 'Entered an email that was already subscribed' : 'Subscribed by email';
+    if (t === 'quiz_complete' || t === 'game_end') return (JLABEL[t]) + (p[0] ? ': ' + p[0] : '');
+    return JLABEL[t] || t.replace(/_/g, ' ');
+  }
+  function openJourney(v) {
+    indexRaw();
+    var d = RAW.dict, D = function (i) { return d[i] || ''; }, j = RAW._j[v], S = RAW._s; if (!j) return;
+    var visits = j.ses.map(function (sid, n) { return { n: n + 1, sid: sid, s: S[sid] || {}, items: [] }; }), by = {}, lastPv = {}, latest = null;
+    visits.forEach(function (x) { by[x.sid] = x; });
+    j.rows.forEach(function (i) {
+      var r = RAW.visits[i], t = D(r[1]), x = by[r[3]]; if (!x) return;
+      if (t === 'pageview') { var it = { page: D(r[4]), t: r[0], secs: 0, depth: 0 }; x.items.push(it); lastPv[r[3] + '|' + r[4]] = it; latest = r; }
+      else if (t === 'page_end') { var pv = lastPv[r[3] + '|' + r[4]], q = D(r[13]).split('|'); if (pv) { pv.secs += parseInt(q[0], 10) || 0; pv.depth = Math.max(pv.depth, parseInt(q[1], 10) || 0); } }
+      else x.items.push({ ev: t, det: D(r[13]), t: r[0], i: i });
+    });
+    var first = RAW.visits[j.rows[0]], who = latest || first;
+    var pages = 0, secs = 0; visits.forEach(function (x) { secs += sesTime(x.s); x.items.forEach(function (it) { if (it.page) pages++; }); });
+    var span = visits.length ? Math.max(1, Math.round((visits[visits.length - 1].s.a - visits[0].s.a) / 86400) + 1) : 1;
+    var h = '<div class="ad-jhead"><span class="ad-avatar" aria-hidden="true">' + esc(shortId(D(v)).slice(0, 2).toUpperCase()) + '</span><div><h2 id="drH">Reader ' + esc(shortId(D(v))) + '</h2>' +
+      '<p>' + esc([D(who[9]), D(who[10]), D(who[11]), D(who[12])].filter(Boolean).join(' · ')) + '</p></div></div>';
+    h += '<div class="ad-chips">' + [[num(visits.length), visits.length === 1 ? 'visit' : 'visits'], [num(span), span === 1 ? 'day' : 'days, first to last'], [dur(secs), 'on the site'],
+      [num(pages), 'pages read'], [visits.length ? dur(secs / visits.length) : '–', 'a visit']].map(function (x) { return '<span class="ad-chip"><b>' + x[0] + '</b>' + x[1] + '</span>'; }).join('') +
+      (every(j) ? '<span class="ad-chip"><b>↻</b>comes back ' + esc(every(j)) + '</span>' : '') + '</div>';
+    if (j.sub != null) {
+      var sr = RAW.visits[j.sub], st = sr[0], sx = by[sr[3]], k = sx ? sx.n : visits.length, how = D(sr[1]) === 'push_subscribe' ? 'browser notifications' : 'email';
+      var pb = 0, tb = 0, seen = 0, later = 0, srcs = {};
+      visits.forEach(function (x) {
+        if (x.n > k) return; if (x.s.td || x.s.tc) srcs[(x.s.td || x.s.tc)] = 1;
+        x.items.forEach(function (it) { if (it.t > st) return; if (it.page) { pb++; tb += it.secs; } if (it.ev === 'prompt_shown') seen++; if (it.ev === 'prompt_later') later++; });
+      });
+      var det = D(sr[13]).split('|'), via = how === 'email' ? 'the email form' : (VIA[det[1]] || det[1] || 'the Follow button');
+      h += '<div class="ad-why"><h3>What led to subscribing</h3><ul>' +
+        '<li>Subscribed to <b>' + how + '</b> on ' + when(st) + ', from ' + esc(via) + ', on <u>' + esc(D(sr[4])) + '</u>.</li>' +
+        '<li>It was visit <b>' + k + '</b>' + (visits.length > k ? ' of ' + visits.length : '') + '. Before that they read <b>' + num(pb) + '</b> page' + (pb === 1 ? '' : 's') + (tb ? ' for <b>' + dur(tb) + '</b>' : '') + '.</li>' +
+        '<li>First came from <b>' + esc(visits[0].s.td || visits[0].s.tc || 'Direct') + '</b>' + (visits[0].s.page ? ', landing on <u>' + esc(visits[0].s.page) + '</u>' : '') + '.</li>' +
+        (Object.keys(srcs).length > 1 ? '<li>Visits up to then came from: ' + esc(Object.keys(srcs).join(', ')) + '.</li>' : '') +
+        (seen ? '<li>Saw the pop-up ' + seen + ' time' + (seen === 1 ? '' : 's') + (later ? ', said “Maybe later” ' + later + ' time' + (later === 1 ? '' : 's') : '') + ' before saying yes.</li>' : '') +
+        (j.subs.length > 1 ? '<li>Also subscribed to ' + (how === 'email' ? 'browser notifications' : 'email') + ' later.</li>' : '') + '</ul></div>';
+    }
+    h += '<ol class="ad-visits">' + visits.map(function (x) {
+      var s = x.s, rows = x.items.map(function (it) {
+        if (it.page) return '<li><time>' + new Date(it.t * 1000).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }) + '</time><a href="' + esc(it.page) + '" target="_blank" rel="noopener">' + esc(it.page) + '</a>' +
+          '<em>' + (it.secs ? dur(it.secs) : '–') + (it.depth ? ' · ' + it.depth + '%' : '') + '</em></li>';
+        var strong = /subscribe$/.test(it.ev) && it.ev !== 'push_unsubscribe';
+        return '<li class="ev' + (strong ? ' sub' : '') + '"><time>' + new Date(it.t * 1000).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }) + '</time><span>' + esc(evText(it.ev, it.det)) + '</span></li>';
+      }).join('');
+      return '<li class="ad-visit"><div class="ad-vh"><b>Visit ' + x.n + '</b><span>' + when(s.a) + '</span><span><i class="ad-tsdot" style="background:' + (TS_COLOR[s.tc] || '#c9c4b8') + '"></i>' +
+        esc(s.td || s.tc || 'Direct') + '</span><span>' + dur(sesTime(s)) + '</span></div><ul class="ad-steps">' + (rows || '<li class="ev"><span>No page views recorded in this visit.</span></li>') + '</ul></li>';
+    }).join('') + '</ol><p class="ad-note">Times are India time. Time on a page counts only while the tab was open and the reader was active; visits before this update show the time between their first and last action instead.</p>';
+    $('drBody').innerHTML = h; $('drawer').hidden = false; document.documentElement.classList.add('ad-noscroll');
+    $('drBody').scrollTop = 0; setTimeout(function () { $('drClose').focus(); }, 30);
+  }
+  function closeJourney() { $('drawer').hidden = true; document.documentElement.classList.remove('ad-noscroll'); }
+  document.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('.ad-chc[data-ch]');
+    if (c) { var v = c.getAttribute('data-ch'); F.ch = F.ch === v ? '' : v; render(); return; }
+    var tr = e.target.closest && e.target.closest('tr.ad-rd[data-vid]');
+    if (tr) { openJourney(Number(tr.getAttribute('data-vid'))); return; }
+    if (e.target.closest && (e.target.id === 'drawer' || e.target.closest('#drClose'))) closeJourney();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !$('drawer').hidden) closeJourney();
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('tr.ad-rd')) { e.preventDefault(); openJourney(Number(e.target.getAttribute('data-vid'))); }
+  });
+
   /* ---------------- live view ---------------- */
   var LABEL = { pageview: 'read', push_subscribe: 'turned on notifications', push_click: 'tapped a notification', prompt_shown: 'saw the notification offer', prompt_yes: 'tapped Allow',
     endcard_seen: 'finished reading a post', quiz_complete: 'finished a quiz', game_end: 'finished a game', lesson_done: 'finished a lesson', save: 'saved a post', ask: 'asked the assistant',
     lead: 'sent an enquiry', app_installed: 'installed the app', push_check_yes: 'confirmed notifications arrive', push_check_no: 'said a notification didn’t show',
-    push_guide: 'opened the fix-it steps', push_denied: 'blocked notifications', follow_open: 'opened Follow' };
+    push_guide: 'opened the fix-it steps', push_denied: 'blocked notifications', follow_open: 'opened Follow',
+    email_subscribe: 'subscribed by email', share: 'shared a page', follow_click: 'tapped a follow link' };
   var seen = {};
   function drawLive(L) {
     var ev = L.events || [], nowS = Date.now() / 1000, active = {};
@@ -527,9 +751,22 @@
     }).then(function () { $('dash').classList.remove('ad-loading'); });
   }
 
-  $('period').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.disabled) return; F.period = b.getAttribute('data-p'); render(); });
+  $('period').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.disabled) return; F.period = b.getAttribute('data-p');
+    if (F.period === 'custom' && !(F.from && F.to)) { F.to = dk(Date.now()); F.from = dk(Date.now() - 13 * DAY); }
+    render(); if (F.period === 'custom') $('rFrom').focus();
+  });
+  ['rFrom', 'rTo'].forEach(function (id) { $(id).addEventListener('change', function () {                     // v10: custom range
+    var v = $(id).value; if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
+    if (id === 'rFrom') F.from = v; else F.to = v; F.period = 'custom'; render();
+  }); });
+  $('rdMode').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; RD.mode = b.getAttribute('data-m');
+    this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (MODEL) drawReaders(MODEL);
+  });
+  $('rdQ').addEventListener('input', function () { RD.q = this.value.trim(); if (MODEL) drawReaders(MODEL); });
   document.querySelectorAll('#filters select').forEach(function (s) { s.addEventListener('change', function () { F[s.getAttribute('data-f')] = s.value; render(); }); });
-  $('reset').addEventListener('click', function () { ['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts'].forEach(function (k) { F[k] = ''; }); render(); });
+  $('reset').addEventListener('click', function () { ['dev', 'br', 'co', 'src', 'sec', 'topic', 'ts', 'ch'].forEach(function (k) { F[k] = ''; }); render(); });
   document.addEventListener('click', function (e) {
     var li = e.target.closest && e.target.closest('.ad-bars li[data-fk]'); if (!li) return;
     var k = li.getAttribute('data-fk'), v = li.getAttribute('data-fv'); F[k] = F[k] === v ? '' : v; render();
