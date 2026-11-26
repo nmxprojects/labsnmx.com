@@ -3,6 +3,31 @@
  "site": "https://labsnmx.com",
  "posts": [
   {
+   "slug": "rebrand-for-ai-agents-docker-futurebrand",
+   "title": "The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI",
+   "url": "https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/",
+   "date": "2026-11-26",
+   "dek": "In one week Docker swapped its box-carrying whale for “Run on Trust” and FutureBrand declared the static identity system over. Strip away the conference talk and there’s a real shift underneath: your brand now has to be readable by machines. Here’s what that means, with a checklist.",
+   "takeaways": [
+    "Docker’s new identity (19 November 2026) keeps a simplified whale, drops the containers, adds a new signature blue, #6172FF, and replaces “Build, Ship, Run” with “Run on Trust”.",
+    "FutureBrand argues static identity systems can’t keep up when AI makes more of a brand’s output, and proposes designing brand “behaviour” instead.",
+    "The practical shift: your guidelines will be read by AI tools, so they need written rules for judgement, voice examples and colour values, not just a logo PDF.",
+    "Sameness is the risk. If every brand in a category feeds AI the same safe rules, everything starts to look alike, which is already happening in electric cars."
+   ],
+   "category": "Global",
+   "track": "studio",
+   "author": "Neeraj",
+   "read_min": 6,
+   "image": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
+   "thumb": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand-640.webp",
+   "regions": [
+    "us",
+    "global"
+   ],
+   "most_read": 0
+  },
+  {
    "slug": "fmcg-brands-shifting-tv-to-digital-advertising-india",
    "title": "FMCG is walking away from TV. Should you care?",
    "url": "https://labsnmx.com/blog/fmcg-brands-shifting-tv-to-digital-advertising-india/",
@@ -27,31 +52,6 @@
     "us",
     "global",
     "me"
-   ],
-   "most_read": 0
-  },
-  {
-   "slug": "rebrand-for-ai-agents-docker-futurebrand",
-   "title": "The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI",
-   "url": "https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/",
-   "date": "2026-11-26",
-   "dek": "In one week Docker swapped its box-carrying whale for “Run on Trust” and FutureBrand declared the static identity system over. Strip away the conference talk and there’s a real shift underneath: your brand now has to be readable by machines. Here’s what that means, with a checklist.",
-   "takeaways": [
-    "Docker’s new identity (19 November 2026) keeps a simplified whale, drops the containers, adds a new signature blue, #6172FF, and replaces “Build, Ship, Run” with “Run on Trust”.",
-    "FutureBrand argues static identity systems can’t keep up when AI makes more of a brand’s output, and proposes designing brand “behaviour” instead.",
-    "The practical shift: your guidelines will be read by AI tools, so they need written rules for judgement, voice examples and colour values, not just a logo PDF.",
-    "Sameness is the risk. If every brand in a category feeds AI the same safe rules, everything starts to look alike, which is already happening in electric cars."
-   ],
-   "category": "Global",
-   "track": "studio",
-   "author": "Neeraj",
-   "read_min": 6,
-   "image": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
-   "thumb": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand.jpg",
-   "thumb_small": "https://labsnmx.com/assets/blog/rebrand-for-ai-agents-docker-futurebrand-640.webp",
-   "regions": [
-    "us",
-    "global"
    ],
    "most_read": 0
   },
@@ -127,7 +127,7 @@
     "in",
     "me"
    ],
-   "most_read": 5
+   "most_read": 4
   },
   {
    "slug": "custom-brand-typefaces-india",
@@ -249,7 +249,7 @@
    "regions": [
     "in"
    ],
-   "most_read": 4
+   "most_read": 5
   },
   {
    "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
