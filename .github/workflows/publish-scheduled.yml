@@ -6,6 +6,8 @@
 #     and keeps every real page in sitemap.xml.
 # v9: also runs when content/youtube.json or scripts/build_v9.py change (bento blog, most read, regions, YouTube tiles,
 #     sitemap_index.xml, 404 page). It reads the counts-only "most read" list, so it needs internet access (GitHub has it).
+# v10: also runs when scripts/build_v10.py changes (LinkedIn and Pinterest links, Play arcade, Pinterest pins on the blog and
+#      home pages from the profile's public feed, blog/pinterest.xml for Pinterest's Auto-publish).
 # v7: also runs when content/home-carousel.json changes (homepage graphic slides), and warns in the run summary
 #     when a published post's page file is missing (the cause of 404s in Search Console).
 #
@@ -21,7 +23,7 @@ on:
     - cron: '35 18 * * *'        # 18:35 UTC = 00:05 IST
   push:
     branches: [main, master]
-    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'content/youtube.json', 'scripts/build.py', 'scripts/build_v9.py', 'scripts/build_learn.py', 'scripts/build_news.py']
+    paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'content/youtube.json', 'scripts/build.py', 'scripts/build_v9.py', 'scripts/build_v10.py', 'scripts/build_learn.py', 'scripts/build_news.py']
   workflow_dispatch:
 
 permissions:
