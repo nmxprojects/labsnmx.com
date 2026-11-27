@@ -42,6 +42,9 @@ v11: new posts are announced and listed as the latest whatever their date (live_
 and the "new_posts" Actions output), category pages with fewer than 3 posts and /sitemap/ are noindex (and out of the
 sitemaps), /clients links in AMP and scheduled pages are fixed, and the flat icon set (scripts/icons_v11.py) is added
 to the footer, homepage and contact page. All of it lives in scripts/build_v11.py: if it's missing or fails, v10 runs.
+v12: icons in the style of the reference row (plain glyphs in one ink, no tiles) from scripts/icons_v12.py, every icon as
+SVG and PNG (assets/icons/), icons already on pages are refreshed on every run, and official logo files added to
+assets/icons/brand/ are used everywhere. All of it lives in scripts/build_v12.py: if it's missing or fails, v11 icons run.
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -66,6 +69,11 @@ try:
 except Exception as _e:
     build_v11 = None
     print('v11 layer skipped: ' + str(_e))
+try:
+    import build_v12   # v12: icon files and the icons on every page. If it breaks, the v11 icons run.
+except Exception as _e:
+    build_v12 = None
+    print('v12 layer skipped: ' + str(_e))
 try:
     import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
 except Exception as _e:
@@ -391,12 +399,16 @@ def build_footers(published):
             if WIRE_BAR and build_news: s = build_news.add_bar(s, WIRE_BAR, rel)                                  # v6: "Latest in" bar
             s = v6_copy(s)
             s = fix_links(s)                                                                      # v8: /services/ and /clients/
-            if build_v11:                                                                         # v11: flat icons
-                try: s = build_v11.icons(s, rel)
-                except Exception as e: print(f'Icons not added to {p}: {e}')
             if build_v10:                                                                         # v10: LinkedIn and Pinterest
                 try: s = build_v10.socials(s)
                 except Exception as e: print(f'Follow links not added to {p}: {e}')
+            done = False
+            if build_v12:                                                                         # v12: icons (after the
+                try: s = build_v12.icons(s, rel); done = True                                     # follow links, so new
+                except Exception as e: print(f'v12 icons not added to {p}: {e}')                 # links get one too)
+            if build_v11 and not done:                                                            # v11: flat icons
+                try: s = build_v11.icons(s, rel)
+                except Exception as e: print(f'Icons not added to {p}: {e}')
             wr(p, s)
 
 def build_feed(published):
@@ -734,10 +746,10 @@ def main():
     if build_v10:                                                      # v10: Play arcade, Pinterest on the blog and home pages
         try: build_v10.pages()
         except Exception as e: print('v10 pages not rebuilt: ' + str(e))
-    if build_v11:                                                      # v11.1: which official brand files exist
-        try: build_v11.sync_brands()
-        except Exception as e: print('v11 brand marks skipped: ' + str(e))
     build_footers(published)
+    if build_v12:                                                      # v12: icon files (SVG, PNG, sprite, classes), logo files
+        try: build_v12.assets()
+        except Exception as e: print('v12 icon files not rebuilt: ' + str(e))
     if build_v11:                                                      # v11: /clients links in AMP and scheduled pages
         try: build_v11.fix_hidden_links(fix_links)
         except Exception as e: print('v11 link fix skipped: ' + str(e))
@@ -766,6 +778,9 @@ def main():
     if build_v11:
         CHANGED.extend(build_v11.WRITTEN)
         for note in build_v11.NOTES: print('v11: ' + note)
+    if build_v12:
+        CHANGED.extend(build_v12.WRITTEN)
+        for note in build_v12.NOTES: print('v12: ' + note)
     print(f'{today}: {len(published)} posts live, {len(CHANGED)} files updated.')
 
 if __name__ == '__main__':

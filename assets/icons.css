@@ -1,32 +1,38 @@
-/* NMX Labs v11: flat icons (scripts/icons_v11.py). Glyphs use currentColor, so they follow the text colour in the
-   light and dark themes. Tiles: slate in the light theme, light grey in the dark theme, orange on hover. */
-:root{ --nx-tile:#383b47; --nx-tile-ink:#ffffff; --nx-accent:#ff5a2b; }
-:root[data-theme="dark"]{ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; } }
+/* NMX Labs v12 icons (scripts/icons_v12.py): plain glyphs in one ink like the reference row, nothing behind them.
+   Ink #403d44 in the light theme, #ecebe7 in the dark theme; links turn the icon orange on hover and keyboard focus.
+   Official logo files in /assets/icons/brand/ are drawn in the same ink (.nx-logo) or as they are (.nx-logo-img).
+   Every icon is also available as a file (SVG and PNG, /assets/icons/) and as a class (/assets/icons/nxi.css). */
+:root{ --nx-glyph:#403d44; --nx-accent:#ff5a2b; }
+:root[data-theme="dark"]{ --nx-glyph:#ecebe7; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-glyph:#ecebe7; } }
 
-svg.nx-i{ width:1.1em; height:1.1em; flex:none; display:inline-block; vertical-align:-.2em; margin-right:.5em; overflow:visible; fill:currentColor; stroke:none; }
-a:hover > svg.nx-i, a:focus-visible > svg.nx-i{ color:var(--nx-accent); }
+.nx-i{ width:1.1em; height:1.1em; flex:none; display:inline-block; vertical-align:-.2em; margin-right:.5em; }
+svg.nx-i{ overflow:visible; fill:currentColor; stroke:none; }
+.nx-logo{ background-color:currentColor; -webkit-mask:var(--logo) center/contain no-repeat; mask:var(--logo) center/contain no-repeat; }
+img.nx-logo-img{ object-fit:contain; }
+a:hover > .nx-i, a:focus-visible > .nx-i{ color:var(--nx-accent); }
 
 /* footer "Get in touch" */
-.footer-col a:has(> svg.nx-i){ display:inline-flex; align-items:center; }
-.footer-col a > svg.nx-i{ width:16px; height:16px; margin-right:9px; opacity:.85; }
-.footer-col a:hover > svg.nx-i{ opacity:1; }
+.footer-col a:has(> .nx-i){ display:inline-flex; align-items:center; }
+.footer-col a > .nx-i{ width:16px; height:16px; margin-right:9px; color:var(--nx-glyph); }
+.footer-col a:hover > .nx-i, .footer-col a:focus-visible > .nx-i{ color:var(--nx-accent); }
 
 /* homepage mobile menu socials */
 .mobile-menu-social a{ display:inline-flex; align-items:center; }
-.mobile-menu-social a > svg.nx-i{ width:15px; height:15px; margin-right:6px; }
+.mobile-menu-social a > .nx-i{ width:15px; height:15px; margin-right:6px; color:var(--nx-glyph); }
 
-/* buttons keep their own colours */
-.btn > svg.nx-i{ margin-right:0; }
+/* buttons keep their own text colour */
+.btn > .nx-i{ margin-right:0; color:inherit; }
 
-/* blog page Instagram card */
+/* blog page social card */
 .social-head strong{ display:inline-flex; align-items:center; }
+.social-head strong > .nx-i{ color:var(--nx-glyph); }
 
-/* contact page: one flat tile per channel */
-h2.nx-h{ display:flex; align-items:center; gap:12px; }
-.nx-ti{ display:inline-grid; place-items:center; width:38px; height:38px; flex:none; border-radius:11px; background:var(--nx-tile); color:var(--nx-tile-ink); transition:background-color .15s ease, color .15s ease; }
-.nx-ti svg.nx-i{ width:20px; height:20px; margin:0; vertical-align:0; }
+/* contact page: one plain icon per channel (the .nx-ti box no longer draws a tile) */
+h2.nx-h{ display:flex; align-items:center; gap:10px; }
+.nx-ti{ display:inline-grid; place-items:center; width:30px; height:30px; flex:none; background:none; color:var(--nx-glyph); }
+.nx-ti .nx-i{ width:24px; height:24px; margin:0; vertical-align:0; }
 h2.nx-h + p a:hover{ color:var(--nx-accent); }
 
-/* flat glyphs that replaced the older line icons (reading tools, player, theme switch, rails, search) */
+/* the flat glyphs that replaced the older line icons (reading tools, player, theme switch, rails, search) */
 svg.nx-f{ fill:currentColor; stroke:none; }
