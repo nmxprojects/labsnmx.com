@@ -1,3 +1,35 @@
+# v15 publish times and instant push, 27 Nov 2026
+
+Goes with Content Blog Creator v10. Lets posts and news stories go live at a set time (India), and sends a news story's
+browser notification the moment it is live.
+
+**Upload:** the files in this package to the repository root, replacing the old copies (10 files):
+`.github/workflows/publish-scheduled.yml`, `.github/workflows/send-push.yml`, `scripts/build.py`, `scripts/build_news.py`,
+`scripts/push_news.py` (new), `scripts/send-push.mjs`, `assets/news.css`, `UPLOAD-NOTES.md`, `scripts/README.md`,
+`_scheduled/README.md`. No secrets or settings change: send-push uses the same five secrets as before.
+
+**What changed:**
+
+| Request | Done |
+|---|---|
+| Publish at a set time | `"time": "18:30"` (India) on a post in content/posts.json or a story in content/news.json. "Publish scheduled posts" now runs every 30 minutes (at :07 and :37). Its first step, `python scripts/build.py --due`, stops the run within seconds unless something is due or it's the nightly rebuild (00:00–01:00 India time), so most runs commit nothing. Without a time, a post or story goes live on its date as before |
+| Instant push for news | A story with `"push": "instant"` gets one browser notification the first time a build shows it. The workflow waits until the story is on labsnmx.com (news/latest.json), then starts send-push.yml with the title, text, link and picture. Stories going live in the same run share one notification per audience. `pushed_at` stops repeats. News never sends emails |
+| Picture on the news page | A story's picture now shows on /news/ with its caption (`image_caption`) and linked credit |
+| send-push | New optional `image` input (the picture reaches the notification). Concurrency is per campaign, so two notifications started close together no longer cancel each other |
+| Feed | A post with a time gets that time in blog/feed.xml |
+
+**First run after the upload:** every story already live gets `live_at` (its date at 09:00 India time), so nothing old is
+announced. Expect one commit that touches content/news.json.
+
+**Private repository?** Every 30-minute check uses about a minute of GitHub's free Actions allowance (about 1,450 minutes
+a month). Public repositories don't count. To halve it, change the cron in publish-scheduled.yml to `'7 * * * *'`:
+set times then go live within the hour.
+
+**Check it:** Actions tab › "Publish scheduled posts": scheduled runs mostly say "Nothing due at HH:MM India time."
+A run that publishes something shows "Instant notifications" in its summary when it sent one.
+
+---
+
 # v14 icon rendering fix, 27 Nov 2026
 
 This update fixes the actual rendering paths for the monochrome social brand marks.

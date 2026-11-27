@@ -17,7 +17,8 @@
  "image": "youtube-partner-programme-2027",   // needs assets/blog/<image>.jpg, .webp and -640.webp
  "image_alt": "...",
  "has_amp": false, "popular": false,
- "takeaways": ["...", "...", "..."] // shown as "The 60-second read" in the new-post email
+ "takeaways": ["...", "...", "..."], // shown as "The 60-second read" in the new-post email
+ "time": "18:30"                   // v15, optional: goes live at this India time on its date (24-hour)
 }
 ```
 
@@ -27,8 +28,20 @@ Commands (Python 3, no packages needed):
 - `python scripts/build.py` publishes anything due today and rebuilds listings, rails, feed, sitemaps and blog/posts.json.
 - `python scripts/build.py --today 2026-12-01` previews the site as it will look on that date (don't commit the result).
 
-The GitHub Action in `.github/workflows/publish-scheduled.yml` runs the build every night at 00:05 IST.
+The GitHub Action in `.github/workflows/publish-scheduled.yml` checks every 30 minutes (v15) with
+`python scripts/build.py --due` and runs the full build when a post or story is due, plus once a night (00:00–01:00 IST).
 If you upload by hand instead, run `python scripts/build.py` before each upload.
+
+## Publish times and instant notifications (v15)
+
+- A post or news story with `"time": "HH:MM"` (India time) goes live at the first check after that time on its date.
+- A news story in `content/news.json` can carry `"push": "instant"`, `"push_audience": "blog"` or `"all"`, and optional
+  `"push_title"` / `"push_text"`. The build gives each story `live_at` the first time it shows it; a story marked instant
+  is then announced by `scripts/push_news.py`, which waits until it is on labsnmx.com and starts `send-push.yml`.
+  `pushed_at` records the send. Several stories going live together share one notification.
+- `"image_caption"` shows under a story's picture on /news/, with `"image_credit"` (linked to `"image_credit_url"`).
+- `python scripts/build.py --due` prints what is due right now, without building.
+- Content Blog Creator v10 writes all of these fields for you.
 
 ## Learn (Creator school) and Play (v5)
 

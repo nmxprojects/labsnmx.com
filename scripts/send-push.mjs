@@ -41,7 +41,7 @@ const clip = (s, n) => String(s || '').trim().slice(0, n);
 let campaignId = clip(env.CAMPAIGN_ID, 40);
 if (!campaignId) {
   if (clip(env.TITLE, 90).length < 3) fail('Nothing to send: run the workflow with a campaign_id, or with a Title for a manual message.');
-  const reg = await api({ action: 'push_register', title: clip(env.TITLE, 90), message: clip(env.MESSAGE, 200), url: clip(env.LINK, 500) || 'https://labsnmx.com/blog/', audience: env.AUDIENCE || 'all' }, 'POST');
+  const reg = await api({ action: 'push_register', title: clip(env.TITLE, 90), message: clip(env.MESSAGE, 200), url: clip(env.LINK, 500) || 'https://labsnmx.com/blog/', image: clip(env.IMAGE, 500), audience: env.AUDIENCE || 'all' }, 'POST');
   campaignId = reg.id;
   console.log(`Registered manual campaign ${campaignId}`);
 }
@@ -55,7 +55,7 @@ const base = {
   title: clip(c.title, 90),
   body: clip(c.body, 200),
   url: c.url || 'https://labsnmx.com/',
-  image: /^https:\/\//.test(c.image) ? c.image : undefined,
+  image: /^https:\/\//.test(c.image) ? c.image : (/^https:\/\//.test(clip(env.IMAGE, 500)) ? clip(env.IMAGE, 500) : undefined),   // v15: the picture passed to a manual or instant send
   tag: `${c.type}-${c.id}`,
   campaign: c.id,
 };

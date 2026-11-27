@@ -24,8 +24,19 @@ v11: a story can carry "added_at" (when it was added, UTC) and "notify": true (C
 notification"). Stories with the same date are listed newest-added first, and Code-Blog.gs v11 sends one browser
 notification for each new story marked notify (no emails for news).
 A "deep" link to one of our posts only appears once that post is published, so scheduled posts never leak.
+v15 (Content Blog Creator v10):
+  - "time": "18:30" (India time) keeps a story hidden until that time on its date. Without it, a story shows from its date.
+  - "live_at" (UTC) is written into content/news.json the first time a build shows the story. The first v15 run stamps
+    every story already live with its date at 09:00 India time, so nothing old is announced.
+  - "push": "instant" (+ "push_audience": blog|all, optional "push_title" and "push_text") sends one browser notification
+    when the story first goes live: the build writes the notification to the GitHub Actions output "push_news" and the
+    workflow sends it through send-push.yml once the story is on labsnmx.com (scripts/push_news.py). Several stories that
+    go live in the same run share one notification per audience. "pushed_at" records it, so it never goes out twice.
+  - "image_caption" shows under the story's picture on the news page, with the picture credit.
 """
 import datetime as dt, html, json, os, re
+IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
+PUSH = []            # v15: notifications to send after this build (see push_jobs)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://labsnmx.com'
@@ -54,16 +65,84 @@ def between(s, start, end, inner):
     a = s.index(start) + len(start); b = s.index(end, a)
     return s[:a] + inner + s[b:]
 
-def load(today, live_slugs):
+def due(x, today, now_hm='23:59'):
+    """v15: dated before today, or today and its time (if any) has come."""
+    d = x.get('date', '9999')
+    return d < today or (d == today and (x.get('time') or '00:00') <= now_hm)
+
+def utc_now():
+    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+def at_nine(d):
+    return dt.datetime.fromisoformat(d + 'T09:00:00').replace(tzinfo=IST).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+def pending(today, now_hm):
+    """v15, for `build.py --due`: stories whose date and time have come but no build has shown yet."""
     p = os.path.join(ROOT, 'content', 'news.json')
     if not os.path.exists(p): return []
-    items = [x for x in json.load(open(p, encoding='utf-8')).get('items', []) if x.get('date', '9999') <= today and x.get('title')]
+    items = [x for x in json.load(open(p, encoding='utf-8')).get('items', []) if x.get('title')]
+    if not any(x.get('live_at') for x in items): return ['first v15 run'] if items else []
+    return [x['title'][:60] for x in items if not x.get('live_at') and due(x, today, now_hm)]
+
+def clip(s, n):
+    s = re.sub(r'\s+', ' ', str(s or '')).strip()
+    return s if len(s) <= n else s[:n - 1].rsplit(' ', 1)[0] + '…'
+
+def stamp_live(today, now_hm):
+    """v15: gives newly shown stories a live_at, and queues instant notifications. Writes content/news.json if it changed."""
+    p = os.path.join(ROOT, 'content', 'news.json')
+    if not os.path.exists(p): return
+    data = json.load(open(p, encoding='utf-8'))
+    items = [x for x in data.get('items', []) if x.get('title')]
+    migrating = not any(x.get('live_at') for x in items)
+    recent = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=2)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    now, fresh, changed = utc_now(), [], False
+    for x in items:
+        if x.get('live_at') or not due(x, today, now_hm): continue
+        if migrating and (x.get('added_at') or '') < recent:
+            x['live_at'] = at_nine(x['date'])                            # already on the site before v15
+        else:
+            x['live_at'] = now; fresh.append(x)
+        changed = True
+    for x in fresh:
+        if x.get('push') == 'instant' and not x.get('pushed_at'):
+            x.setdefault('id', re.sub(r'[^a-z0-9]+', '-', x['title'].lower()).strip('-')[:60])
+            x['pushed_at'] = now; PUSH.append(x)
+    if changed:
+        txt = json.dumps(data, ensure_ascii=False, indent=1) + '\n'
+        if txt != open(p, encoding='utf-8').read():
+            open(p, 'w', encoding='utf-8').write(txt); WRITTEN.append('content/news.json')
+
+def push_jobs():
+    """v15: one notification per audience; several stories going live together share it."""
+    jobs = []
+    for aud in ('blog', 'all'):
+        group = [x for x in PUSH if (x.get('push_audience') or 'blog') == aud]
+        if not group: continue
+        x = group[0]
+        img = (SITE + x['image']) if str(x.get('image') or '').startswith('/') else ''
+        if len(group) == 1:
+            jobs.append({'title': clip(x.get('push_title') or x['title'], 90), 'message': clip(x.get('push_text') or x.get('take') or x.get('summary'), 200),
+                         'url': f'{SITE}/news/#{x["id"]}', 'image': img, 'audience': aud, 'ids': [x['id']]})
+        else:
+            jobs.append({'title': clip(f'{len(group)} new stories on NMX Labs: ' + x['title'], 90), 'message': clip(' · '.join(y['title'] for y in group), 200),
+                         'url': f'{SITE}/news/', 'image': img, 'audience': aud, 'ids': [y['id'] for y in group]})
+    out = os.environ.get('GITHUB_OUTPUT')
+    if out:
+        with open(out, 'a', encoding='utf-8') as f: f.write('push_news=' + json.dumps(jobs, ensure_ascii=True) + '\n')
+    for j in jobs: print(f'Instant notification queued ({j["audience"]}): {j["title"]}')
+    return jobs
+
+def load(today, live_slugs, now_hm='23:59'):
+    p = os.path.join(ROOT, 'content', 'news.json')
+    if not os.path.exists(p): return []
+    items = [x for x in json.load(open(p, encoding='utf-8')).get('items', []) if due(x, today, now_hm) and x.get('title')]   # v15: date and time
     for x in items:
         x.setdefault('id', re.sub(r'[^a-z0-9]+', '-', x['title'].lower()).strip('-')[:60])
         if x.get('topic') not in TONE: x['topic'] = 'Marketing'
         m = re.match(r'^/blog/([a-z0-9-]+)/$', x.get('deep') or '')
         if m and m.group(1) not in live_slugs: x['deep'] = ''          # don't link a post that isn't live yet
-    items.sort(key=lambda x: x.get('added_at') or '', reverse=True)   # v11: same date: the story added last comes first
+    items.sort(key=lambda x: x.get('live_at') or x.get('added_at') or '', reverse=True)   # v11/v15: same date: the story that went live last comes first
     items.sort(key=lambda x: x['date'], reverse=True)
     return items
 
@@ -157,7 +236,14 @@ def item_card(x, with_id=True, lead=False):
     idattr = ' id="' + esc(x['id']) + '"' if with_id else ''
     reg = {'India': 'in', 'UK': 'uk', 'US': 'us', 'Middle East': 'me', 'Gulf': 'me', 'UAE': 'me'}.get(str(x.get('region') or ''), 'global')   # v9: for picks by country
     if x.get('youtube'): links.append(f'<a href="https://www.youtube.com/watch?v={esc(x["youtube"])}" target="_blank" rel="noopener">Watch on YouTube</a>')   # v9: optional "youtube": "<video id>"
-    return (f'<article class="nw-item nw-item--{TONE[x["topic"]]}{" nw-item--lead" if lead else ""}"{idattr} data-region="{reg}" data-title="{esc(x["title"])}">'
+    fig = ''
+    if x.get('image'):                                                 # v15: the story's picture, with its caption and credit
+        cr = esc(x.get('image_credit') or '')
+        if cr and x.get('image_credit_url'): cr = f'<a href="{esc(x["image_credit_url"])}" target="_blank" rel="noopener">{cr}</a>'
+        cap = ' '.join(b for b in [esc(x.get('image_caption') or ''), f'<span class="nw-credit">Image: {cr}</span>' if cr else ''] if b)
+        fig = (f'<figure class="nw-fig"><img src="{esc(x["image"])}" alt="{esc(x.get("image_alt") or "")}" width="640" height="400" loading="lazy" decoding="async" style="width:100%;height:auto">'
+               + (f'<figcaption>{cap}</figcaption>' if cap else '') + '</figure>')
+    return (f'<article class="nw-item nw-item--{TONE[x["topic"]]}{" nw-item--lead" if lead else ""}"{idattr} data-region="{reg}" data-title="{esc(x["title"])}">{fig}'
             f'<p class="nw-meta"><span class="nw-tag">{esc(x["topic"])}</span><span>{esc(x.get("tag") or "")}{" · " + esc(x["region"]) if x.get("region") else ""}</span><time datetime="{x["date"]}">{esc(label(x))}</time></p>'
             f'<h3>{esc(x["title"])}</h3><p>{esc(x["summary"])}</p>'
             f'<p class="nw-take"><strong>NMX take:</strong> {esc(x["take"])}</p>'
@@ -204,9 +290,11 @@ def latest_json(items, posts):
                        'posts': [{'title': p['title'], 'url': f'{SITE}/blog/{p["slug"]}/', 'date': p['date'], 'category': p['category_label']} for p in posts[:12]]},
                       ensure_ascii=False, indent=1) + '\n'
 
-def build(today, posts):
+def build(today, posts, now_hm='23:59', live_run=False):
     """Returns (items, bar_html, home_news_html). Writes news/index.html and news/latest.json."""
-    items = load(today, {p['slug'] for p in posts})
+    if live_run:                                                       # v15: never stamp or notify while previewing a day
+        stamp_live(today, now_hm); push_jobs()
+    items = load(today, {p['slug'] for p in posts}, now_hm)
     bar = bar_html(items, posts) if items else ''
     if os.path.exists(os.path.join(ROOT, 'news', 'index.html')): wr('news/index.html', news_page(items, posts))
     wr('news/latest.json', latest_json(items, posts))

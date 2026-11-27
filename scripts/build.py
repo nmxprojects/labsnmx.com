@@ -45,6 +45,10 @@ to the footer, homepage and contact page. All of it lives in scripts/build_v11.p
 v13: brand-specific social marks in the reference-row style (plain glyphs in one ink, no tiles) from scripts/icons_v12.py, every icon as
 SVG and PNG (assets/icons/), icons already on pages are refreshed on every run, and official logo files added to
 assets/icons/brand/ are used everywhere. All of it lives in scripts/build_v12.py: if it's missing or fails, v11 icons run.
+v15: a post can carry "time" (India time, HH:MM, from Content Blog Creator's Schedule). A scheduled post goes live at the
+first run after its date and time; without a time it goes live at 00:00 on its date, as before. The workflow runs every
+30 minutes and first asks `python scripts/build.py --due` whether anything is due (or it's the nightly run), so most runs
+stop after a few seconds and nothing is committed. News stories can carry a time too (scripts/build_news.py).
 No third-party packages needed.
 """
 import argparse, collections, datetime as dt, html, json, os, re, shutil, sys
@@ -86,6 +90,13 @@ MANIFEST = os.path.join(ROOT, 'content', 'posts.json')
 SCHEDULED_DIR = os.path.join(ROOT, '_scheduled')
 MAX_PER_DAY = 2
 IST = dt.timezone(dt.timedelta(hours=5, minutes=30))
+NOW_HM = '23:59'      # v15: India time of this run (HH:MM); '23:59' when previewing a day with --today
+TIME_RE = re.compile(r'^([01]\d|2[0-3]):[0-5]\d$')
+
+def is_due(p, today, now_hm=None):
+    """v15: dated before today, or today and its time (if any) has come."""
+    now_hm = now_hm or NOW_HM
+    return p['date'] < today or (p['date'] == today and (p.get('time') or '00:00') <= now_hm)
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 # slug -> (label, description). Order = order of the category chips.
@@ -123,9 +134,9 @@ def wr(p, s):
 CHANGED = []
 def esc(s): return html.escape(s, quote=True)
 def human(d): y, m, dd = d.split('-'); return f"{int(dd)} {MONTHS[int(m)-1]} {y}"
-def rfc822(d):
+def rfc822(d, t=None):
     x = dt.datetime.strptime(d, '%Y-%m-%d')
-    return x.strftime('%a, %d %b %Y') + ' 09:00:00 +0530'
+    return x.strftime('%a, %d %b %Y') + f' {t or "09:00"}:00 +0530'          # v15: the post's own time when it has one
 def sub_once(pattern, repl, s, flags=re.S):
     new, n = re.subn(pattern, lambda m: repl, s, count=1, flags=flags)
     return new, n
@@ -154,6 +165,7 @@ def load(check_only=False):
         if p.get('status') not in ('published', 'scheduled', 'draft'): errors.append(f"{p['slug']}: bad status")
         try: dt.date.fromisoformat(p['date'])
         except Exception: errors.append(f"{p['slug']}: bad date {p.get('date')}")
+        if p.get('time') and not TIME_RE.match(str(p['time'])): errors.append(f"{p['slug']}: bad time {p.get('time')} (use HH:MM, India time)")
         p.setdefault('modified', p['date']); p.setdefault('image', p['slug']); p.setdefault('takeaways', [])
         p.setdefault('track', 'growth' if p['category'] == 'growth' else 'studio')
         p.setdefault('author_name', AUTHORS.get(p['author'], p['author']))
@@ -181,7 +193,7 @@ def warn_missing(posts, today):
 def publish_due(posts, today):
     moved = []
     for p in posts:
-        due = p['date'] <= today and p['status'] in ('scheduled', 'published')
+        due = is_due(p, today) and p['status'] in ('scheduled', 'published')       # v15: date and time
         src, dst = os.path.join(SCHEDULED_DIR, p['slug']), os.path.join(ROOT, 'blog', p['slug'])
         if not due: continue
         has_src, has_dst = os.path.exists(os.path.join(src, 'index.html')), os.path.exists(os.path.join(dst, 'index.html'))
@@ -423,7 +435,7 @@ def build_feed(published):
     <author>nmxprojects@gmail.com ({esc(p["author_name"])})</author>
     <guid isPermaLink="true">{SITE}/blog/{p["slug"]}/</guid>
     <category>{esc(p["category_label"])}</category>
-    <pubDate>{rfc822(p["date"])}</pubDate>
+    <pubDate>{rfc822(p["date"], p.get("time"))}</pubDate>
     <description>{esc(p["dek"])}</description>
   </item>''')
     wr('blog/feed.xml', f'''<?xml version="1.0" encoding="UTF-8"?>
@@ -690,22 +702,40 @@ def main():
     ap.add_argument('--today', help='YYYY-MM-DD (default: today in India)')
     ap.add_argument('--check', action='store_true')
     ap.add_argument('--fetch', action='store_true', help='v9: read reader counts for "Most read" (automatic on GitHub)')
+    ap.add_argument('--due', action='store_true', help='v15: only say whether a full build is needed now (for the workflow)')
     a = ap.parse_args()
-    today = a.today or dt.datetime.now(IST).date().isoformat()
+    global NOW_HM
+    now = dt.datetime.now(IST)
+    today = a.today or now.date().isoformat()
+    NOW_HM = '23:59' if a.today else now.strftime('%H:%M')
     posts = load()
+    if a.due:                                                          # v15: the 30-minute check
+        reasons = []
+        if not a.today and now.strftime('%H:%M') < '01:00': reasons.append('nightly rebuild (lessons, most read, Pinterest)')
+        reasons += [f"post {p['slug']} ({p['date']} {p.get('time') or '00:00'})" for p in posts
+                    if p['status'] == 'scheduled' and is_due(p, today)]
+        if build_news:
+            try: reasons += [f'news: {t}' for t in build_news.pending(today, NOW_HM)]
+            except Exception as e: reasons.append('news check failed (' + str(e) + '), building to be safe')
+        due = bool(reasons)
+        print(('Due: ' + '; '.join(reasons)) if due else f'Nothing due at {NOW_HM} India time.')
+        out = os.environ.get('GITHUB_OUTPUT')
+        if out:
+            with open(out, 'a', encoding='utf-8') as f: f.write(f'due={"true" if due else "false"}\n')
+        return
     if a.check:
         up = sorted((p for p in posts if p['status'] == 'scheduled'), key=lambda p: p['date'])
         print(f'OK. {sum(p["status"] == "published" for p in posts)} published, {len(up)} scheduled.')
         for p in up:
             ok = os.path.exists(os.path.join(SCHEDULED_DIR, p['slug'], 'index.html')) or os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))
-            print(f'  {p["date"]}  {p["slug"]}  {"ready" if ok else "MISSING _scheduled/" + p["slug"] + "/index.html"}')
+            print(f'  {p["date"]} {p.get("time") or "00:00"}  {p["slug"]}  {"ready" if ok else "MISSING _scheduled/" + p["slug"] + "/index.html"}')
         warn_missing(posts, today)
         return
     TODAY = today
     publish_due(posts, today)
     warn_missing(posts, today)
     order = {p['slug']: i for i, p in enumerate(posts)}
-    published = [p for p in posts if p['status'] == 'published' and p['date'] <= today
+    published = [p for p in posts if p['status'] == 'published' and is_due(p, today)
                  and os.path.exists(os.path.join(ROOT, 'blog', p['slug'], 'index.html'))]
     published.sort(key=lambda p: order[p['slug']]); published.sort(key=lambda p: p['date'], reverse=True)
     NEW_LIVE[:] = []
@@ -731,7 +761,7 @@ def main():
     global WIRE_BAR
     news, news_home = [], ''
     if build_news:                                                     # v6: news page, homepage wire and the "Latest in" bar
-        try: news, WIRE_BAR, news_home = build_news.build(today, published); CHANGED.extend(build_news.WRITTEN)
+        try: news, WIRE_BAR, news_home = build_news.build(today, published, NOW_HM, live_run=bool(os.environ.get('GITHUB_ACTIONS')) and not a.today); CHANGED.extend(build_news.WRITTEN)   # v15: live_at and instant push only on GitHub
         except Exception as e: print('News not rebuilt: ' + str(e))
     build_home(published, today, news_home)
     lessons = []
