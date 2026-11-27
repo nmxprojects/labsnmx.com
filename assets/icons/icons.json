@@ -1,5 +1,5 @@
 {
- "version": 12,
+ "version": 13,
  "ink": "#403d44",
  "light": "#ecebe7",
  "email": "#77737c",
@@ -327,39 +327,103 @@
  "networks": {
   "instagram": {
    "label": "Instagram",
-   "glyph": "camera"
+   "glyph": "camera",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/instagram.svg",
+    "png": "/assets/icons/png/brand/instagram.png",
+    "png_light": "/assets/icons/png/brand/light/instagram.png"
+   }
   },
   "whatsapp": {
    "label": "WhatsApp",
-   "glyph": "chat"
+   "glyph": "chat",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/whatsapp.svg",
+    "png": "/assets/icons/png/brand/whatsapp.png",
+    "png_light": "/assets/icons/png/brand/light/whatsapp.png"
+   }
   },
   "youtube": {
    "label": "YouTube",
-   "glyph": "play"
+   "glyph": "play",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/youtube.svg",
+    "png": "/assets/icons/png/brand/youtube.png",
+    "png_light": "/assets/icons/png/brand/light/youtube.png"
+   }
   },
   "linkedin": {
    "label": "LinkedIn",
-   "glyph": "briefcase"
+   "glyph": "briefcase",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/linkedin.svg",
+    "png": "/assets/icons/png/brand/linkedin.png",
+    "png_light": "/assets/icons/png/brand/light/linkedin.png"
+   }
   },
   "pinterest": {
    "label": "Pinterest",
-   "glyph": "pin"
+   "glyph": "pin",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/pinterest.svg",
+    "png": "/assets/icons/png/brand/pinterest.png",
+    "png_light": "/assets/icons/png/brand/light/pinterest.png"
+   }
   },
   "x": {
    "label": "X",
-   "glyph": "at"
+   "glyph": "at",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/x.svg",
+    "png": "/assets/icons/png/brand/x.png",
+    "png_light": "/assets/icons/png/brand/light/x.png"
+   }
   },
   "facebook": {
    "label": "Facebook",
-   "glyph": "people"
+   "glyph": "people",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/facebook.svg",
+    "png": "/assets/icons/png/brand/facebook.png",
+    "png_light": "/assets/icons/png/brand/light/facebook.png"
+   }
   },
   "threads": {
    "label": "Threads",
-   "glyph": "bubbles"
+   "glyph": "bubbles",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/threads.svg",
+    "png": "/assets/icons/png/brand/threads.png",
+    "png_light": "/assets/icons/png/brand/light/threads.png"
+   }
   },
   "telegram": {
    "label": "Telegram",
-   "glyph": "plane"
+   "glyph": "plane",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/telegram.svg",
+    "png": "/assets/icons/png/brand/telegram.png",
+    "png_light": "/assets/icons/png/brand/light/telegram.png"
+   }
+  },
+  "twitter": {
+   "label": "Twitter",
+   "glyph": "at",
+   "brand": {
+    "mode": "mono",
+    "svg": "/assets/icons/brand/twitter.svg",
+    "png": "/assets/icons/png/brand/twitter.png",
+    "png_light": "/assets/icons/png/brand/light/twitter.png"
+   }
   },
   "google": {
    "label": "Google",
