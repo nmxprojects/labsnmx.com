@@ -1,5 +1,36 @@
 [
  {
+  "slug": "whatsapp-scheduled-messages-feature-latest-updates",
+  "status": "published",
+  "date": "2026-11-27",
+  "modified": "2026-11-27",
+  "track": "studio",
+  "category": "global",
+  "category_label": "Global",
+  "author": "anisha",
+  "author_name": "Anisha",
+  "read_min": 6,
+  "title": "WhatsApp can now send messages while you sleep. What else has changed?",
+  "dek": "WhatsApp has announced scheduled messages, a long-requested feature that lets people write a text, photo or video now and choose when it should arrive in an individual or group chat. Messages can be scheduled from 10 minutes to 14 days ahead, and WhatsApp says they will still be delivered if the sender’s phone is switched off. The update arrives during a busy year for WhatsApp, with new tools for groups, calls, events, security and travel.",
+  "image": "whatsapp-scheduled-messages-feature-latest-updates",
+  "image_alt": "WhatsApp scheduled-message interface image supplied to TechCrunch by WhatsApp.",
+  "has_amp": false,
+  "popular": false,
+  "takeaways": [
+   "WhatsApp announced scheduled messages on 25 November 2026. Users can choose a delivery time from 10 minutes to 14 days ahead [1].",
+   "The feature supports text, photos and videos in individual and group chats. Users can review and delete queued messages before delivery [1][2].",
+   "WhatsApp says scheduled messages remain end-to-end encrypted and will send even if the sender’s phone is off or out of battery [1].",
+   "Recent updates include travel eSIM support, richer Events, guest calling, group-chat tools, passkeys and WhatsApp Web calling [3–9]."
+  ],
+  "regions": [
+   "in",
+   "global",
+   "us",
+   "uk",
+   "me"
+  ]
+ },
+ {
   "slug": "google-november-2026-core-update-calm-guide",
   "status": "published",
   "date": "2026-11-27",

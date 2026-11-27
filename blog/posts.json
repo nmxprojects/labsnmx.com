@@ -3,6 +3,35 @@
  "site": "https://labsnmx.com",
  "posts": [
   {
+   "slug": "whatsapp-scheduled-messages-feature-latest-updates",
+   "title": "WhatsApp can now send messages while you sleep. What else has changed?",
+   "url": "https://labsnmx.com/blog/whatsapp-scheduled-messages-feature-latest-updates/",
+   "date": "2026-11-27",
+   "dek": "WhatsApp has announced scheduled messages, a long-requested feature that lets people write a text, photo or video now and choose when it should arrive in an individual or group chat. Messages can be scheduled from 10 minutes to 14 days ahead, and WhatsApp says they will still be delivered if the sender’s phone is switched off. The update arrives during a busy year for WhatsApp, with new tools for groups, calls, events, security and travel.",
+   "takeaways": [
+    "WhatsApp announced scheduled messages on 25 November 2026. Users can choose a delivery time from 10 minutes to 14 days ahead [1].",
+    "The feature supports text, photos and videos in individual and group chats. Users can review and delete queued messages before delivery [1][2].",
+    "WhatsApp says scheduled messages remain end-to-end encrypted and will send even if the sender’s phone is off or out of battery [1].",
+    "Recent updates include travel eSIM support, richer Events, guest calling, group-chat tools, passkeys and WhatsApp Web calling [3–9]."
+   ],
+   "category": "Global",
+   "track": "studio",
+   "author": "Anisha",
+   "read_min": 6,
+   "image": "https://labsnmx.com/assets/blog/whatsapp-scheduled-messages-feature-latest-updates.jpg",
+   "thumb": "https://labsnmx.com/assets/blog/whatsapp-scheduled-messages-feature-latest-updates.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/whatsapp-scheduled-messages-feature-latest-updates-640.webp",
+   "regions": [
+    "in",
+    "global",
+    "us",
+    "uk",
+    "me"
+   ],
+   "most_read": 0,
+   "live_at": "2026-11-27T13:06:38Z"
+  },
+  {
    "slug": "google-november-2026-core-update-calm-guide",
    "title": "Google’s November 2026 core update: the calm person’s guide (it’s also Black Friday)",
    "url": "https://labsnmx.com/blog/google-november-2026-core-update-calm-guide/",
