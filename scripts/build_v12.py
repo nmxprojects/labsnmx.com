@@ -30,7 +30,7 @@ except Exception:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WRITTEN, NOTES = [], []
-CSS_LINK = '<link rel="stylesheet" href="/assets/icons.css?v=13">'
+CSS_LINK = '<link rel="stylesheet" href="/assets/icons.css?v=14">'
 _BRANDS = None
 
 
@@ -158,7 +158,7 @@ def refresh_svgs(s):
         if 'viewBox="0 0 24 24"' not in attrs: return m.group(0)
         d = DATA_I.search(attrs)
         name = d.group(1) if d and d.group(1) in IC.GLYPHS else (SWAP.get(inner) or V11.get(inner))
-        if not name: return m.group(0)
+        if not name or name not in IC.GLYPHS: return m.group(0)
         if not re.search(r'class="[^"]*\bnx-(?:i|f)\b', attrs):
             if 'class="' in attrs: attrs = re.sub(r'class="([^"]*)"', lambda c: 'class="' + c.group(1) + ' nx-f"', attrs, count=1)
             else: attrs = ' class="nx-f"' + attrs
@@ -179,9 +179,9 @@ def link_css(t):
 
 def icons(s, rel=''):
     rel = rel.replace('\\', '/')
-    if '/amp' in '/' + rel or rel.startswith(('tools', 'dashboard')): return s
+    if '/amp' in '/' + rel: return s
     b = brands()
-    t = re.sub(r'(<h4>Get in touch</h4>\s*<ul>)(.*?)(</ul>)', lambda m: m.group(1) + iconise_links(m.group(2)) + m.group(3), s, flags=re.S)
+    t = re.sub(r'(<h4>Get in touch</h4>\s*<ul\b[^>]*>)(.*?)(</ul>)', lambda m: m.group(1) + iconise_links(m.group(2)) + m.group(3), s, flags=re.S)
     t = re.sub(r'(<div class="mobile-menu-social">)(.*?)(</div>)', lambda m: m.group(1) + iconise_links(m.group(2)) + m.group(3), t, flags=re.S)
     t = re.sub(r'<a\b[^>]*data-pixel-source="hero"[^>]*>.*?</a>', lambda m: iconise_links(m.group(0)), t, flags=re.S)
     t = SOCIAL_CARD.sub(lambda m: m.group(1) + IC.icon(m.group(3).lower() if m.group(3) != 'X' else 'x', b) + m.group(3) + m.group(4), t)
