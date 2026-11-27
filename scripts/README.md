@@ -38,7 +38,7 @@ If you upload by hand instead, run `python scripts/build.py` before each upload.
 - A news story in `content/news.json` can carry `"push": "instant"`, `"push_audience": "blog"` or `"all"`, and optional
   `"push_title"` / `"push_text"`. The build gives each story `live_at` the first time it shows it; a story marked instant
   is then announced by `scripts/push_news.py`, which waits until it is on labsnmx.com and starts `send-push.yml`.
-  `pushed_at` records the send. Several stories going live together share one notification.
+  `pushed_at` records the send. Each story gets its own notification. The original `"notify": true` still works.
 - `"image_caption"` shows under a story's picture on /news/, with `"image_credit"` (linked to `"image_credit_url"`).
 - `python scripts/build.py --due` prints what is due right now, without building.
 - Content Blog Creator v10 writes all of these fields for you.

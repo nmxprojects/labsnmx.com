@@ -30,8 +30,9 @@ v15 (Content Blog Creator v10):
     every story already live with its date at 09:00 India time, so nothing old is announced.
   - "push": "instant" (+ "push_audience": blog|all, optional "push_title" and "push_text") sends one browser notification
     when the story first goes live: the build writes the notification to the GitHub Actions output "push_news" and the
-    workflow sends it through send-push.yml once the story is on labsnmx.com (scripts/push_news.py). Several stories that
-    go live in the same run share one notification per audience. "pushed_at" records it, so it never goes out twice.
+    workflow sends it through send-push.yml once the story is on labsnmx.com (scripts/push_news.py). Each story gets its
+    own notification. "pushed_at" records it, so it never goes out twice. The original "notify": true (sent by the Apps
+    Script backend) still works as before.
   - "image_caption" shows under the story's picture on the news page, with the picture credit.
 """
 import datetime as dt, html, json, os, re
@@ -114,19 +115,12 @@ def stamp_live(today, now_hm):
             open(p, 'w', encoding='utf-8').write(txt); WRITTEN.append('content/news.json')
 
 def push_jobs():
-    """v15: one notification per audience; several stories going live together share it."""
+    """v15: one notification per story marked "push": "instant", the moment it goes live."""
     jobs = []
-    for aud in ('blog', 'all'):
-        group = [x for x in PUSH if (x.get('push_audience') or 'blog') == aud]
-        if not group: continue
-        x = group[0]
+    for x in PUSH:
         img = (SITE + x['image']) if str(x.get('image') or '').startswith('/') else ''
-        if len(group) == 1:
-            jobs.append({'title': clip(x.get('push_title') or x['title'], 90), 'message': clip(x.get('push_text') or x.get('take') or x.get('summary'), 200),
-                         'url': f'{SITE}/news/#{x["id"]}', 'image': img, 'audience': aud, 'ids': [x['id']]})
-        else:
-            jobs.append({'title': clip(f'{len(group)} new stories on NMX Labs: ' + x['title'], 90), 'message': clip(' · '.join(y['title'] for y in group), 200),
-                         'url': f'{SITE}/news/', 'image': img, 'audience': aud, 'ids': [y['id'] for y in group]})
+        jobs.append({'title': clip(x.get('push_title') or x['title'], 90), 'message': clip(x.get('push_text') or x.get('take') or x.get('summary'), 200),
+                     'url': f'{SITE}/news/#{x["id"]}', 'image': img, 'audience': 'all' if x.get('push_audience') == 'all' else 'blog', 'ids': [x['id']]})
     out = os.environ.get('GITHUB_OUTPUT')
     if out:
         with open(out, 'a', encoding='utf-8') as f: f.write('push_news=' + json.dumps(jobs, ensure_ascii=True) + '\n')
