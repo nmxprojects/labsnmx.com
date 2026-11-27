@@ -1,7 +1,32 @@
 {
- "updated": "2026-11-26",
+ "updated": "2026-11-27",
  "site": "https://labsnmx.com",
  "posts": [
+  {
+   "slug": "google-november-2026-core-update-calm-guide",
+   "title": "Google’s November 2026 core update: the calm person’s guide (it’s also Black Friday)",
+   "url": "https://labsnmx.com/blog/google-november-2026-core-update-calm-guide/",
+   "date": "2026-11-27",
+   "dek": "Google started its third core update of the year on 10 November, right before the biggest shopping week of the year. Rankings wobble during a rollout, and most of the advice you’ll read this week will make it worse. Here’s what to check, when, and what to leave alone.",
+   "takeaways": [
+    "Google began rolling out its November 2026 core update on 10 November, for all sites and languages, and said it could take up to two weeks. It’s the third core update of 2026.",
+    "Don’t judge anything mid-rollout. Google’s advice is to wait until it finishes, then compare a full week afterwards with a week before it started.",
+    "Separate two problems: a ranking drop (your position fell) and a click drop (you rank the same but an AI Overview answers the question). They need different fixes.",
+    "A core update isn’t a penalty. Improve the pages that lost ground for real readers, and ignore anyone selling a guaranteed “recovery” mid-rollout."
+   ],
+   "category": "Growth playbook",
+   "track": "growth",
+   "author": "Neeraj",
+   "read_min": 5,
+   "image": "https://labsnmx.com/assets/blog/google-november-2026-core-update-calm-guide.jpg",
+   "thumb": "https://labsnmx.com/assets/blog/google-november-2026-core-update-calm-guide.jpg",
+   "thumb_small": "https://labsnmx.com/assets/blog/google-november-2026-core-update-calm-guide-640.webp",
+   "regions": [
+    "global"
+   ],
+   "most_read": 0,
+   "live_at": "2026-11-27T01:53:13Z"
+  },
   {
    "slug": "rebrand-for-ai-agents-docker-futurebrand",
    "title": "The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI",

@@ -1,6 +1,6 @@
 {
  "_how": "Readers per post over the last 30 days, refreshed by the daily build. Counts only: no personal data.",
- "updated": "2026-11-26",
+ "updated": "2026-11-27",
  "window_days": 30,
  "items": [
   {
@@ -11,7 +11,7 @@
   {
    "slug": "latest-adobe-ai-updates-november-2026",
    "readers": 6,
-   "views": 8
+   "views": 18
   },
   {
    "slug": "cadbury-not-just-a-cadbury-ad-ai-personalisation",
@@ -20,8 +20,8 @@
   },
   {
    "slug": "asia-cup-2026-cricket-sponsorship-brands",
-   "readers": 4,
-   "views": 9
+   "readers": 5,
+   "views": 11
   },
   {
    "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
@@ -34,6 +34,11 @@
    "views": 3
   },
   {
+   "slug": "campa-cola-comeback-price-war",
+   "readers": 2,
+   "views": 8
+  },
+  {
    "slug": "canva-figma-adobe-ai-design-war",
    "readers": 2,
    "views": 3
@@ -41,7 +46,7 @@
   {
    "slug": "john-lewis-christmas-ad-2026-backlash-vs-effectiveness",
    "readers": 2,
-   "views": 2
+   "views": 3
   },
   {
    "slug": "cred-against-type-celebrity-ads",
@@ -62,11 +67,6 @@
    "slug": "fmcg-brands-shifting-tv-to-digital-advertising-india",
    "readers": 2,
    "views": 2
-  },
-  {
-   "slug": "campa-cola-comeback-price-war",
-   "readers": 1,
-   "views": 3
   },
   {
    "slug": "meta-ads-creative-system",

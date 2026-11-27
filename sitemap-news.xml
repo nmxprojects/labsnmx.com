@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://labsnmx.com/blog/google-november-2026-core-update-calm-guide/</loc>
+    <news:news>
+      <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
+      <news:publication_date>2026-11-27T09:00:00+05:30</news:publication_date>
+      <news:title>Google’s November 2026 core update: the calm person’s guide (it’s also Black Friday)</news:title>
+    </news:news>
+  </url>
+  <url>
     <loc>https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/</loc>
     <news:news>
       <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
@@ -22,22 +30,6 @@
       <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
       <news:publication_date>2026-11-25T09:00:00+05:30</news:publication_date>
       <news:title>Everyone hated the John Lewis Christmas ad. The testers loved it. Who’s right?</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/blogging-is-dead-why-are-you-reading-this/</loc>
-    <news:news>
-      <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
-      <news:publication_date>2026-11-24T09:00:00+05:30</news:publication_date>
-      <news:title>Blogging is dead. So why are you still reading this?</news:title>
-    </news:news>
-  </url>
-  <url>
-    <loc>https://labsnmx.com/blog/asia-cup-2026-cricket-sponsorship-brands/</loc>
-    <news:news>
-      <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
-      <news:publication_date>2026-11-24T09:00:00+05:30</news:publication_date>
-      <news:title>Why brands are signing up for cricket beyond the biggest matches</news:title>
     </news:news>
   </url>
 </urlset>

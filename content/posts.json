@@ -1,7 +1,7 @@
 [
  {
   "slug": "google-november-2026-core-update-calm-guide",
-  "status": "scheduled",
+  "status": "published",
   "date": "2026-11-27",
   "modified": "2026-11-27",
   "track": "growth",
@@ -21,7 +21,8 @@
    "Don’t judge anything mid-rollout. Google’s advice is to wait until it finishes, then compare a full week afterwards with a week before it started.",
    "Separate two problems: a ranking drop (your position fell) and a click drop (you rank the same but an AI Overview answers the question). They need different fixes.",
    "A core update isn’t a penalty. Improve the pages that lost ground for real readers, and ignore anyone selling a guaranteed “recovery” mid-rollout."
-  ]
+  ],
+  "live_at": "2026-11-27T01:53:13Z"
  },
  {
   "slug": "rebrand-for-ai-agents-docker-futurebrand",

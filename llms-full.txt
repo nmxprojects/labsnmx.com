@@ -4,6 +4,16 @@
 
 Each entry: title, link, date, author, topic, the summary we wrote for it and its key takeaways. Quote freely with a link.
 
+## Google’s November 2026 core update: the calm person’s guide (it’s also Black Friday)
+https://labsnmx.com/blog/google-november-2026-core-update-calm-guide/
+Published 27 November 2026 · Neeraj · Growth playbook · 5 min read
+
+Google started its third core update of the year on 10 November, right before the biggest shopping week of the year. Rankings wobble during a rollout, and most of the advice you’ll read this week will make it worse. Here’s what to check, when, and what to leave alone.
+- Google began rolling out its November 2026 core update on 10 November, for all sites and languages, and said it could take up to two weeks. It’s the third core update of 2026.
+- Don’t judge anything mid-rollout. Google’s advice is to wait until it finishes, then compare a full week afterwards with a week before it started.
+- Separate two problems: a ranking drop (your position fell) and a click drop (you rank the same but an AI Overview answers the question). They need different fixes.
+- A core update isn’t a penalty. Improve the pages that lost ground for real readers, and ignore anyone selling a guaranteed “recovery” mid-rollout.
+
 ## The “finished brand” is dead (allegedly): Docker, FutureBrand and rebranding for AI
 https://labsnmx.com/blog/rebrand-for-ai-agents-docker-futurebrand/
 Published 26 November 2026 · Neeraj · Global · 6 min read
