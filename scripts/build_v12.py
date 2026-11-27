@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-NMX Labs v12, called by scripts/build.py on every run. Everything else in v11 (build_v11.py) still runs as before;
-v12 takes over the icons only.
+NMX Labs v13, called by scripts/build.py on every run. Everything else in v11 (build_v11.py) still runs as before;
+v13 takes over the icons only.
 
 1. Icon files (assets())
    - Writes every icon as SVG (ink and light), the sprite, assets/icons/nxi.css and assets/icons/icons.json from
@@ -13,11 +13,11 @@ v12 takes over the icons only.
 
 2. Icons on pages (icons(s, rel), from build_footers)
    - The footer "Get in touch" column, the homepage socials and Instagram button, the blog's social card and the contact
-     page get one icon per link, in the v12 style (no tile).
-   - Icons that v11 or v12 already put on a page are replaced by the current version, so changing a glyph in
+     page get one icon per link, in the v13 style (no tile).
+   - Icons that v11, v12 or v13 already put on a page are replaced by the current version, so changing a glyph in
      icons_v12.py (or adding a logo file) reaches every page on the next run. v11 skipped links that had an icon.
    - The older line icons (theme switch, Listen, Summarise, audio player, rails, search) become flat glyphs.
-   - /assets/icons.css?v=12 is linked on every page that has an icon.
+   - /assets/icons.css?v=13 is linked on every page that has an icon.
    Safe to run on any page, any number of times.
 """
 import json, os, re
@@ -30,7 +30,7 @@ except Exception:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WRITTEN, NOTES = [], []
-CSS_LINK = '<link rel="stylesheet" href="/assets/icons.css?v=12">'
+CSS_LINK = '<link rel="stylesheet" href="/assets/icons.css?v=13">'
 _BRANDS = None
 
 
@@ -88,14 +88,15 @@ def icon_for(href):
     if 'threads.net' in h or 'threads.com' in h: return 'threads'
     if 't.me/' in h: return 'telegram'
     if 'facebook.com' in h or 'fb.com/' in h: return 'facebook'
-    if 'x.com/' in h or 'twitter.com' in h: return 'x'
+    if 'twitter.com' in h: return 'twitter'
+    if 'x.com/' in h: return 'x'
     if 'google.com/maps' in h or 'maps.app.goo.gl' in h or 'goo.gl/maps' in h: return 'location'
     if 'g.page/' in h or 'business.google.' in h or 'search.google.com/local' in h: return 'google'
     if h.endswith('feed.xml'): return 'rss'
     return ''
 
 
-# an icon this build (v11 or v12) put at the start of a link or heading
+# an icon this build (v11, v12 or v13) put at the start of a link or heading
 OURS = (r'(?:<svg\b[^>]*\bclass="[^"]*\bnx-i\b[^"]*"[^>]*>.*?</svg>'
         r'|<span\b[^>]*\bclass="[^"]*\bnx-logo\b[^"]*"[^>]*></span>'
         r'|<img\b[^>]*\bclass="[^"]*\bnx-logo-img\b[^"]*"[^>]*>)')
@@ -115,11 +116,11 @@ def iconise_links(block):
 
 
 CONTACT_H = {'WhatsApp': 'whatsapp', 'Email': 'email', 'Phone': 'phone', 'Instagram': 'instagram', 'LinkedIn': 'linkedin',
-             'Pinterest': 'pinterest', 'YouTube': 'youtube', 'Facebook': 'facebook', 'X': 'x', 'Threads': 'threads',
+             'Pinterest': 'pinterest', 'YouTube': 'youtube', 'Facebook': 'facebook', 'X': 'x', 'Twitter': 'twitter', 'Threads': 'threads',
              'Telegram': 'telegram', 'Google': 'google', 'Studio': 'location'}
 CONTACT_NAMES = '|'.join(CONTACT_H)
 SOCIAL_CARD = re.compile(r'(<div class="social-head"><strong>)((?:\s*' + OURS + r')?)\s*'
-                         r'(Instagram|LinkedIn|Pinterest|YouTube|WhatsApp|Facebook|X|Threads)(</strong>)', re.S)
+                         r'(Instagram|LinkedIn|Pinterest|YouTube|WhatsApp|Facebook|X|Twitter|Threads)(</strong>)', re.S)
 
 # the site's older line icons -> flat glyphs (same table as v11, plus the Content Blog Creator's own)
 SWAP = {
@@ -151,7 +152,7 @@ DATA_I = re.compile(r'\sdata-i="([A-Za-z]+)"')
 
 
 def refresh_svgs(s):
-    """Every 24 x 24 icon this site's builds know (older line icon, v11 glyph or v12 glyph) -> the current v12 glyph."""
+    """Every 24 x 24 icon this site's builds know (older line icon, v11 glyph or v12 glyph) -> the current v13 glyph."""
     def one(m):
         attrs, inner = m.groups()
         if 'viewBox="0 0 24 24"' not in attrs: return m.group(0)

@@ -42,7 +42,7 @@ v11: new posts are announced and listed as the latest whatever their date (live_
 and the "new_posts" Actions output), category pages with fewer than 3 posts and /sitemap/ are noindex (and out of the
 sitemaps), /clients links in AMP and scheduled pages are fixed, and the flat icon set (scripts/icons_v11.py) is added
 to the footer, homepage and contact page. All of it lives in scripts/build_v11.py: if it's missing or fails, v10 runs.
-v12: icons in the style of the reference row (plain glyphs in one ink, no tiles) from scripts/icons_v12.py, every icon as
+v13: brand-specific social marks in the reference-row style (plain glyphs in one ink, no tiles) from scripts/icons_v12.py, every icon as
 SVG and PNG (assets/icons/), icons already on pages are refreshed on every run, and official logo files added to
 assets/icons/brand/ are used everywhere. All of it lives in scripts/build_v12.py: if it's missing or fails, v11 icons run.
 No third-party packages needed.
@@ -70,10 +70,10 @@ except Exception as _e:
     build_v11 = None
     print('v11 layer skipped: ' + str(_e))
 try:
-    import build_v12   # v12: icon files and the icons on every page. If it breaks, the v11 icons run.
+    import build_v12   # v13: icon files and the icons on every page. If it breaks, the v11 icons run.
 except Exception as _e:
     build_v12 = None
-    print('v12 layer skipped: ' + str(_e))
+    print('v13 layer skipped: ' + str(_e))
 try:
     import build_news  # v6: news front page, homepage wire, "Latest in" bar. If it breaks, blog publishing still runs.
 except Exception as _e:

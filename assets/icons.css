@@ -1,4 +1,4 @@
-/* NMX Labs v12 icons (scripts/icons_v12.py): plain glyphs in one ink like the reference row, nothing behind them.
+/* NMX Labs v13 icons (scripts/icons_v12.py): plain glyphs in one ink like the reference row, nothing behind them.
    Ink #403d44 in the light theme, #ecebe7 in the dark theme; links turn the icon orange on hover and keyboard focus.
    Official logo files in /assets/icons/brand/ are drawn in the same ink (.nx-logo) or as they are (.nx-logo-img).
    Every icon is also available as a file (SVG and PNG, /assets/icons/) and as a class (/assets/icons/nxi.css). */
@@ -8,7 +8,10 @@
 
 .nx-i{ width:1.1em; height:1.1em; flex:none; display:inline-block; vertical-align:-.2em; margin-right:.5em; }
 svg.nx-i{ overflow:visible; fill:currentColor; stroke:none; }
-.nx-logo{ background-color:currentColor; -webkit-mask:var(--logo) center/contain no-repeat; mask:var(--logo) center/contain no-repeat; }
+.nx-logo{ background-color:transparent; background-image:var(--logo-png); background-position:center; background-size:contain; background-repeat:no-repeat; }
+:root[data-theme="dark"] .nx-logo{ background-image:var(--logo-png-light); }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .nx-logo{ background-image:var(--logo-png-light); } }
+@supports ((-webkit-mask-image:none) or (mask-image:none)){ .nx-logo{ background-image:none; background-color:currentColor; -webkit-mask:var(--logo) center/contain no-repeat; mask:var(--logo) center/contain no-repeat; } }
 img.nx-logo-img{ object-fit:contain; }
 a:hover > .nx-i, a:focus-visible > .nx-i{ color:var(--nx-accent); }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-NMX Labs v12: one icon set for the website, the emails and any other file, in the style of the reference row
+NMX Labs v13: one icon set for the website, the emails and any other file, in the style of the reference row
 (plain glyphs in one dark ink, no tile or circle behind them, solid shapes with knock-out details and one outline weight).
 
 Colours
@@ -18,7 +18,7 @@ Every icon exists as
   assets/icons/icons.json             names, file paths and which glyph each network uses
   assets/email/icons/                 PNGs for the emails (same file names as before, so the email code is unchanged)
 
-Social networks: a generic symbol with the network's name beside it, unless the official file is in
+Social networks: the matching monochrome brand mark is used when a file exists in
 assets/icons/brand/ (see brand_files below). Then that file is used everywhere instead, in the same ink.
 
 Commands (python scripts/icons_v12.py ...)
@@ -146,6 +146,7 @@ NETWORKS = {
     'instagram': ('camera', 'Instagram'), 'whatsapp': ('chat', 'WhatsApp'), 'youtube': ('play', 'YouTube'),
     'linkedin': ('briefcase', 'LinkedIn'), 'pinterest': ('pin', 'Pinterest'), 'x': ('at', 'X'),
     'facebook': ('people', 'Facebook'), 'threads': ('bubbles', 'Threads'), 'telegram': ('plane', 'Telegram'),
+    'twitter': ('at', 'Twitter'),
     'google': ('search', 'Google'),
     'email': ('mail', 'Email'), 'phone': ('phone', 'Phone'), 'rss': ('feed', 'RSS feed'), 'website': ('globe', 'Website'),
     'copy': ('link', 'Copy link'), 'more': ('more', 'More'), 'share': ('share', 'Share'), 'save': ('save', 'Save'),
@@ -153,7 +154,7 @@ NETWORKS = {
     'send': ('send', 'Send'), 'link': ('link', 'Link'), 'calendar': ('calendar', 'Book'),
 }
 APPS = NETWORKS                     # the v11 name, kept for anything that imports it
-SOCIAL = ('instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'x', 'facebook', 'threads', 'telegram', 'google')
+SOCIAL = ('instagram', 'whatsapp', 'youtube', 'linkedin', 'pinterest', 'x', 'twitter', 'facebook', 'threads', 'telegram', 'google')
 
 # the small icons engage.js keeps under its own names
 ENGAGE_I = {'bell': 'bell', 'bellOff': 'bellOff', 'chat': 'comment', 'x': 'close', 'send': 'send', 'mark': 'save',
@@ -229,7 +230,7 @@ def brand_markup(net, mode, cls='nx-i'):
     """A brand file on a page: masked with the text colour ('mono'), or as it is ('colour')."""
     if mode == 'colour':
         return f'<img class="{cls} nx-logo-img" data-i="brand:{net}" src="{brand_url(net, mode)}" alt="" width="16" height="16">'
-    return f'<span class="{cls} nx-logo" data-i="brand:{net}" style="--logo:url({brand_url(net, mode)})" aria-hidden="true"></span>'
+    return f'<span class="{cls} nx-logo" data-i="brand:{net}" style="--logo:url({brand_url(net, mode)});--logo-png:url(/assets/icons/png/brand/{net}.png);--logo-png-light:url(/assets/icons/png/brand/light/{net}.png)" aria-hidden="true"></span>'
 
 
 def icon(net_or_glyph, brands=None, cls='nx-i'):
@@ -279,7 +280,7 @@ def manifest(brands=None):
                           'png': f'/assets/icons/png/brand/{net}.png'}
             if brands[net] == 'mono': e['brand']['png_light'] = f'/assets/icons/png/brand/light/{net}.png'
         nets[net] = e
-    return json.dumps({'version': 12, 'ink': INK, 'light': LIGHT, 'email': MAIL, 'png_size': PNG_PX,
+    return json.dumps({'version': 13, 'ink': INK, 'light': LIGHT, 'email': MAIL, 'png_size': PNG_PX,
                        'icons': icons, 'networks': nets}, indent=1, ensure_ascii=False) + '\n'
 
 
@@ -328,7 +329,7 @@ def png_jobs(root):
 
 
 def _key(kind, src, px):
-    return hashlib.sha1(f'v12|{kind}|{px}|{src}'.encode('utf-8')).hexdigest()
+    return hashlib.sha1(f'v13|{kind}|{px}|{src}'.encode('utf-8')).hexdigest()
 
 
 def _recolour_fit(png_bytes, px, colour, frac):
