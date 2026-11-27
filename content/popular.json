@@ -5,8 +5,8 @@
  "items": [
   {
    "slug": "adobe-max-2026-sneaks-explained",
-   "readers": 23,
-   "views": 27
+   "readers": 24,
+   "views": 28
   },
   {
    "slug": "latest-adobe-ai-updates-november-2026",
@@ -21,7 +21,7 @@
   {
    "slug": "asia-cup-2026-cricket-sponsorship-brands",
    "readers": 5,
-   "views": 11
+   "views": 13
   },
   {
    "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
@@ -30,6 +30,11 @@
   },
   {
    "slug": "swiggy-zomato-push-notification-copy-war",
+   "readers": 3,
+   "views": 3
+  },
+  {
+   "slug": "rebrand-for-ai-agents-docker-futurebrand",
    "readers": 3,
    "views": 3
   },
@@ -55,11 +60,6 @@
   },
   {
    "slug": "amul-topical-ads-moment-marketing",
-   "readers": 2,
-   "views": 2
-  },
-  {
-   "slug": "rebrand-for-ai-agents-docker-futurebrand",
    "readers": 2,
    "views": 2
   },
@@ -90,6 +90,11 @@
   },
   {
    "slug": "generative-video-d2c-ads-veo-firefly",
+   "readers": 1,
+   "views": 1
+  },
+  {
+   "slug": "google-november-2026-core-update-calm-guide",
    "readers": 1,
    "views": 1
   }
