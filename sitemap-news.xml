@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   <url>
+    <loc>https://labsnmx.com/blog/whatsapp-scheduled-messages-feature-latest-updates/</loc>
+    <news:news>
+      <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
+      <news:publication_date>2026-11-27T09:00:00+05:30</news:publication_date>
+      <news:title>WhatsApp can now send messages while you sleep. What else has changed?</news:title>
+    </news:news>
+  </url>
+  <url>
     <loc>https://labsnmx.com/blog/google-november-2026-core-update-calm-guide/</loc>
     <news:news>
       <news:publication><news:name>NMX Labs</news:name><news:language>en</news:language></news:publication>
