@@ -1,3 +1,13 @@
+# v14 icon rendering fix, 27 Nov 2026
+
+This update fixes the actual rendering paths for the monochrome social brand marks.
+
+**Upload:** upload the contents of `labsnmx.com-main/` to the repository root, replacing the matching files. The key files are `dashboard/dashboard.js`, `dashboard/index.html`, `scripts/build_v12.py`, `assets/icons.css`, `assets/icons/brand/`, and the regenerated HTML pages.
+
+**What changed:** the dashboard channel cards now load the existing brand SVGs from the correct singular `/assets/icons/brand/` directory. The dashboard previously looked in `/assets/icons/brands/` (plural) and had an empty brand list, so it always fell back to camera/people/pin/briefcase glyphs. The website build script also previously skipped `dashboard/` and `tools/`, and its footer matcher did not match `<ul class="nx-iconrow">`; both issues are corrected. Footer social links now use the brand SVGs while Google Search keeps its search glyph. The dashboard JS and icon CSS cache versions are bumped.
+
+---
+
 # labsnmx.com update v3, 22 Nov 2026
 
 Navigation and Blog/News colour pop, compact blog header, dates redistributed (max 2 a day), automatic scheduled publishing,
