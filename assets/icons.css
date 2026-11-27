@@ -1,44 +1,32 @@
-/* NMX Labs v11.2: flat icons, as in the reference set: one solid colour, details in negative space, no tiles,
-   gradients, gloss or shadows. Slate in the light theme, light grey in the dark theme, orange on hover.
-   Glyphs come from scripts/icons_v11.py; official brand files in assets/icons/brands/ are drawn the same way (.nx-bm). */
-:root{ --nx-ic:#383b47; --nx-accent:#ff5a2b; --nx-tip:#17171a; --nx-tip-ink:#ffffff; }
-:root[data-theme="dark"]{ --nx-ic:#e6e4de; --nx-tip:#ecebe7; --nx-tip-ink:#17171a; }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-ic:#e6e4de; --nx-tip:#ecebe7; --nx-tip-ink:#17171a; } }
+/* NMX Labs v11: flat icons (scripts/icons_v11.py). Glyphs use currentColor, so they follow the text colour in the
+   light and dark themes. Tiles: slate in the light theme, light grey in the dark theme, orange on hover. */
+:root{ --nx-tile:#383b47; --nx-tile-ink:#ffffff; --nx-accent:#ff5a2b; }
+:root[data-theme="dark"]{ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --nx-tile:#ecebe7; --nx-tile-ink:#17171a; } }
 
-svg.nx-i,svg.nx-f{ fill:currentColor; stroke:none; }
-svg.nx-i{ width:1.1em; height:1.1em; flex:none; display:inline-block; vertical-align:-.2em; margin-right:.5em; overflow:visible; }
-.nx-bm{ display:inline-block; flex:none; width:1.1em; height:1.1em; vertical-align:-.2em; margin-right:.5em; background:currentColor;
-  -webkit-mask:var(--bm) center/contain no-repeat; mask:var(--bm) center/contain no-repeat; }
-a:hover > svg.nx-i,a:focus-visible > svg.nx-i,a:hover > .nx-bm,a:focus-visible > .nx-bm{ color:var(--nx-accent); }
+svg.nx-i{ width:1.1em; height:1.1em; flex:none; display:inline-block; vertical-align:-.2em; margin-right:.5em; overflow:visible; fill:currentColor; stroke:none; }
+a:hover > svg.nx-i, a:focus-visible > svg.nx-i{ color:var(--nx-accent); }
 
-/* footer "Get in touch": a row of glyphs (no boxes); the name, address or number shows under the glyph on hover or focus */
-.footer-col ul.nx-iconrow{ flex-direction:row; flex-wrap:wrap; align-items:center; gap:14px 16px; margin-top:2px; }
-.footer-col .nx-iconrow li{ display:block; line-height:0; }
-.footer-col .nx-iconrow a{ position:relative; display:inline-block; padding:2px; gap:0; background:none; color:var(--nx-ic); line-height:0; border-radius:6px; transition:color .12s ease; }
-.footer-col .nx-iconrow a > svg.nx-i,.footer-col .nx-iconrow a > .nx-bm{ width:20px; height:20px; margin:0; opacity:1; vertical-align:0; color:inherit; }
-.footer-col .nx-iconrow a:hover,.footer-col .nx-iconrow a:focus-visible{ color:var(--nx-accent); }
-.footer-col .nx-iconrow a:focus-visible{ outline:2px solid var(--nx-accent); outline-offset:2px; }
-.nx-iconrow .nx-lbl{ position:absolute; z-index:5; top:calc(100% + 6px); left:50%; transform:translateX(-50%); white-space:nowrap;
-  padding:5px 8px; border-radius:6px; background:var(--nx-tip); color:var(--nx-tip-ink); font-size:12px; font-weight:500; line-height:1.2;
-  opacity:0; pointer-events:none; transition:opacity .1s ease; }
-.nx-iconrow a:hover .nx-lbl,.nx-iconrow a:focus-visible .nx-lbl{ opacity:1; }
-.nx-iconrow li:first-child .nx-lbl{ left:0; transform:none; }
-.nx-iconrow li:last-child .nx-lbl{ left:auto; right:0; transform:none; }
-@media (max-width:760px){ .footer-col ul.nx-iconrow{ justify-content:center; } }
+/* footer "Get in touch" */
+.footer-col a:has(> svg.nx-i){ display:inline-flex; align-items:center; }
+.footer-col a > svg.nx-i{ width:16px; height:16px; margin-right:9px; opacity:.85; }
+.footer-col a:hover > svg.nx-i{ opacity:1; }
 
-/* homepage mobile menu socials and buttons */
+/* homepage mobile menu socials */
 .mobile-menu-social a{ display:inline-flex; align-items:center; }
-.mobile-menu-social a > svg.nx-i,.mobile-menu-social a > .nx-bm{ width:15px; height:15px; margin-right:6px; }
-.btn > svg.nx-i,.btn > .nx-bm{ margin-right:0; }
+.mobile-menu-social a > svg.nx-i{ width:15px; height:15px; margin-right:6px; }
+
+/* buttons keep their own colours */
+.btn > svg.nx-i{ margin-right:0; }
+
+/* blog page Instagram card */
 .social-head strong{ display:inline-flex; align-items:center; }
 
-/* contact page: a glyph beside each channel heading (no box) */
-h2.nx-h{ display:flex; align-items:center; gap:10px; }
-.nx-ti{ display:inline-flex; flex:none; color:var(--nx-ic); }
-.nx-ti svg.nx-i,.nx-ti .nx-bm{ width:24px; height:24px; margin:0; vertical-align:0; }
+/* contact page: one flat tile per channel */
+h2.nx-h{ display:flex; align-items:center; gap:12px; }
+.nx-ti{ display:inline-grid; place-items:center; width:38px; height:38px; flex:none; border-radius:11px; background:var(--nx-tile); color:var(--nx-tile-ink); transition:background-color .15s ease, color .15s ease; }
+.nx-ti svg.nx-i{ width:20px; height:20px; margin:0; vertical-align:0; }
+h2.nx-h + p a:hover{ color:var(--nx-accent); }
 
-/* "Personalise what you see" reads like the other footer links */
-.footer-col .foot-pf{ background:none; border:0; padding:0; font:inherit; font-size:12.5px; line-height:inherit; color:var(--muted,#8c8a84);
-  text-decoration:none; text-align:left; cursor:pointer; }
-.footer-col .foot-pf:hover{ color:var(--ink,#111110); }
-@media (prefers-reduced-motion:reduce){ .footer-col .nx-iconrow a,.nx-iconrow .nx-lbl{ transition:none; } }
+/* flat glyphs that replaced the older line icons (reading tools, player, theme switch, rails, search) */
+svg.nx-f{ fill:currentColor; stroke:none; }
