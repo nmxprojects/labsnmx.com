@@ -1,17 +1,22 @@
 {
  "_how": "Readers per post over the last 30 days, refreshed by the daily build. Counts only: no personal data.",
- "updated": "2026-11-27",
+ "updated": "2026-11-28",
  "window_days": 30,
  "items": [
   {
    "slug": "adobe-max-2026-sneaks-explained",
    "readers": 25,
-   "views": 35
+   "views": 37
   },
   {
    "slug": "latest-adobe-ai-updates-november-2026",
-   "readers": 6,
-   "views": 18
+   "readers": 7,
+   "views": 19
+  },
+  {
+   "slug": "asia-cup-2026-cricket-sponsorship-brands",
+   "readers": 7,
+   "views": 19
   },
   {
    "slug": "cadbury-not-just-a-cadbury-ad-ai-personalisation",
@@ -19,19 +24,29 @@
    "views": 6
   },
   {
-   "slug": "asia-cup-2026-cricket-sponsorship-brands",
-   "readers": 5,
-   "views": 16
-  },
-  {
    "slug": "ten-minute-food-zepto-cafe-swiggy-bolt-blinkit-bistro",
-   "readers": 3,
-   "views": 5
+   "readers": 4,
+   "views": 6
   },
   {
    "slug": "canva-figma-adobe-ai-design-war",
-   "readers": 3,
+   "readers": 4,
+   "views": 5
+  },
+  {
+   "slug": "whatsapp-scheduled-messages-feature-latest-updates",
+   "readers": 4,
+   "views": 5
+  },
+  {
+   "slug": "rebrand-for-ai-agents-docker-futurebrand",
+   "readers": 4,
    "views": 4
+  },
+  {
+   "slug": "campa-cola-comeback-price-war",
+   "readers": 3,
+   "views": 9
   },
   {
    "slug": "swiggy-zomato-push-notification-copy-war",
@@ -39,19 +54,19 @@
    "views": 3
   },
   {
-   "slug": "rebrand-for-ai-agents-docker-futurebrand",
+   "slug": "fmcg-brands-shifting-tv-to-digital-advertising-india",
    "readers": 3,
    "views": 3
-  },
-  {
-   "slug": "campa-cola-comeback-price-war",
-   "readers": 2,
-   "views": 8
   },
   {
    "slug": "john-lewis-christmas-ad-2026-backlash-vs-effectiveness",
    "readers": 2,
    "views": 3
+  },
+  {
+   "slug": "blogging-is-dead-why-are-you-reading-this",
+   "readers": 2,
+   "views": 2
   },
   {
    "slug": "cred-against-type-celebrity-ads",
@@ -60,11 +75,6 @@
   },
   {
    "slug": "amul-topical-ads-moment-marketing",
-   "readers": 2,
-   "views": 2
-  },
-  {
-   "slug": "fmcg-brands-shifting-tv-to-digital-advertising-india",
    "readers": 2,
    "views": 2
   },
@@ -84,22 +94,12 @@
    "views": 1
   },
   {
-   "slug": "blogging-is-dead-why-are-you-reading-this",
-   "readers": 1,
-   "views": 1
-  },
-  {
    "slug": "quick-commerce-brand-war-blinkit-zepto-instamart",
    "readers": 1,
    "views": 1
   },
   {
    "slug": "generative-video-d2c-ads-veo-firefly",
-   "readers": 1,
-   "views": 1
-  },
-  {
-   "slug": "ai-design-workflow-for-brands",
    "readers": 1,
    "views": 1
   }
