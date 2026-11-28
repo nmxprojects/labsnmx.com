@@ -7,6 +7,12 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <meta name="theme-color" content="#faf9f6">
+<link rel="manifest" href="/dashboard/manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/dashboard/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="canonical" href="https://labsnmx.com/dashboard/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -270,6 +276,44 @@
   .ad-chc.sel .ad-app,.ad-chc:hover .ad-app{background:none !important;color:var(--orange,#ff5a2b) !important}
   .ad-bm{display:block;width:22px;height:22px;background:currentColor;-webkit-mask:var(--bm) center/contain no-repeat;mask:var(--bm) center/contain no-repeat}
   svg.nx-f{fill:currentColor;stroke:none}
+
+  /* v16: channel cards wrap to fit however many channels there are */
+  .ad-chs{grid-template-columns:repeat(auto-fill,minmax(176px,1fr))}
+  @media (max-width:640px){.ad-chs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  /* v16: share-link maker */
+  .ad-lm{margin-top:16px;display:grid;gap:14px}
+  .ad-lm-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}
+  .ad-lm-grid label{display:grid;gap:6px;font-size:13px;font-weight:600}
+  .ad-lm-grid select,.ad-lm-grid input,.ad-lm-out input,.ad-code{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:500 14px/1.3 var(--font-body)}
+  .ad-lm-lbl{font-size:13px;font-weight:600}
+  .ad-lm-ch{display:flex;flex-wrap:wrap;gap:6px}
+  .ad-lm-ch button{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 13px;font:600 12.5px/1 var(--font-body)}
+  .ad-lm-ch button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+  .ad-lm-out{display:flex;gap:8px;flex-wrap:wrap}
+  .ad-lm-out input{flex:1 1 280px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  @media (max-width:640px){.ad-lm-grid{grid-template-columns:1fr}}
+  /* v16: sign-in, phone app and alerts */
+  .ad-acct{margin-top:16px}
+  .ad-acct-col{display:grid;gap:10px;align-content:start}
+  .ad-acct-col h3{font-size:14.5px;font-weight:700}
+  .ad-hint{font-size:13px;line-height:1.5;color:var(--muted);display:block}
+  .ad-acct label small{font-weight:500;color:var(--muted)}
+  .ad-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:13px;line-height:1.5}
+  .ad-steps:empty{display:none}
+  .ad-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;resize:vertical;word-break:break-all}
+  .ad-linkbtn{appearance:none;background:none;border:0;padding:6px 2px;cursor:pointer;font:600 13px/1.2 var(--font-body);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  @media (display-mode:standalone){#appTop{display:none}}
+  /* v17: send a post now or at a date and time */
+  .ad-when{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:14px 0 12px}
+  .ad-seg button{appearance:none;border:0;background:transparent;color:var(--ink);border-radius:999px;padding:8px 16px;font:600 13px/1 var(--font-body);cursor:pointer}
+  .ad-seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .ad-seg button:disabled{opacity:.45;cursor:not-allowed}
+  .ad-when-at{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .ad-when-at input{padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:500 14px/1.2 var(--font-body)}
+  .ad-when-at small,.ad-when-note{font-size:12.5px;color:var(--muted)}
+  .ad-sched{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:6px}
+  .ad-sched li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px;font-size:13px}
+  .ad-sched li.done{border-style:solid;color:var(--muted)}
 </style>
 <link rel="stylesheet" href="/assets/icons.css?v=14">
 </head>
@@ -283,11 +327,18 @@
 
 <section id="login" class="ad-login" hidden>
   <h1 style="font-family:var(--font-display);font-size:clamp(40px,6vw,64px);line-height:.95;letter-spacing:-.03em">Dashboard</h1>
-  <p style="color:var(--muted);margin:12px 0 20px">For the site owner. Sign in with your admin key.</p>
+  <p style="color:var(--muted);margin:12px 0 20px" id="loginIntro">For the site owner.</p>
+  <form id="pwForm" class="ad-form" hidden>
+    <label>User ID<input id="uid" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
+    <label>Password<input id="pwd" type="password" autocomplete="current-password" required></label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input id="pwRemember" type="checkbox" style="width:auto" checked> Keep me signed in on this device for 30 days</label>
+    <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Sign in</button><button class="ad-linkbtn" type="button" id="useKey">Use the admin key instead</button></div>
+    <p class="ad-status" id="pwStatus" role="status"></p>
+  </form>
   <form id="loginForm" class="ad-form">
     <label>Admin key<input id="key" type="password" autocomplete="current-password" required></label>
     <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input id="remember" type="checkbox" style="width:auto"> Keep me signed in on this device</label>
-    <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Sign in</button></div>
+    <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Sign in</button><button class="ad-linkbtn" type="button" id="usePw" hidden>Use your user ID and password</button></div>
     <p class="ad-status" id="loginStatus" role="status"></p>
   </form>
 </section>
@@ -302,6 +353,7 @@
     <div><h1>Dashboard</h1><p id="updated">Loading…</p></div>
     <div class="ad-acts">
       <button class="ad-live" id="live" type="button" aria-pressed="true" title="Checks every 30 seconds while this tab is open. Tap to pause."><i></i><span id="liveTxt">Live</span></button>
+      <button class="ad-btn" id="appTop" type="button" hidden>Install app</button>
       <button class="ad-btn" id="refresh" type="button">Refresh</button>
       <a class="ad-btn" id="sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
       <button class="ad-btn" id="signout" type="button">Sign out</button>
@@ -332,6 +384,19 @@
   <div class="ad-kpis" id="kpis"></div>
 
   <div class="ad-card ad-chcard"><h2>Channels</h2><p class="ad-sub" id="chSub">Visits that arrived from each channel. Tap one to filter the whole dashboard.</p><div class="ad-chs" id="chs"></div></div>
+
+  <div class="ad-card ad-lm" id="linkCard">
+    <div><h2>Share links that count</h2>
+      <p class="ad-sub">WhatsApp, Instagram and most apps hide where a tap came from, so those visits show up as Direct. Share a tagged link instead and the visit lands on the right card above.</p></div>
+    <div class="ad-lm-grid">
+      <label>Page<select id="lmPage"></select></label>
+      <label>Or paste any labsnmx.com address<input id="lmUrl" type="url" inputmode="url" placeholder="https://labsnmx.com/…"></label>
+    </div>
+    <p class="ad-lm-lbl" id="lmChL">Where you’ll share it</p>
+    <div class="ad-lm-ch" id="lmCh" role="group" aria-labelledby="lmChL"></div>
+    <div class="ad-lm-out"><input id="lmOut" readonly aria-label="Your tagged link"><button class="ad-btn ad-btn--go" id="lmCopy" type="button">Copy link</button><a class="ad-btn" id="lmWa" href="#" target="_blank" rel="noopener">Open in WhatsApp</a></div>
+    <p class="ad-status" id="lmSt" role="status"></p>
+  </div>
 
   <div class="ad-grid ad-g21">
     <div class="ad-card ad-chart"><h2>Visitors and page views</h2><p class="ad-sub" id="visitSub"></p><div class="ad-chartwrap" id="visits"></div>
@@ -366,6 +431,12 @@
           <li><input type="checkbox" id="postMail"><label for="postMail"><b>Email</b> to <span id="postMailN">your</span> subscribers</label><small id="postMailSt"></small></li>
           <li><input type="checkbox" id="postPush"><label for="postPush"><b>Browser notification</b> to <span id="postPushN">your</span> blog followers</label><small id="postPushSt"></small></li>
         </ul>
+        <div class="ad-when" id="postWhen">
+          <div class="ad-seg" role="group" aria-label="When to send"><button type="button" data-when="now" aria-pressed="true">Now</button><button type="button" data-when="later" aria-pressed="false">Later</button></div>
+          <span class="ad-when-at" id="postAt" hidden><input type="date" id="postDate" aria-label="Date"><input type="time" id="postTime" step="300" aria-label="Time, India"><small>India time</small></span>
+          <small class="ad-when-note" id="postWhenNote"></small>
+        </div>
+        <ul class="ad-sched" id="postSched" hidden></ul>
         <div class="ad-row"><button class="ad-btn" type="button" id="postTest">Send a test email to me</button><button class="ad-btn ad-btn--go" type="button" id="postGo">Send</button></div>
         <p class="ad-status" id="postStatus" role="status"></p>
       </div>
@@ -467,9 +538,54 @@
     <div class="ad-card"><h2>Leads from the site assistant</h2><p class="ad-sub">Each one was also emailed to you.</p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Name</th><th>Contact</th><th>Message</th><th>Source</th></tr></thead><tbody id="leads"></tbody></table></div></div>
     <div class="ad-card"><h2>What visitors ask the assistant</h2><p class="ad-sub" id="askSub"></p><div class="ad-scroll"><table class="ad-table"><thead><tr><th>When</th><th>Question</th><th>Page</th></tr></thead><tbody id="asks"></tbody></table></div></div>
   </div>
+
+  <div class="ad-card ad-acct" id="acct">
+    <h2>Sign-in, phone app and alerts</h2>
+    <p class="ad-sub">Only you can open this dashboard: it needs your admin key, or your user ID and password, which unlock it.</p>
+    <div class="ad-grid ad-g3">
+      <div class="ad-acct-col">
+        <h3>User ID and password</h3>
+        <p class="ad-hint" id="pwState"></p>
+        <form id="pwSet" class="ad-form">
+          <label>User ID<input id="newUid" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
+          <label>New password <small>(at least 10 characters)</small><input id="newPwd" type="password" autocomplete="new-password" required></label>
+          <label>Type it again<input id="newPwd2" type="password" autocomplete="new-password" required></label>
+          <div class="ad-row"><button class="ad-btn ad-btn--go" type="submit">Save</button></div>
+          <p class="ad-status" id="pwSetSt" role="status"></p>
+        </form>
+        <div id="pwShare" hidden>
+          <p class="ad-hint">Works on this device now. To sign in the same way on your other phones and computers, upload this small file to the <code>dashboard</code> folder on GitHub. It holds your admin key locked with your password, so without the password it’s useless.</p>
+          <button class="ad-btn" id="pwDl" type="button">Download access.json</button>
+        </div>
+      </div>
+      <div class="ad-acct-col">
+        <h3>Dashboard on your phone</h3>
+        <p class="ad-hint" id="appState"></p>
+        <div class="ad-row"><button class="ad-btn ad-btn--go" id="appInstall" type="button" hidden>Install the dashboard app</button></div>
+        <ol class="ad-steps" id="appSteps"></ol>
+      </div>
+      <div class="ad-acct-col">
+        <h3>Phone alerts</h3>
+        <p class="ad-hint">A notification on this phone for each new enquiry, for new subscribers, and a short summary at 9 PM. Checked every 30 minutes.</p>
+        <div class="ad-row"><button class="ad-btn ad-btn--go" id="alOn" type="button">Turn on alerts on this phone</button></div>
+        <p class="ad-status" id="alSt" role="status"></p>
+        <div id="alBox" hidden>
+          <label class="ad-hint" for="alCode">This phone’s alert code</label>
+          <textarea id="alCode" class="ad-code" readonly rows="3"></textarea>
+          <div class="ad-row"><button class="ad-btn" id="alCopy" type="button">Copy code</button><button class="ad-btn" id="alTest" type="button">Show a test here</button></div>
+          <ol class="ad-steps">
+            <li>On GitHub, open your repository › <b>Settings</b> › <b>Secrets and variables</b> › <b>Actions</b> › <b>New repository secret</b>.</li>
+            <li>Name it <code>OWNER_PUSH</code> and paste the code. For a second phone, put each code on its own line.</li>
+            <li>Add one more secret, <code>ADMIN_KEY</code>, with your admin key.</li>
+            <li>In the <b>Actions</b> tab, open <b>Owner alerts</b> › <b>Run workflow</b> with “Send a test” ticked. A test alert should arrive within a minute.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 <aside class="ad-drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drH" hidden><div class="ad-drawer-in"><div class="ad-drawer-top"><p>Reader journey</p><button class="ad-btn" id="drClose" type="button">Close</button></div><div id="drBody"></div></div></aside>
 </main>
-<script src="/dashboard/dashboard.js?v=14" defer></script>
+<script src="/dashboard/dashboard.js?v=17" defer></script>
 </body>
 </html>

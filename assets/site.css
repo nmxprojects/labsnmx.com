@@ -834,3 +834,30 @@ img{max-width:100%;display:block}
 /* v10: related-reading cards stay inside the screen on phones (a long title or link could push the single column wider than the page) */
 .prose .rb-grid > li{min-width:0}
 @media (max-width:640px){.prose .rb-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* v16: phone menu on every page = the home page's full-screen sheet (assets/engage.js adds .mm-v2 and the X state) */
+@media (max-width:860px){
+  .mobile-menu.mm-v2{display:flex;position:fixed;inset:0;z-index:69;flex-direction:column;align-items:center;gap:24px;
+    padding:calc(78px + env(safe-area-inset-top,0px)) 24px calc(28px + env(safe-area-inset-bottom,0px));background:var(--bg);border:0;
+    overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-12px);
+    transition:opacity .28s cubic-bezier(.2,.7,.2,1),transform .28s cubic-bezier(.2,.7,.2,1),visibility 0s linear .28s}
+  .mobile-menu.mm-v2.open{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s}
+  .mm-v2 > :first-child{margin-top:auto}
+  .mm-v2 > :last-child{margin-bottom:auto}
+  .mm-v2 .mobile-menu-links{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .mm-v2 .mobile-menu-links a{padding:6px 14px;font-size:clamp(22px,6.4vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.15;color:var(--ink);text-decoration:none}
+  .mm-v2 .mobile-menu-links a.nav-pop{color:var(--orange)}
+  .mm-v2 .mobile-menu-links a[aria-current="page"]{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;text-decoration-color:var(--orange)}
+  .mm-v2 .mm-cta{display:inline-flex;padding:14px 26px;font-size:14px}
+  .mm-v2 .mobile-menu-social{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}
+  .mm-v2 .mobile-menu-social a{display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border-radius:50%;font-size:0;color:var(--ink);text-decoration:none}
+  .mm-v2 .mobile-menu-social a .nx-i{width:22px;height:22px;margin:0;color:var(--nx-glyph,var(--ink))}
+  .nav-burger span{transition:transform .28s cubic-bezier(.2,.7,.2,1),opacity .2s}
+  .nav-burger.is-open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  .nav-burger.is-open span:nth-child(2){opacity:0}
+  .nav-burger.is-open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+  html.mm-lock{overflow:hidden}
+  html.mm-lock .site-nav{z-index:70}
+  html.mm-lock .nx-dock{visibility:hidden}
+}
+@media (prefers-reduced-motion:reduce){.mobile-menu.mm-v2,.nav-burger span{transition:none}}

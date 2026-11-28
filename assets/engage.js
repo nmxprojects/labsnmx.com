@@ -102,7 +102,7 @@
   var NMX_HOSTS = [[/^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$/, 'Google app (Search or Discover)'], [/^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com)$/, 'Gmail'],
     [/^((m|www)\.)?google\.[a-z.]+$/, 'Google Search'], [/(^|\.)bing\.com$/, 'Bing'], [/duckduckgo\.com$/, 'DuckDuckGo'], [/(^|\.)yahoo\.(com|co\.jp)$/, 'Yahoo'],
     [/^(l\.|lm\.|m\.|web\.)?facebook\.com$|^fb\.(com|me)$|^com\.facebook\.(katana|lite)$/, 'Facebook'], [/^(l\.)?instagram\.com$|^com\.instagram\.android$/, 'Instagram'],
-    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
+    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp(\.w4b)?$|^l\.wl\.co$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
     [/linkedin\.com$|^lnkd\.in$|^com\.linkedin\.android$/, 'LinkedIn'], [/^(t\.co|twitter\.com|x\.com|com\.twitter\.android)$/, 'X (Twitter)'],
     [/youtube\.com$|^youtu\.be$|^com\.google\.android\.youtube$/, 'YouTube'], [/^(chatgpt\.com|chat\.openai\.com|openai\.com)$/, 'ChatGPT'], [/perplexity\.ai$/, 'Perplexity'],
     [/^claude\.ai$/, 'Claude'], [/^gemini\.google\.com$/, 'Gemini'], [/copilot\.(microsoft\.)?com$/, 'Copilot'], [/deepseek\.com$/, 'DeepSeek'], [/^grok\.com$/, 'Grok'],
@@ -132,7 +132,7 @@
     var AI_SRC = /^(chatgpt|openai|perplexity|claude|gemini|copilot|deepseek|grok|meta\.ai)/;
     var MAIL = /^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com|outlook\.(live|office|office365)\.com|mail\.yahoo\.com|mail\.proton\.me|mail\.zoho\.(com|in)|mail\.aol\.com|mail\.rediff\.com|webmail\..+)$/;
     var SEARCH = /^((m|www)\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$|^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$|^(cn\.)?bing\.com$|^([a-z]{2}\.)?search\.yahoo\.com$|^yahoo\.co\.jp$|^((html|lite)\.)?duckduckgo\.com$|^yandex\.[a-z.]+$|^baidu\.com$|^ecosia\.org$|^search\.brave\.com$|^startpage\.com$|^qwant\.com$|^(search\.)?naver\.com$|^seznam\.cz$|^sogou\.com$|^so\.com$|^ask\.com$|^search\.aol\.com$|^kagi\.com$/;
-    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
+    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|l\.wl\.co|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|whatsapp\.w4b|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
     var SOC_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|th|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
     var META_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|wa|whatsapp|th|threads|meta)$/;
     var SEARCH_SRC = /^(google|bing|yahoo|duckduckgo|ddg|yandex|baidu|ecosia|brave|naver|msn|microsoft|adwords|googleads|google[-_ ]?ads|bing[-_ ]?ads|microsoft[-_ ]?ads)$/;
@@ -295,6 +295,43 @@
     var nl = $('.site-nav .nav-links'); if (nl) nl.classList.add('nx-nav-plus');
   })();
 
+  /* =========================================================== v16: phone menu */
+  // Every page's phone menu matches the home page: a full-screen sheet with big links, the Book button and icon-only
+  // social links, an X on the burger, and the page behind it locked. The home page keeps its own menu.
+  (function menuPlus() {
+    var m = $('#mobileMenu'), b = $('#navBurger'), html = doc.documentElement;
+    if (!m || !b || m.querySelector('.mobile-menu-links')) return;
+    var links = doc.createElement('div'), soc = doc.createElement('div'), here = location.hostname.replace(/^www\./, '');
+    links.className = 'mobile-menu-links'; soc.className = 'mobile-menu-social';
+    var SOC = /instagram\.com|linkedin\.com|pinterest\.|youtube\.com|facebook\.com|threads\.(net|com)|(^|\/\/)(www\.)?(x|twitter)\.com|t\.me\/|wa\.me\/\d+$/;
+    $$('a', m).forEach(function (a) { var ext = /^https?:/i.test(a.getAttribute('href') || '') && a.hostname.replace(/^www\./, '') !== here; (ext ? soc : links).appendChild(a); });
+    var seen = {}; $$('a', soc).forEach(function (a) { seen[a.href] = 1; });
+    var foot = $$('.site-footer a[href]').filter(function (a) { return SOC.test(a.getAttribute('href')); });
+    foot.forEach(function (a) { if (seen[a.href]) return; seen[a.href] = 1; var c = a.cloneNode(true); c.removeAttribute('class'); c.setAttribute('data-pixel-source', 'mobile_menu'); soc.appendChild(c); });
+    $$('a', soc).forEach(function (a) {
+      var lbl = a.textContent.replace(/\s+/g, ' ').trim() || a.hostname;
+      if (!a.querySelector('.nx-i')) { var twin = foot.filter(function (f) { return f.href === a.href && f.querySelector('.nx-i'); })[0]; if (twin) a.insertBefore(twin.querySelector('.nx-i').cloneNode(true), a.firstChild); }
+      a.setAttribute('aria-label', lbl); a.setAttribute('title', lbl);
+    });
+    m.textContent = ''; m.appendChild(links);
+    var cta = $('.site-nav a.btn'); if (cta) { var c2 = cta.cloneNode(true); c2.className = 'btn mm-cta'; c2.setAttribute('data-pixel-source', 'mobile_menu_book_1_1'); m.appendChild(c2); }
+    if (soc.children.length) m.appendChild(soc);
+    m.classList.add('mm-v2'); m.setAttribute('role', 'dialog'); m.setAttribute('aria-label', 'Menu');
+    function sync() {
+      var o = m.classList.contains('open');
+      b.classList.toggle('is-open', o); html.classList.toggle('mm-lock', o);
+      b.setAttribute('aria-expanded', String(o)); b.setAttribute('aria-label', o ? 'Close menu' : 'Open menu');
+    }
+    function close() { if (m.classList.contains('open')) { m.classList.remove('open'); sync(); } }
+    if (window.MutationObserver) new MutationObserver(sync).observe(m, { attributes: true, attributeFilter: ['class'] });
+    m.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a')) close(); });
+    doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && m.classList.contains('open')) { close(); b.focus(); } });
+    addEventListener('resize', function () { if (innerWidth > 860) close(); });
+    // footer icon links carry their name for screen readers and long-press
+    $$('.site-footer .nx-iconrow a').forEach(function (a) { var t = a.textContent.replace(/\s+/g, ' ').trim(); if (t && !a.title) a.title = t; });
+    sync();
+  })();
+
   /* =========================================================== service worker (notifications + offline) */
   var SW = 'serviceWorker' in navigator && window.isSecureContext;
   // v5: registered as soon as the browser is idle (v4 waited for every image and ad to finish loading, which is
@@ -316,6 +353,11 @@
   // iPhone/iPad: Safari only allows web push for sites added to the Home Screen (iOS 16.4+).
   var IOS_NEEDS_INSTALL = PUSH_ON && IOS && !STANDALONE && !/in-app browser$/.test(U.br);
   var INAPP = /in-app browser$/.test(U.br);
+  // v16: on iPhone and iPad every browser (Safari, Chrome, Edge, Firefox…) can add the site to the Home Screen, and
+  // notifications then work in the Home Screen app. The steps follow the browser the reader is actually using.
+  var IOS_BR = !IOS ? '' : /CriOS/.test(UAS) ? 'Chrome' : /FxiOS/.test(UAS) ? 'Firefox' : /EdgiOS/.test(UAS) ? 'Edge' : /OPT\//.test(UAS) ? 'Opera'
+    : /DuckDuckGo|Ddg\//.test(UAS) ? 'DuckDuckGo' : 'Safari';
+  var IPAD = IOS && U.dev === 'Tablet';
   var SHOW_FOLLOW = PUSH_ON && (PUSH_API || IOS_NEEDS_INSTALL || INAPP);
 
   // Phone brand, for brand-specific fixes (Chrome on Android tells pages the model when asked).
@@ -340,7 +382,7 @@
 
   /* =========================================================== UI shell */
   if (!$('link[href^="/assets/engage.css"]')) {
-    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=13'; doc.head.appendChild(css);
+    var css = doc.createElement('link'); css.rel = 'stylesheet'; css.href = '/assets/engage.css?v=16'; doc.head.appendChild(css);
   }
   // v13: flat icons in the reference style (scripts/icons_v12.py --js). Same keys as before.
   var I = {"bell": "<svg class=\"nx-f\" data-i=\"bell\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M12 2.8c-3.4 0-6.1 2.7-6.1 6.2v4.2l-1.7 2.6c-.4.7.1 1.6.9 1.6h13.8c.8 0 1.3-.9.9-1.6l-1.7-2.6V9c0-3.5-2.7-6.2-6.1-6.2z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M9.4 18.6h5.2a2.6 2.6 0 0 1-5.2 0z\"/></svg>", "bellOff": "<svg class=\"nx-f\" data-i=\"bellOff\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M7 17.6H5.1c-.8 0-1.3-.9-.9-1.6l1.7-2.6V9c0-1.2.3-2.3.9-3.2M9.2 3.6A6 6 0 0 1 18.1 9v4.2l1.3 2\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M9.4 18.6h5.2a2.6 2.6 0 0 1-5.2 0z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M3.6 3.6l16.8 16.8\"/></svg>", "chat": "<svg class=\"nx-f\" data-i=\"comment\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M6.6 16.4v4.2a.5.5 0 0 0 .84.37l4.9-4.57z\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M6.2 3.6h11.6a3.6 3.6 0 0 1 3.6 3.6v6.4a3.6 3.6 0 0 1 -3.6 3.6h-11.6a3.6 3.6 0 0 1 -3.6 -3.6v-6.4a3.6 3.6 0 0 1 3.6 -3.6zM7.45 7.6h9.1a0.85 0.85 0 0 1 0.85 0.85v0a0.85 0.85 0 0 1 -0.85 0.85h-9.1a0.85 0.85 0 0 1 -0.85 -0.85v-0a0.85 0.85 0 0 1 0.85 -0.85zM7.45 11.3h4.9a0.85 0.85 0 0 1 0.85 0.85v0a0.85 0.85 0 0 1 -0.85 0.85h-4.9a0.85 0.85 0 0 1 -0.85 -0.85v-0a0.85 0.85 0 0 1 0.85 -0.85z\"/></svg>", "x": "<svg class=\"nx-f\" data-i=\"close\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M6 6l12 12M18 6 6 18\"/></svg>", "send": "<svg class=\"nx-f\" data-i=\"send\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M3.4 4.2c-.2-.9.7-1.6 1.5-1.2l16 8c.8.4.8 1.6 0 2l-16 8c-.8.4-1.7-.3-1.5-1.2L5 13.1l7.6-1.1L5 10.9z\"/></svg>", "mark": "<svg class=\"nx-f\" data-i=\"save\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" d=\"M6.3 3h11.4A1.8 1.8 0 0 1 19.5 4.8v15.6c0 .7-.8 1.1-1.4.7L12 16.7l-6.1 4.4c-.6.4-1.4 0-1.4-.7V4.8A1.8 1.8 0 0 1 6.3 3z\"/></svg>", "marked": "<svg class=\"nx-f\" data-i=\"saved\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M6.3 3h11.4A1.8 1.8 0 0 1 19.5 4.8v15.6c0 .7-.8 1.1-1.4.7L12 16.7l-6.1 4.4c-.6.4-1.4 0-1.4-.7V4.8A1.8 1.8 0 0 1 6.3 3zM8.3 9.5l1.2-1.2 1.6 1.6 3.4-3.4 1.2 1.2-4.6 4.6z\"/></svg>", "check": "<svg class=\"nx-f\" data-i=\"check\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M4.8 12.6l4.6 4.6L19.2 7.4\"/></svg>", "phone": "<svg class=\"nx-f\" data-i=\"mobile\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M9 2h6a3.2 3.2 0 0 1 3.2 3.2v13.6a3.2 3.2 0 0 1 -3.2 3.2h-6a3.2 3.2 0 0 1 -3.2 -3.2v-13.6a3.2 3.2 0 0 1 3.2 -3.2zM10.75 17.6h2.5a0.75 0.75 0 0 1 0.75 0.75v0a0.75 0.75 0 0 1 -0.75 0.75h-2.5a0.75 0.75 0 0 1 -0.75 -0.75v-0a0.75 0.75 0 0 1 0.75 -0.75zM11.1 5a0.9 0.9 0 1 0 1.8 0a0.9 0.9 0 1 0 -1.8 0z\"/></svg>"};
@@ -428,7 +470,7 @@
     hideSheet();
     openKind = kind; panel.hidden = false; panel.setAttribute('data-kind', kind);
     setExpanded();
-    if (kind === 'alerts') renderAlerts(); else if (kind === 'guide') renderGuide(arg); else if (kind === 'share') renderShare(); else renderAsk();
+    if (kind === 'alerts') renderAlerts(arg); else if (kind === 'guide') renderGuide(arg); else if (kind === 'share') renderShare(); else renderAsk();
     var f = $('[data-nx-focus]', panel) || $('button, input, textarea', panel); if (f) setTimeout(function () { f.focus(); }, 30);
   }
   if (bellBtn) bellBtn.addEventListener('click', function () {
@@ -676,15 +718,55 @@
     if (installEvt && !STANDALONE) bits.push('<button type="button" class="nx-link" data-nx-install>Install the app</button>');
     return '<div class="nx-foot">' + bits.join('') + '</div>';
   }
-  function iosSteps() {
-    return '<ol class="nx-steps"><li>Tap the Share button in Safari.</li><li>Choose <strong>Add to Home Screen</strong>, then Add.</li><li>Open NMX Labs from your Home Screen and tap <strong>Follow</strong>.</li></ol>';
+  var SHARE_IOS = '<svg class="nx-ios-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 3.6v10.8M8.2 7.2 12 3.6l3.8 3.6M8.6 10.2H7.2a2 2 0 0 0-2 2v6.4a2 2 0 0 0 2 2h9.6a2 2 0 0 0 2-2v-6.4a2 2 0 0 0-2-2h-1.4"/></svg>';
+  function iosKey(t) { return '<b class="nx-ios-key" aria-hidden="true">' + t + '</b>'; }
+  function iosStepList() {
+    var share = '<strong>Share</strong> ' + SHARE_IOS, add = '<strong>Add to Home Screen</strong>', s;
+    if (IOS_BR === 'Chrome') s = ['Tap ' + share + ' in the address bar' + (IPAD ? '' : ' at the top') + '.', 'Scroll the list down, tap ' + add + ', then <strong>Add</strong>.'];
+    else if (IOS_BR === 'Edge') s = ['Tap the ' + iosKey('⋯') + ' menu at the bottom, then ' + share + '.', 'Tap ' + add + ', then <strong>Add</strong>.'];
+    else if (IOS_BR === 'Firefox') s = ['Tap the ' + iosKey('≡') + ' menu, then ' + share + '.', 'Tap ' + add + ', then <strong>Add</strong>.'];
+    else if (IOS_BR === 'Safari') s = ['Tap ' + share + (IPAD ? ' at the top right' : ' at the bottom of the screen') + ' (don’t see it? tap ' + iosKey('⋯') + ' first).', 'Scroll down, tap ' + add + ', keep <strong>Open as Web App</strong> on if you see it, then tap <strong>Add</strong>.'];
+    else s = ['Open your browser’s ' + share + ' menu.', 'Tap ' + add + ', then <strong>Add</strong>.'];
+    s.push('Open <strong>NMX Labs</strong> from your Home Screen and tap <strong>Turn on notifications</strong>. That’s it, and you only do this once.');
+    return s;
   }
-  function renderAlerts() {
+  function iosSteps() { return '<ol class="nx-steps nx-steps--ios">' + iosStepList().map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'; }
+  function iosIntro() {
+    return IOS_BR === 'Safari' ? 'On iPhone and iPad, notifications come through once NMX Labs is on your Home Screen. It takes about ten seconds, once.'
+      : 'On iPhone and iPad, notifications come through once NMX Labs is on your Home Screen. You can do it right here in ' + IOS_BR + '; there’s no need to switch to Safari.';
+  }
+  // v16: email as the no-setup alternative, right inside the panel (same request as the blog's form, so it's counted the same way)
+  function quickEmailHtml() {
+    if (read('nmx-subscribed') === '1') return '';
+    return '<form class="nx-qmail" data-nx-qmail novalidate><label for="nxQm">Rather have email? New posts land in your inbox instead.</label>' +
+      '<div><input id="nxQm" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required><button type="submit" class="nx-btn nx-btn--ghost">Subscribe</button></div>' +
+      '<p class="nx-status" role="status"></p></form>';
+  }
+  function bindQuickEmail(box) {
+    var f = $('[data-nx-qmail]', box); if (!f) return;
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var inp = $('input', f), st = $('.nx-status', f), em = (inp.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) { st.textContent = 'Enter a valid email address, like name@example.com.'; inp.focus(); return; }
+      if (!READY) { location.href = '/blog/#subHIdx'; return; }
+      st.textContent = 'Subscribing…'; $('button', f).disabled = true;
+      fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams({ action: 'subscribe', email: em, source: path, v: CFG.BACKEND_VERSION || 'v4' }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.ok) throw new Error('backend');
+          store('nmx-subscribed', '1'); store('nmx-sub-email', em);
+          st.textContent = d.already ? 'You’re already subscribed. New posts keep coming to that inbox.' : 'Done. Check your inbox for a welcome email.';
+          track('Subscribe', { method: 'follow_panel', page_path: path });
+        })
+        .catch(function () { $('button', f).disabled = false; st.innerHTML = 'That didn’t go through. <a href="/blog/#subHIdx">Use the form on the blog</a> instead.'; });
+    });
+  }
+  function renderAlerts(arg) {
     var perm = permission(), st = pushState(), html;
     if (IOS_NEEDS_INSTALL) {
       html = head('Add NMX Labs to your Home Screen', true) + '<div class="nx-body">' +
-        '<p>On iPhone and iPad, notifications work once the site is on your Home Screen.</p>' + iosSteps() +
-        '<p class="nx-fine">Needs iOS 16.4 or later. Prefer email? <a href="/blog/#subHIdx">Get new posts by email</a>.</p></div>' + footHtml();
+        '<p>' + iosIntro() + '</p>' + iosSteps() + quickEmailHtml() +
+        '<p class="nx-fine">Needs iOS 16.4 or later. Apple sends website notifications only to Home Screen apps; no website can skip that step.</p></div>' + footHtml();
     } else if (st && perm === 'granted') {
       html = head('Notifications are on', false) + '<div class="nx-body">' +
         '<p>You’ll get one notification for each new post or video you picked below.</p>' + topicsHtml(st.topics) +
@@ -692,8 +774,9 @@
         '<button type="button" class="nx-link" data-nx-guide>Not seeing them?</button></div>' +
         '<p class="nx-status" role="status"></p></div>' + footHtml();
     } else {
-      html = head('Follow NMX Labs', true) + '<div class="nx-body">' +
-        '<p>A short notification when we publish a post, a lesson or a YouTube video. No email needed, and you can switch it off in one tap.</p>' +
+      html = head(arg === 'welcome' ? 'One tap to finish' : 'Follow NMX Labs', true) + '<div class="nx-body">' +
+        (arg === 'welcome' ? '<p>You’re in the NMX Labs app. Turn on notifications and we’ll ping you when a new post, lesson or video is out.</p>'
+          : '<p>A short notification when we publish a post, a lesson or a YouTube video. No email needed, and you can switch it off in one tap.</p>') +
         topicsHtml('blog,youtube') +
         '<div class="nx-actions"><button type="button" class="nx-btn" data-nx-on data-nx-focus>' + I.bell + 'Turn on notifications</button></div>' +
         '<p class="nx-status" role="status"></p></div>' + footHtml();
@@ -721,6 +804,7 @@
       });
     });
     if (inst) inst.addEventListener('click', install);
+    bindQuickEmail(panel);
   }
 
   /* =========================================================== notifications: fixing a block */
@@ -733,8 +817,7 @@
       steps: ['Tap the ⋯ or ⋮ menu at the top of this screen.', 'Choose <strong>Open in browser</strong> (or Open in Chrome / Safari).', 'Tap <strong>Follow</strong> on labsnmx.com.'], tips: [], copy: true };
     if (reason === 'unsupported') return { title: 'This browser can’t do notifications', intro: 'Use Chrome, Edge, Firefox, Samsung Internet or Safari (on iPhone, from the Home Screen app), or get new posts by email instead.', steps: [], tips: [] };
     if (os === 'iOS') {
-      if (!STANDALONE) return { title: 'Add NMX Labs to your Home Screen', intro: 'Apple only allows website notifications for sites added to the Home Screen (iOS 16.4 or later).',
-        steps: ['Tap the Share button in Safari.', 'Choose <strong>Add to Home Screen</strong>, then Add.', 'Open NMX Labs from your Home Screen and tap <strong>Follow</strong>.'], tips: [] };
+      if (!STANDALONE) return { title: 'Add NMX Labs to your Home Screen', intro: iosIntro(), steps: iosStepList(), tips: [] };
       steps = ['Open your iPhone’s <strong>Settings</strong> → <strong>Notifications</strong> → <strong>NMX Labs</strong>.', 'Turn on <strong>Allow Notifications</strong> and pick Banners.', 'Close NMX Labs completely, open it again from the Home Screen and tap <strong>Check again</strong>.'];
       tips = ['A Focus mode (Do Not Disturb, Sleep, Work) hides notifications until it ends. Check Control Centre.'];
     } else if (os === 'Android') {
@@ -846,7 +929,7 @@
     var noun = lesson() ? 'lesson' : 'post', list = mode === 'follow' ? FOLLOW_QUIPS : QUIPS, key = mode === 'follow' ? 'nmx-quip-f' : 'nmx-quip';
     var n = (Number(read(key) || -1) + 1) % list.length; store(key, String(n));
     var q = list[n], h = q[0].replace(/\{noun\}/g, noun), body = q[1].replace(/\{noun\}/g, noun);
-    if (mode === 'ios') { h = 'Get new ' + noun + 's on your iPhone'; body = 'Add NMX Labs to your Home Screen, then tap Follow. Apple only allows website notifications that way. Ten seconds, tops.'; }
+    if (mode === 'ios') { h = 'Get new ' + noun + 's on your iPhone'; body = 'Add NMX Labs to your Home Screen from ' + (IOS_BR === 'Safari' ? 'Safari' : IOS_BR) + '’s Share menu, open it, and tap Turn on. Ten seconds, and only once.'; }
     var sub = $('.subscribe'), primary = mode === 'push' ? '<button type="button" class="nx-cafe-go" data-sheet="yes">' + I.bell + '<span>Ping me when it’s fresh</span></button>'
       : mode === 'ios' ? '<button type="button" class="nx-cafe-go" data-sheet="ios">' + I.phone + '<span>Show me how</span></button>' : '';
     lastFocus = doc.activeElement;
@@ -1218,6 +1301,12 @@
   }
   $$('[data-install-app]').forEach(function (b) { b.addEventListener('click', install); });
   if (STANDALONE && !ssGet('nmx-app-open')) { ssSet('nmx-app-open', '1'); logEvent('app_open'); }
+  // v16: the first time the Home Screen app opens on iPhone or iPad, the Follow panel is already open with one button.
+  // (No website can show Apple's permission prompt without a tap, so this is as close to automatic as iOS allows.)
+  if (IOS && STANDALONE && PUSH_ON && PUSH_API && permission() === 'default' && !pushState() && !read('nmx-ios-asked')) {
+    store('nmx-ios-asked', '1');
+    setTimeout(function () { if (!openKind && sheet.hidden) { openPanel('alerts', 'welcome'); logEvent('follow_open', 'ios_app_first_open'); } }, 1200);
+  }
 
   window.NMX_ENGAGE = { open: openPanel, close: closePanel, pushState: pushState, ready: READY, pushOn: PUSH_ON, follow: enable, fix: function (r) { openPanel('guide', r || 'system'); }, share: function () { shareNow('api'); }, version: 'v10' };
 })();

@@ -400,3 +400,15 @@ svg.nx-f{ fill:currentColor; stroke:none; overflow:visible; }
   background:transparent !important; color:var(--nx-accent) !important; }
 .nx-follow a:focus-visible,.nx-share-apps a:focus-visible{ outline:2px solid var(--nx-accent); outline-offset:2px; }
 .nx-share-apps a > span:last-child{ opacity:.82; }
+
+/* v16: iPhone steps for every browser, and the email alternative inside the Follow panel */
+.nx-ios-ic{display:inline-block;width:1.2em;height:1.2em;vertical-align:-.24em;margin-left:1px}
+.nx-ios-key{display:inline-grid;place-items:center;min-width:1.6em;height:1.35em;padding:0 .25em;border:1px solid currentColor;border-radius:6px;font-size:.85em;line-height:1;font-weight:700;vertical-align:.05em;opacity:.8}
+.nx-steps--ios li{line-height:1.5}
+.nx-qmail{margin-top:16px;padding-top:14px;border-top:1px solid rgba(127,127,127,.25)}
+.nx-qmail label{display:block;font-size:13px;line-height:1.45;margin-bottom:8px;opacity:.85}
+.nx-qmail div{display:flex;gap:8px}
+.nx-qmail input{flex:1;min-width:0;padding:10px 12px;border-radius:12px;border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;font:inherit;font-size:16px}
+.nx-qmail input:focus{outline:2px solid #ff5a2b;outline-offset:1px}
+.nx-qmail .nx-btn{flex:none}
+.nx-qmail .nx-status{margin-top:8px}

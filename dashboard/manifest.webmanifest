@@ -1,0 +1,33 @@
+{
+  "id": "/dashboard/",
+  "name": "NMX Labs Dashboard",
+  "short_name": "Dashboard",
+  "description": "Your labsnmx.com visitors, channels, subscribers and enquiries.",
+  "lang": "en-IN",
+  "start_url": "/dashboard/?app=1",
+  "scope": "/dashboard/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#faf9f6",
+  "theme_color": "#111110",
+  "icons": [
+    {
+      "src": "/dashboard/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/dashboard/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/dashboard/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

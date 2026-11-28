@@ -21,7 +21,7 @@
   var NMX_HOSTS = [[/^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$/, 'Google app (Search or Discover)'], [/^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com)$/, 'Gmail'],
     [/^((m|www)\.)?google\.[a-z.]+$/, 'Google Search'], [/(^|\.)bing\.com$/, 'Bing'], [/duckduckgo\.com$/, 'DuckDuckGo'], [/(^|\.)yahoo\.(com|co\.jp)$/, 'Yahoo'],
     [/^(l\.|lm\.|m\.|web\.)?facebook\.com$|^fb\.(com|me)$|^com\.facebook\.(katana|lite)$/, 'Facebook'], [/^(l\.)?instagram\.com$|^com\.instagram\.android$/, 'Instagram'],
-    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
+    [/^messenger\.com$|^com\.facebook\.orca$/, 'Messenger'], [/whatsapp\.com$|^wa\.me$|^com\.whatsapp(\.w4b)?$|^l\.wl\.co$/, 'WhatsApp'], [/^threads\.(net|com)$/, 'Threads'],
     [/linkedin\.com$|^lnkd\.in$|^com\.linkedin\.android$/, 'LinkedIn'], [/^(t\.co|twitter\.com|x\.com|com\.twitter\.android)$/, 'X (Twitter)'],
     [/youtube\.com$|^youtu\.be$|^com\.google\.android\.youtube$/, 'YouTube'], [/^(chatgpt\.com|chat\.openai\.com|openai\.com)$/, 'ChatGPT'], [/perplexity\.ai$/, 'Perplexity'],
     [/^claude\.ai$/, 'Claude'], [/^gemini\.google\.com$/, 'Gemini'], [/copilot\.(microsoft\.)?com$/, 'Copilot'], [/deepseek\.com$/, 'DeepSeek'], [/^grok\.com$/, 'Grok'],
@@ -51,7 +51,7 @@
     var AI_SRC = /^(chatgpt|openai|perplexity|claude|gemini|copilot|deepseek|grok|meta\.ai)/;
     var MAIL = /^(mail\.google\.com|com\.google\.android\.gm|inbox\.google\.com|outlook\.(live|office|office365)\.com|mail\.yahoo\.com|mail\.proton\.me|mail\.zoho\.(com|in)|mail\.aol\.com|mail\.rediff\.com|webmail\..+)$/;
     var SEARCH = /^((m|www)\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$|^(com\.google\.android\.googlequicksearchbox|googlequicksearchbox)$|^(cn\.)?bing\.com$|^([a-z]{2}\.)?search\.yahoo\.com$|^yahoo\.co\.jp$|^((html|lite)\.)?duckduckgo\.com$|^yandex\.[a-z.]+$|^baidu\.com$|^ecosia\.org$|^search\.brave\.com$|^startpage\.com$|^qwant\.com$|^(search\.)?naver\.com$|^seznam\.cz$|^sogou\.com$|^so\.com$|^ask\.com$|^search\.aol\.com$|^kagi\.com$/;
-    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
+    var SOCIAL = /(^|\.)(facebook\.com|fb\.com|fb\.me|messenger\.com|instagram\.com|linkedin\.com|lnkd\.in|t\.co|twitter\.com|x\.com|youtube\.com|youtu\.be|pinterest\.[a-z.]+|pin\.it|reddit\.com|redd\.it|quora\.com|threads\.net|threads\.com|whatsapp\.com|wa\.me|l\.wl\.co|telegram\.org|t\.me|snapchat\.com|tiktok\.com|tumblr\.com|discord\.com|discord\.gg|sharechat\.com|bsky\.app|mastodon\.social|vk\.com|weibo\.com|medium\.com|behance\.net|dribbble\.com)$|^(com\.(linkedin\.android|instagram\.android|facebook\.(katana|orca|lite)|twitter\.android|google\.android\.youtube|whatsapp|whatsapp\.w4b|reddit\.frontpage|pinterest|snapchat\.android|zhiliaoapp\.musically)|org\.telegram\.messenger)$/;
     var SOC_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|th|linkedin|lnkd|li|twitter|x|youtube|yt|pinterest|reddit|quora|threads|whatsapp|wa|telegram|tg|snapchat|tiktok|meta|discord|bluesky|tumblr|sharechat)([-_. ].*)?$/;
     var META_SRC = /^(facebook|fb|instagram|ig|insta|an|msg|messenger|wa|whatsapp|th|threads|meta)$/;
     var SEARCH_SRC = /^(google|bing|yahoo|duckduckgo|ddg|yandex|baidu|ecosia|brave|naver|msn|microsoft|adwords|googleads|google[-_ ]?ads|bing[-_ ]?ads|microsoft[-_ ]?ads)$/;
@@ -126,9 +126,15 @@
   function ago(sec) { var s = Math.max(0, Math.round(Date.now() / 1000 - sec)); return s < 60 ? 'just now' : s < 3600 ? Math.round(s / 60) + ' min ago' : Math.round(s / 3600) + ' h ago'; }
   function dk(ms) { return new Date(ms + IST).toISOString().slice(0, 10); }               // India date of a moment
   function istMidnight(ms) { var x = ms + IST; return x - x % DAY - IST; }
-  function getKey() { try { return sessionStorage.getItem('nmx-admin') || localStorage.getItem('nmx-admin') || ''; } catch (e) { return ''; } }
-  function setKey(k, remember) { try { sessionStorage.setItem('nmx-admin', k); if (remember) localStorage.setItem('nmx-admin', k); } catch (e) {} }
-  function clearKey() { try { sessionStorage.removeItem('nmx-admin'); localStorage.removeItem('nmx-admin'); } catch (e) {} }
+  function getKey() {
+    try {
+      var exp = Number(localStorage.getItem('nmx-admin-exp') || 0);                // v16: "keep me signed in" lasts 30 days
+      if (exp && Date.now() > exp) { localStorage.removeItem('nmx-admin'); localStorage.removeItem('nmx-admin-exp'); }
+      return sessionStorage.getItem('nmx-admin') || localStorage.getItem('nmx-admin') || '';
+    } catch (e) { return ''; }
+  }
+  function setKey(k, remember) { try { sessionStorage.setItem('nmx-admin', k); if (remember) { localStorage.setItem('nmx-admin', k); localStorage.setItem('nmx-admin-exp', String(Date.now() + 30 * 864e5)); } } catch (e) {} }
+  function clearKey() { try { sessionStorage.removeItem('nmx-admin'); localStorage.removeItem('nmx-admin'); localStorage.removeItem('nmx-admin-exp'); } catch (e) {} }
   function api(params) {
     params.action = 'admin'; params.key = KEY;
     return fetch(CFG.BACKEND_URL, { method: 'POST', body: new URLSearchParams(params) }).then(function (r) { return r.json(); });
@@ -164,7 +170,7 @@
     function tsDetOf(r) { return relabelTraffic(tsOf(r), (sesTs[r[3]] || [0, D(r[15])])[1]); }   // v9: plain-English source names, old rows too
     indexRaw(); var SX = RAW._s;                                                                  // v10: channels and readers
     function chOf(r) { var x = SX[r[3]]; return x ? x.ch || '' : ''; }
-    var CHS = {}; CH.forEach(function (c) { CHS[c[0]] = { ses: {}, prev: {}, people: {}, days: zero() }; });
+    var CHS = {}; function chBucket(k) { return CHS[k] || (CHS[k] = { ses: {}, prev: {}, people: {}, days: zero() }); } CH_PINNED.forEach(chBucket);
     var RD_P = {};
     function visitOk(r, skipCh) {
       return !(F.dev && D(r[9]) !== F.dev) && !(F.br && D(r[10]) !== F.br) && !(F.co && D(r[12]) !== F.co) &&
@@ -185,7 +191,7 @@
       if (vid && !(vid in V.firstSeen)) V.firstSeen[vid] = ms;
       if (type === 'push_click') { var c = D(r[13]); clicks[c] = (clicks[c] || 0) + 1; if (ms >= start && ms <= end) taps++; else if (ms >= prevStart && ms < start) prevTaps++; return; }
       if (type === 'pageview' && ms >= prevStart && ms <= end && visitOk(r, true)) {                // v10: channel cards ignore their own filter
-        var cc = chOf(r); if (cc) { var cs = CHS[cc]; if (ms < start) cs.prev[r[3]] = 1; else { if (!cs.ses[r[3]]) { cs.ses[r[3]] = 1; var cd = dk(ms); if (cd in cs.days) cs.days[cd]++; } cs.people[r[2]] = 1; } }
+        var cc = chOf(r); if (cc) { var cs = chBucket(cc); if (ms < start) cs.prev[r[3]] = 1; else { if (!cs.ses[r[3]]) { cs.ses[r[3]] = 1; var cd = dk(ms); if (cd in cs.days) cs.days[cd]++; } cs.people[r[2]] = 1; } }
       }
       if (!visitOk(r)) return;
       if (ms < start) { if (ms >= prevStart && type === 'pageview') { V.prevPv++; if (vid) V.prevUniq[vid] = 1; } return; }
@@ -251,10 +257,10 @@
     var uniq = Object.keys(V.uniq).length, sesN = Object.keys(V.ses).length;
     var emTs = {}; RAW.email.forEach(function (r) { if (r[1] && (!F.ts || D(r[3]) === F.ts)) bump(emTs, D(r[3]) || 'Unknown'); });
     var chOut = {};                                                                               // v10: channels and readers
-    CH.forEach(function (c) {
-      var cs = CHS[c[0]], sids = Object.keys(cs.ses), secs = 0, paid = 0, subs = 0;
+    Object.keys(CHS).forEach(function (ck) {
+      var cs = CHS[ck], sids = Object.keys(cs.ses), secs = 0, paid = 0, subs = 0;
       sids.forEach(function (x) { var q = SX[x]; secs += sesTime(q); if (q && q.paid) paid++; if (q && q.sub) subs++; });
-      chOut[c[0]] = { ses: sids.length, prev: Object.keys(cs.prev).length, people: Object.keys(cs.people).length, secs: secs, paid: paid, subs: subs, days: days.map(function (x) { return cs.days[x]; }) };
+      chOut[ck] = { ses: sids.length, prev: Object.keys(cs.prev).length, people: Object.keys(cs.people).length, secs: secs, paid: paid, subs: subs, days: days.map(function (x) { return cs.days[x]; }) };
     });
     var readers = Object.keys(RD_P).map(function (k) {
       var p = RD_P[k], j = RAW._j[k] || { ses: [], subs: [] }, sids = Object.keys(p.ses), secs = 0, types = {};
@@ -517,26 +523,50 @@
     var len = F.period === 'today' ? 1 : F.period === 'all' ? RAW.days : (Number(F.period) || 30);
     return { start: istMidnight(now) - (len - 1) * DAY, end: now, len: len };
   }
-  // The five channels shown as cards. Instagram and Facebook include Meta ads (counted separately as "from ads").
-  var CH = [['instagram', 'Instagram', 'camera', '#a689f5', '#6b46d6'], ['google', 'Google Search', 'search', '#93a986', '#62785a'],
-    ['facebook', 'Facebook', 'people', '#5fc6ba', '#2a8a80'], ['pinterest', 'Pinterest', 'pin', '#ffdb6e', '#ffb21a'], ['linkedin', 'LinkedIn', 'briefcase', '#78a3ea', '#3d68c2']];
-  // v14: use the actual monochrome brand marks from /assets/icons/brand/ for social channel cards.
-  var GLYPH = {"camera": "<path fill=\"currentColor\" stroke=\"none\" d=\"M9.1 4.3h5.8a1.3 1.3 0 0 1 1.1.6L17.3 7H6.7l1.3-2.1a1.3 1.3 0 0 1 1.1-.6z\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M6.5 6.6h11a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-11a4 4 0 0 1 -4 -4v-6a4 4 0 0 1 4 -4zM7.5 13.6a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0zM9.4 13.6a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0zM16.95 10.1a1.05 1.05 0 1 0 2.1 0a1.05 1.05 0 1 0 -2.1 0z\"/>", "search": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.4\" d=\"M4 10.6a6.6 6.6 0 1 0 13.2 0a6.6 6.6 0 1 0 -13.2 0z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.8\" d=\"M15.6 15.6 20.6 20.6\"/>", "people": "<path fill=\"currentColor\" stroke=\"none\" d=\"M5.4 8a3.6 3.6 0 1 0 7.2 0a3.6 3.6 0 1 0 -7.2 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M2.6 19.6c0-3.7 2.9-6.4 6.4-6.4s6.4 2.7 6.4 6.4a.9.9 0 0 1-.9.9H3.5a.9.9 0 0 1-.9-.9z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M14.1 8.9a2.8 2.8 0 1 0 5.6 0a2.8 2.8 0 1 0 -5.6 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M16.2 13.6c3 0 5.2 2.2 5.2 5.4a.9.9 0 0 1-.9.9h-3.3c0-2.5-.8-4.6-2.3-6.1.4-.1.8-.2 1.3-.2z\"/>", "pin": "<path fill=\"currentColor\" stroke=\"none\" d=\"M8.3 3.4h7.4a1.1 1.1 0 0 1 .9 1.7l-1.5 2.4v3.2l3 2.9a1.1 1.1 0 0 1-.8 1.9H6.7a1.1 1.1 0 0 1-.8-1.9l3-2.9V7.5L7.4 5.1a1.1 1.1 0 0 1 .9-1.7z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M12 15.6v5.4\"/>", "briefcase": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.1\" d=\"M8.9 6.9V5.6a1.8 1.8 0 0 1 1.8-1.8h2.6a1.8 1.8 0 0 1 1.8 1.8v1.3\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M5.7 6.8h12.6a3.2 3.2 0 0 1 3.2 3.2v7.2a3.2 3.2 0 0 1 -3.2 3.2h-12.6a3.2 3.2 0 0 1 -3.2 -3.2v-7.2a3.2 3.2 0 0 1 3.2 -3.2zM2.5 11.9h19v1.5h-19z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M11.1 10.9h1.8a0.9 0.9 0 0 1 0.9 0.9v1.7a0.9 0.9 0 0 1 -0.9 0.9h-1.8a0.9 0.9 0 0 1 -0.9 -0.9v-1.7a0.9 0.9 0 0 1 0.9 -0.9z\"/>"};
-  var BRANDS = ['instagram', 'facebook', 'pinterest', 'linkedin']; // Google Search intentionally remains a search glyph.
-  function chTile(c) {
-    var face = BRANDS.indexOf(c[0]) > -1 ? '<i class="ad-bm" style="--bm:url(/assets/icons/brand/' + c[0] + '.svg)"></i>' : '<svg class="nx-f" viewBox="0 0 24 24">' + GLYPH[c[2]] + '</svg>';
-    return '<span class="ad-app ad-app--' + c[0] + '" aria-hidden="true">' + face + '</span>';   // v11.1: flat tile, colours in index.html
+  // v16: a card for every channel that sends visits. Instagram, Google Search (organic), Facebook, WhatsApp, Pinterest and
+  // LinkedIn always show; any other source (YouTube, X, Telegram, ChatGPT, Gmail, a website…) gets its own card as soon as
+  // it sends a visit, so channels you start using later appear by themselves. Instagram and Facebook include Meta ads.
+  var GLYPH = {"camera": "<path fill=\"currentColor\" stroke=\"none\" d=\"M9.1 4.3h5.8a1.3 1.3 0 0 1 1.1.6L17.3 7H6.7l1.3-2.1a1.3 1.3 0 0 1 1.1-.6z\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M6.5 6.6h11a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-11a4 4 0 0 1 -4 -4v-6a4 4 0 0 1 4 -4zM7.5 13.6a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0zM9.4 13.6a2.6 2.6 0 1 0 5.2 0a2.6 2.6 0 1 0 -5.2 0zM16.95 10.1a1.05 1.05 0 1 0 2.1 0a1.05 1.05 0 1 0 -2.1 0z\"/>", "search": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M4 10.6a6.6 6.6 0 1 0 13.2 0a6.6 6.6 0 1 0 -13.2 0z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.6\" d=\"M15.6 15.6 20.6 20.6\"/>", "people": "<path fill=\"currentColor\" stroke=\"none\" d=\"M5.4 8a3.6 3.6 0 1 0 7.2 0a3.6 3.6 0 1 0 -7.2 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M2.6 19.6c0-3.7 2.9-6.4 6.4-6.4s6.4 2.7 6.4 6.4a.9.9 0 0 1-.9.9H3.5a.9.9 0 0 1-.9-.9z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M14.1 8.9a2.8 2.8 0 1 0 5.6 0a2.8 2.8 0 1 0 -5.6 0z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M16.2 13.6c3 0 5.2 2.2 5.2 5.4a.9.9 0 0 1-.9.9h-3.3c0-2.5-.8-4.6-2.3-6.1.4-.1.8-.2 1.3-.2z\"/>", "pin": "<path fill=\"currentColor\" stroke=\"none\" d=\"M8.3 3.4h7.4a1.1 1.1 0 0 1 .9 1.7l-1.5 2.4v3.2l3 2.9a1.1 1.1 0 0 1-.8 1.9H6.7a1.1 1.1 0 0 1-.8-1.9l3-2.9V7.5L7.4 5.1a1.1 1.1 0 0 1 .9-1.7z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M12 15.6v5.4\"/>", "briefcase": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M8.9 6.9V5.6a1.8 1.8 0 0 1 1.8-1.8h2.6a1.8 1.8 0 0 1 1.8 1.8v1.3\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M5.7 6.8h12.6a3.2 3.2 0 0 1 3.2 3.2v7.2a3.2 3.2 0 0 1 -3.2 3.2h-12.6a3.2 3.2 0 0 1 -3.2 -3.2v-7.2a3.2 3.2 0 0 1 3.2 -3.2zM2.5 11.9h19v1.5h-19z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M11.1 10.9h1.8a0.9 0.9 0 0 1 0.9 0.9v1.7a0.9 0.9 0 0 1 -0.9 0.9h-1.8a0.9 0.9 0 0 1 -0.9 -0.9v-1.7a0.9 0.9 0 0 1 0.9 -0.9z\"/>", "chat": "<path fill=\"currentColor\" stroke=\"none\" d=\"M5.4 16.3 3.7 20.9a.5.5 0 0 0 .66.63l4.9-1.85z\"/><path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M3 11.6a9 9 0 1 0 18 0a9 9 0 1 0 -18 0zM6.8 11.6a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0zM10.7 11.6a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0zM14.6 11.6a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0z\"/>", "play": "<path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M2.4 12a9.6 9.6 0 1 0 19.2 0a9.6 9.6 0 1 0 -19.2 0zM10 8.4v7.2c0 .5.5.8.9.55l5.8-3.6a.65.65 0 0 0 0-1.1l-5.8-3.6c-.4-.25-.9.05-.9.55z\"/>", "at": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M8.3 12a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0 -7.4 0zM15.7 12v1.4a2.7 2.7 0 0 0 5.4 0V12a9.1 9.1 0 1 0-3.6 7.3\"/>", "bubbles": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M12.2 3.3h6a3.2 3.2 0 0 1 3.2 3.2v3a3.2 3.2 0 0 1 -3.2 3.2h-6a3.2 3.2 0 0 1 -3.2 -3.2v-3a3.2 3.2 0 0 1 3.2 -3.2zM18.6 12.7v2.6l-2.8-2.6\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M5.9 8h6a3.3 3.3 0 0 1 3.3 3.3v3a3.3 3.3 0 0 1 -3.3 3.3h-6a3.3 3.3 0 0 1 -3.3 -3.3v-3a3.3 3.3 0 0 1 3.3 -3.3z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M5 17.2v3.6a.5.5 0 0 0 .85.36l3.9-3.96z\"/>", "plane": "<path fill=\"currentColor\" stroke=\"none\" d=\"M2.9 10.9 20.3 3.7c.7-.3 1.4.4 1.1 1.1l-6.9 16.9c-.3.8-1.4.7-1.6-.1l-1.8-6.3-6.4-2.1c-.8-.3-.9-1.4-.1-1.7z\"/>", "mail": "<path fill=\"currentColor\" stroke=\"none\" fill-rule=\"evenodd\" d=\"M5.7 4.8h12.6a3.2 3.2 0 0 1 3.2 3.2v8.2a3.2 3.2 0 0 1 -3.2 3.2h-12.6a3.2 3.2 0 0 1 -3.2 -3.2v-8.2a3.2 3.2 0 0 1 3.2 -3.2zM5 7.6 12 12.4l7-4.8v2.6L12 15l-7-4.8z\"/>", "bell": "<path fill=\"currentColor\" stroke=\"none\" d=\"M12 2.8c-3.4 0-6.1 2.7-6.1 6.2v4.2l-1.7 2.6c-.4.7.1 1.6.9 1.6h13.8c.8 0 1.3-.9.9-1.6l-1.7-2.6V9c0-3.5-2.7-6.2-6.1-6.2z\"/><path fill=\"currentColor\" stroke=\"none\" d=\"M9.4 18.6h5.2a2.6 2.6 0 0 1-5.2 0z\"/>", "globe": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0zM3 12h18M12 3c2.6 2.4 3.9 5.4 3.9 9s-1.3 6.6-3.9 9c-2.6-2.4-3.9-5.4-3.9-9S9.4 5.4 12 3z\"/>", "sparkle": "<path fill=\"currentColor\" stroke=\"none\" d=\"M11 2.6c.5 4.2 2.8 6.6 7 7-4.2.5-6.5 2.8-7 7-.4-4.2-2.8-6.5-7-7 4.2-.4 6.6-2.8 7-7zM18.2 14.2c.2 1.8 1.2 2.8 3 3-1.8.2-2.8 1.2-3 3-.2-1.8-1.2-2.8-3-3 1.8-.2 2.8-1.2 3-3z\"/>", "link": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.3\" d=\"M10 14a4 4 0 0 0 5.7 0l3.2-3.2a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3.2 3.2a4 4 0 0 0 5.7 5.7l1-1\"/>", "feed": "<path fill=\"currentColor\" stroke=\"none\" d=\"M3.7 18a2.3 2.3 0 1 0 4.6 0a2.3 2.3 0 1 0 -4.6 0z\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2.5\" d=\"M4.2 11.2a8.6 8.6 0 0 1 8.6 8.6M4.2 4.6a15.2 15.2 0 0 1 15.2 15.2\"/>"};
+  var BRAND_FILES = ['instagram', 'facebook', 'pinterest', 'linkedin', 'whatsapp', 'youtube', 'x', 'threads', 'telegram'];
+  var CHREG = { instagram: ['Instagram', 'camera'], google: ['Google Search', 'search', 'organic'], facebook: ['Facebook', 'people'], whatsapp: ['WhatsApp', 'chat'],
+    pinterest: ['Pinterest', 'pin'], linkedin: ['LinkedIn', 'briefcase'], youtube: ['YouTube', 'play'], x: ['X (Twitter)', 'at'], threads: ['Threads', 'bubbles'],
+    telegram: ['Telegram', 'plane'], messenger: ['Messenger', 'chat'], meta: ['Facebook or Instagram', 'people', 'Meta click ID'], reddit: ['Reddit', 'globe'],
+    quora: ['Quora', 'globe'], snapchat: ['Snapchat', 'camera'], tiktok: ['TikTok', 'play'], sharechat: ['ShareChat', 'globe'], medium: ['Medium', 'globe'],
+    bing: ['Bing', 'search', 'organic'], duckduckgo: ['DuckDuckGo', 'search', 'organic'], yahoo: ['Yahoo', 'search', 'organic'],
+    'google-ads': ['Google Ads', 'search', 'paid'], 'microsoft-ads': ['Microsoft Ads', 'search', 'paid'],
+    chatgpt: ['ChatGPT', 'sparkle', 'AI answer'], perplexity: ['Perplexity', 'sparkle', 'AI answer'], gemini: ['Gemini', 'sparkle', 'AI answer'], claude: ['Claude', 'sparkle', 'AI answer'],
+    copilot: ['Copilot', 'sparkle', 'AI answer'], deepseek: ['DeepSeek', 'sparkle', 'AI answer'], grok: ['Grok', 'sparkle', 'AI answer'],
+    gmail: ['Gmail', 'mail'], outlook: ['Outlook', 'mail'], newsletter: ['Email newsletter', 'mail'], email: ['Email', 'mail'], push: ['Notifications', 'bell', 'browser'] };
+  var CH_PINNED = ['instagram', 'google', 'facebook', 'whatsapp', 'pinterest', 'linkedin'];
+  var CH_RULES = [[/^instagram/, 'instagram'], [/^facebook/, 'facebook'], [/^messenger/, 'messenger'], [/^whatsapp|^wa$/, 'whatsapp'], [/^threads/, 'threads'],
+    [/^linkedin/, 'linkedin'], [/^pinterest/, 'pinterest'], [/^youtube/, 'youtube'], [/^x \(twitter\)|^x app|^twitter|^x$/, 'x'], [/^telegram/, 'telegram'],
+    [/^reddit/, 'reddit'], [/^quora/, 'quora'], [/^snapchat/, 'snapchat'], [/^tiktok/, 'tiktok'], [/^sharechat/, 'sharechat'], [/^medium/, 'medium'],
+    [/^google app|^google search|^google$/, 'google'], [/^bing/, 'bing'], [/^duckduckgo/, 'duckduckgo'], [/^yahoo/, 'yahoo'],
+    [/^chatgpt/, 'chatgpt'], [/^perplexity/, 'perplexity'], [/^gemini/, 'gemini'], [/^claude/, 'claude'], [/^copilot/, 'copilot'], [/^deepseek/, 'deepseek'], [/^grok/, 'grok'],
+    [/^gmail/, 'gmail'], [/^outlook/, 'outlook'], [/^email newsletter/, 'newsletter'], [/^browser notification/, 'push']];
+  var CH_NAMES = {};                                                     // names of sources that aren't in the list above
+  function chSlug(x) { return String(x || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/[^a-z0-9.]+/g, '-').replace(/^-|-$/g, '').slice(0, 40); }
+  function chInfo(k) {
+    if (CHREG[k]) return { key: k, name: CHREG[k][0], glyph: CHREG[k][1], note: CHREG[k][2] || '' };
+    return { key: k, name: CH_NAMES[k] || k.replace(/^(site|src):/, ''), glyph: 'globe', note: /^site:/.test(k) ? 'website' : '' };
   }
+  function chTile(k) {
+    var c = chInfo(k), face = BRAND_FILES.indexOf(k) > -1 ? '<i class="ad-bm" style="--bm:url(/assets/icons/brand/' + k + '.svg)"></i>' : '<svg class="nx-f" viewBox="0 0 24 24">' + (GLYPH[c.glyph] || GLYPH.globe) + '</svg>';
+    return '<span class="ad-app ad-app--' + k.replace(/[^a-z0-9-]/g, '') + '" aria-hidden="true">' + face + '</span>';   // flat glyph, colours in index.html
+  }
+  function chRule(x) { x = String(x || '').toLowerCase().trim(); for (var i = 0; i < CH_RULES.length; i++) if (CH_RULES[i][0].test(x)) return CH_RULES[i][1]; return ''; }
+  function chOther(name) { var k = (/\./.test(name) ? 'site:' : 'src:') + chSlug(name); if (k.length > 5) CH_NAMES[k] = name; return k.length > 5 ? k : ''; }
   function channelOf(tc, td, br) {
     td = String(td || ''); br = String(br || '');
-    var meta = /^Facebook or Instagram/.test(td);
-    if (/^Instagram/.test(td) || (meta && /^Instagram/.test(br))) return 'instagram';
-    if ((/^Facebook/.test(td) && !meta) || (meta && /^Facebook/.test(br))) return 'facebook';
-    if (/^Pinterest/.test(td)) return 'pinterest';
-    if (/^LinkedIn/.test(td)) return 'linkedin';
-    if (tc === 'Organic Search' && /^Google/.test(td)) return 'google';
-    return '';
+    if (!td || tc === 'Direct' || /^(Inside the site|Installed app|Tagged link)/.test(td)) return '';
+    var p = td.split(' · '), a = (p[0] || '').trim(), al = a.toLowerCase();
+    if (/^facebook or instagram/.test(al)) return /^Instagram/.test(br) ? 'instagram' : /^Facebook/.test(br) ? 'facebook' : 'meta';
+    if (tc === 'Paid Search') return /bing|microsoft/i.test(td) ? 'microsoft-ads' : 'google-ads';
+    if (al === 'ai answer') return chRule(p[1]) || chOther(p[1] || 'AI answer');
+    if (al === 'email') return chRule(p[1]) || 'email';
+    return chRule(a) || (a ? chOther(a) : '');
   }
+  function pinRank(k) { var i = CH_PINNED.indexOf(k); return i < 0 ? 99 : i; }
   // One pass over every row, once per load: visits (sessions) and readers (visitor IDs), across all the data.
   function indexRaw() {
     if (RAW._s) return;
@@ -579,21 +609,23 @@
     var box = $('chs'); if (!box) return;
     if (!m.ch) { box.innerHTML = '<p class="ad-empty">Shows up with Code-Blog.gs v5 or later.</p>'; return; }
     var tot = m.tsTotal || 0;
-    box.innerHTML = CH.map(function (c) {
-      var x = m.ch[c[0]], sel = F.ch === c[0], n = x.ses, prev = x.prev, delta = '';
+    var keys = Object.keys(m.ch).filter(function (k) { var x = m.ch[k]; return pinRank(k) < 99 || x.ses || x.prev || k === F.ch; });
+    keys.sort(function (a, b) { return (m.ch[b].ses - m.ch[a].ses) || (m.ch[b].prev - m.ch[a].prev) || (pinRank(a) - pinRank(b)) || (a < b ? -1 : 1); });
+    box.innerHTML = keys.map(function (k) {
+      var c = chInfo(k), x = m.ch[k], sel = F.ch === k, n = x.ses, prev = x.prev, delta = '';
       if (F.period !== 'all' && prev) { var p = Math.round((n - prev) / prev * 100); delta = '<em class="' + (p >= 0 ? 'up' : 'down') + '">' + (p >= 0 ? '▲' : '▼') + Math.abs(p) + '%</em>'; }
       else if (F.period !== 'all' && n) delta = '<em class="up">new</em>';
-      var max = Math.max(1, Math.max.apply(null, x.days)), w = 120, h = 26, k = x.days.length;
-      var pts = x.days.map(function (v, i) { return (k > 1 ? i * w / (k - 1) : w / 2).toFixed(1) + ',' + (h - 2 - v / max * (h - 4)).toFixed(1); }).join(' ');
-      return '<button type="button" class="ad-chc' + (sel ? ' sel' : '') + '" data-ch="' + c[0] + '" aria-pressed="' + sel + '" title="' + (sel ? 'Clear this filter' : 'Show only visits from ' + c[1]) + '">' +
-        '<span class="ad-chc-top">' + chTile(c) + '<span class="ad-chc-name">' + c[1] + (c[0] === 'google' ? ' <small>organic</small>' : '') + '</span></span>' +
+      var max = Math.max(1, Math.max.apply(null, x.days)), w = 120, h = 26, len = x.days.length;
+      var pts = x.days.map(function (v, i) { return (len > 1 ? i * w / (len - 1) : w / 2).toFixed(1) + ',' + (h - 2 - v / max * (h - 4)).toFixed(1); }).join(' ');
+      return '<button type="button" class="ad-chc' + (sel ? ' sel' : '') + '" data-ch="' + esc(k) + '" aria-pressed="' + sel + '" title="' + (sel ? 'Clear this filter' : 'Show only visits from ' + esc(c.name)) + '">' +
+        '<span class="ad-chc-top">' + chTile(k) + '<span class="ad-chc-name">' + esc(c.name) + (c.note ? ' <small>' + esc(c.note) + '</small>' : '') + '</span></span>' +
         '<b>' + num(n) + '</b><span class="ad-chc-sub">visits' + delta + '</span>' +
         '<svg class="ad-spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '"/></svg>' +
         '<span class="ad-chc-meta">' + num(x.people) + ' people · ' + (tot ? Math.round(n / tot * 100) : 0) + '% of visits<br>' +
         (n ? dur(x.secs / n) + ' a visit' : 'no visits yet') + (x.paid ? ' · ' + num(x.paid) + ' from ads' : '') + (x.subs ? ' · ' + num(x.subs) + ' subscribed' : '') + '</span></button>';
     }).join('');
-    $('chSub').textContent = F.ch ? 'Showing only visits from ' + CH.filter(function (c) { return c[0] === F.ch; })[0][1] + '. Tap it again to see everything.'
-      : 'Visits that arrived from each channel in this view, against the same length of time before it. Tap one to filter the whole dashboard.';
+    $('chSub').textContent = F.ch ? 'Showing only visits from ' + chInfo(F.ch).name + '. Tap it again to see everything.'
+      : 'Visits from each channel in this view, against the same length of time before it. A new channel gets its own card as soon as it sends a visit. Tap one to filter the whole dashboard.';
   }
 
   var RD = { mode: 'returning', q: '' };
@@ -948,7 +980,7 @@
       var keep = $('postPick').value; POST = r;
       $('postPick').innerHTML = r.posts.map(function (p, i) { return '<option value="' + esc(p.slug) + '">' + (i ? '' : 'Latest: ') + esc(p.title.length > 70 ? p.title.slice(0, 68) + '…' : p.title) + ' (' + esc(p.date) + ')</option>'; }).join('');
       $('postPick').hidden = r.posts.length < 2; if (keep && postAt(keep)) $('postPick').value = keep;
-      drawPost();
+      drawPost(); drawSched(); paintWhen();
     }).catch(function () { $('postSub').textContent = 'The backend didn’t answer.'; });
   }
   $('postPick').addEventListener('change', drawPost);
@@ -960,13 +992,72 @@
     api({ op: 'post_test', slug: p.slug }).then(function (r) { st.textContent = r.ok ? 'Test sent to ' + r.to + '. Check your inbox (and Promotions).' : r.error || 'That didn’t work.'; })
       .catch(function () { st.textContent = 'The backend didn’t answer. Try again.'; });
   });
+  /* v17: send now, or later at a date and time (India). Needs Code-Blog.gs v12 (older backends would send at once). */
+  var WHEN = 'now';
+  function istDay(ms) { return new Date(ms + IST).toISOString().slice(0, 10); }
+  function istHM(ms) { return new Date(ms + IST).toISOString().slice(11, 16); }
+  function atMs() { var d = $('postDate').value, t = $('postTime').value; return /^\d{4}-\d{2}-\d{2}$/.test(d) && /^\d{2}:\d{2}/.test(t) ? Date.parse(d + 'T' + t.slice(0, 5) + ':00+05:30') : NaN; }
+  function canSchedule() { return !!POST && Number(String(POST.version || 'v0').replace(/\D/g, '')) >= 12; }
+  function whenNote() {
+    var n = $('postWhenNote'); if (!n) return;
+    if (WHEN !== 'later') { n.textContent = canSchedule() ? '' : 'Sending later needs Code-Blog.gs v12.'; return; }
+    var ms = atMs();
+    n.textContent = isNaN(ms) ? 'Pick a date and a time.' : ms < Date.now() + 60000 ? 'That time has passed: pick a later one, or choose Now.'
+      : 'Goes out within 5 minutes of ' + new Date(ms).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) + ' India time.';
+  }
+  function setWhen(w) {
+    if (w === 'later' && !canSchedule()) w = 'now';
+    WHEN = w;
+    Array.prototype.forEach.call(document.querySelectorAll('#postWhen [data-when]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-when') === w)); });
+    $('postAt').hidden = w !== 'later';
+    $('postDate').min = istDay(Date.now());
+    if (w === 'later' && (!$('postDate').value || isNaN(atMs()) || atMs() < Date.now())) {
+      var t = Math.ceil((Date.now() + 60 * 6e4) / (15 * 6e4)) * 15 * 6e4;                // an hour from now, on the quarter hour
+      $('postDate').value = istDay(t); $('postTime').value = istHM(t);
+    }
+    $('postGo').textContent = w === 'later' ? 'Schedule' : 'Send';
+    whenNote();
+  }
+  function paintWhen() {
+    var later = document.querySelector('#postWhen [data-when="later"]'); if (!later) return;
+    later.disabled = !canSchedule(); later.title = canSchedule() ? '' : 'Paste Code-Blog.gs v12 into Apps Script and deploy a new version to send later.';
+    setWhen(WHEN);
+  }
+  function drawSched() {
+    var box = $('postSched'); if (!box || !POST) return;
+    var p = postAt($('postPick').value) || POST.posts[0], slug = p && p.slug;
+    var ch = function (j) { return [j.mail ? 'email' : '', j.push ? 'notification' : ''].filter(Boolean).join(' + '); };
+    var wait = (POST.scheduled || []).filter(function (j) { return j.slug === slug; }), done = (POST.schedLog || []).filter(function (j) { return j.slug === slug; }).slice(0, 2);
+    box.innerHTML = wait.map(function (j) {
+      return '<li><span><b>Scheduled:</b> ' + esc(j.label) + ' India time · ' + esc(ch(j)) + '</span><button class="ad-link" type="button" data-cancel="' + esc(j.id) + '">Cancel</button></li>';
+    }).join('') + done.map(function (j) { return '<li class="done"><span>' + (j.ok ? 'Sent' : 'Didn’t go out') + ' at ' + esc(j.label) + ': ' + esc(j.note || '') + '</span></li>'; }).join('');
+    box.hidden = !box.innerHTML;
+  }
+  $('postWhen').addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-when]'); if (b && !b.disabled) setWhen(b.getAttribute('data-when')); });
+  ['postDate', 'postTime'].forEach(function (id) { $(id).addEventListener('input', whenNote); $(id).addEventListener('change', whenNote); });
+  $('postPick').addEventListener('change', drawSched);
+  $('postSched').addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-cancel]'); if (!b) return;
+    b.disabled = true; $('postStatus').textContent = 'Cancelling…';
+    api({ op: 'post_cancel', id: b.getAttribute('data-cancel') }).then(function (r) { $('postStatus').textContent = r.ok ? 'Cancelled. Nothing will go out for that time.' : r.error || 'That didn’t work.'; loadPost(); })
+      .catch(function () { b.disabled = false; $('postStatus').textContent = 'The backend didn’t answer. Try again.'; });
+  });
+
   $('postGo').addEventListener('click', function () {
     var p = postAt($('postPick').value) || POST.posts[0], st = $('postStatus'), em = $('postMail').checked, pu = $('postPush').checked;
     var who = [em ? 'email subscribers who haven’t had it' : '', pu ? num(POST.followers) + ' blog followers (notification)' : ''].filter(Boolean).join(' and ');
-    if (!confirm('Send “' + p.title + '” to ' + who + '?')) return;
-    $('postGo').disabled = true; st.textContent = 'Sending…';
-    api({ op: 'post_send', slug: p.slug, ch_email: em ? '1' : '0', ch_push: pu ? '1' : '0', force: forcePush ? '1' : '' }).then(function (r) {
+    var later = WHEN === 'later', ms = atMs(), params = { op: 'post_send', slug: p.slug, ch_email: em ? '1' : '0', ch_push: pu ? '1' : '0', force: forcePush ? '1' : '' };
+    if (later) {
+      if (!canSchedule()) { st.textContent = 'Sending later needs Code-Blog.gs v12 in Apps Script.'; return; }
+      if (isNaN(ms) || ms < Date.now() + 60000) { st.textContent = 'Pick a date and time in the future, or choose Now.'; return; }
+      params.at = $('postDate').value + 'T' + $('postTime').value.slice(0, 5);
+      var lbl = new Date(ms).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+      if (!confirm('Send “' + p.title + '” to ' + who + ' on ' + lbl + ' India time?')) return;
+    } else if (!confirm('Send “' + p.title + '” to ' + who + ' now?')) return;
+    $('postGo').disabled = true; st.textContent = later ? 'Scheduling…' : 'Sending…';
+    api(params).then(function (r) {
       if (!r.ok) { st.textContent = r.error || 'That didn’t work.'; return; }
+      if (r.scheduled) { st.textContent = 'Scheduled for ' + r.scheduled.label + ' India time. You can cancel it here until then.'; forcePush = false; setWhen('now'); loadPost(); return; }
       var bits = [];
       if (em) bits.push(r.id ? (r.waiting ? 'Sent ' + num(r.sent) + ' emails; ' + num(r.waiting) + ' more go out automatically.' : 'Sent ' + num(r.sent || 0) + ' emails.') : (r.mailNote || ''));
       if (pu) bits.push(r.pushError ? 'Notification: ' + r.pushError : r.pushNote || 'Notification queued on GitHub.');
@@ -977,7 +1068,7 @@
   });
 
   $('refresh').addEventListener('click', function () { load(true); });
-  $('signout').addEventListener('click', function () { clearKey(); KEY = ''; clearTimeout(liveTimer); show('login'); });
+  $('signout').addEventListener('click', function () { clearKey(); KEY = ''; clearTimeout(liveTimer); show('login'); loginMode(); });
   $('loginForm').addEventListener('submit', function (e) {
     e.preventDefault(); KEY = $('key').value.trim(); $('loginStatus').textContent = 'Checking…';
     api({ op: 'stats' }).then(function (d) {
@@ -986,10 +1077,222 @@
     }).catch(function () { $('loginStatus').textContent = 'The backend didn’t answer. Check BACKEND_URL and the deployment.'; });
   });
 
+  /* ---------------- v16: share links that land on the right channel card ---------------- */
+  var LM_CH = [['whatsapp', 'status', 'WhatsApp Status'], ['whatsapp', 'chat', 'WhatsApp chat or group'], ['instagram', 'story', 'Instagram story'],
+    ['instagram', 'bio', 'Instagram bio'], ['linkedin', 'social', 'LinkedIn'], ['facebook', 'social', 'Facebook'], ['pinterest', 'social', 'Pinterest'],
+    ['youtube', 'social', 'YouTube'], ['x', 'social', 'X'], ['telegram', 'social', 'Telegram'], ['email', 'email', 'Email']];
+  var LM = { ch: 0 };
+  function lmOpt(p) { return '<option value="' + esc(p[0]) + '">' + esc(p[1]) + '</option>'; }
+  function lmUrl() {
+    var raw = ($('lmUrl').value || '').trim() || $('lmPage').value || 'https://labsnmx.com/', u;
+    try { u = new URL(raw, 'https://labsnmx.com/'); } catch (e) { return ''; }
+    if (!/(^|\.)labsnmx\.com$/.test(u.hostname)) return '';
+    var c = LM_CH[LM.ch], slug = u.pathname.split('/').filter(Boolean).pop() || 'home';
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) { u.searchParams.delete(k); });
+    u.searchParams.set('utm_source', c[0]); u.searchParams.set('utm_medium', c[1]); u.searchParams.set('utm_campaign', slug.replace(/\.html?$/, '').slice(0, 60));
+    return u.href;
+  }
+  function lmPaint() {
+    var v = lmUrl(), title = $('lmUrl').value.trim() ? '' : (($('lmPage').selectedOptions || [])[0] || {}).text || '';
+    $('lmOut').value = v; $('lmSt').textContent = v ? '' : 'Use an address on labsnmx.com.';
+    $('lmWa').hidden = LM_CH[LM.ch][0] !== 'whatsapp' || !v;
+    $('lmWa').href = 'https://wa.me/?text=' + encodeURIComponent((title && !/^(Home page|Blog|News)$/.test(title) ? title + '\n' : '') + v);
+    Array.prototype.forEach.call($('lmCh').children, function (b, i) { b.setAttribute('aria-pressed', String(i === LM.ch)); });
+  }
+  function lmInit() {
+    if (!$('lmCh')) return;
+    var base = [['https://labsnmx.com/', 'Home page'], ['https://labsnmx.com/blog/', 'Blog'], ['https://labsnmx.com/news/', 'News']];
+    $('lmCh').innerHTML = LM_CH.map(function (c, i) { return '<button type="button" data-lm="' + i + '" aria-pressed="false">' + esc(c[2]) + '</button>'; }).join('');
+    $('lmPage').innerHTML = base.map(lmOpt).join('');
+    fetch('/blog/posts.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      var ps = (j.posts || []).filter(function (p) { return p.url && p.title; }).slice(0, 40); if (!ps.length) return;
+      $('lmPage').innerHTML = '<optgroup label="Latest posts">' + ps.map(function (p) { return lmOpt([p.url, p.title]); }).join('') + '</optgroup><optgroup label="Pages">' + base.map(lmOpt).join('') + '</optgroup>';
+      lmPaint();
+    }).catch(function () {});
+    $('lmCh').addEventListener('click', function (e) { var b = e.target.closest('[data-lm]'); if (!b) return; LM.ch = Number(b.getAttribute('data-lm')); lmPaint(); });
+    $('lmPage').addEventListener('change', function () { $('lmUrl').value = ''; lmPaint(); });
+    $('lmUrl').addEventListener('input', lmPaint);
+    $('lmCopy').addEventListener('click', function () {
+      var v = $('lmOut').value; if (!v) return;
+      (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () { $('lmSt').textContent = 'Copied. Paste it into your ' + LM_CH[LM.ch][2] + '.'; },
+        function () { $('lmOut').select(); $('lmSt').textContent = 'Selected. Copy it from the box.'; });
+    });
+    lmPaint();
+  }
+
+  /* ---------------- v16: user ID + password ---------------- */
+  // The password never leaves this browser. It unlocks an encrypted copy of your admin key (AES-256-GCM, key derived with
+  // PBKDF2-SHA-256 x 600,000 from your user ID + password). The copy lives on this device and, if you upload it, in
+  // /dashboard/access.json so your other devices can use it. The backend still checks the admin key on every request.
+  var VAULT_LS = 'nmx-dash-vault', VAULTS = [], PW_FAILS = 0, LAST_VAULT = null;
+  function b64e(buf) { var x = '', a = new Uint8Array(buf); for (var i = 0; i < a.length; i++) x += String.fromCharCode(a[i]); return btoa(x); }
+  function b64d(t) { var x = atob(t), a = new Uint8Array(x.length); for (var i = 0; i < x.length; i++) a[i] = x.charCodeAt(i); return a; }
+  function vaultKey(id, pw, salt, iter) {
+    return crypto.subtle.importKey('raw', new TextEncoder().encode(String(id).trim().toLowerCase() + '\n' + pw), 'PBKDF2', false, ['deriveKey']).then(function (base) {
+      return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function makeVault(id, pw, key) {
+    var salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 600000;
+    return vaultKey(id, pw, salt, iter).then(function (k) {
+      return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, k, new TextEncoder().encode(JSON.stringify({ k: key, u: String(id).trim(), at: new Date().toISOString() })));
+    }).then(function (ct) { return { v: 1, kdf: 'PBKDF2-SHA256', iter: iter, salt: b64e(salt), iv: b64e(iv), ct: b64e(ct), made: new Date().toISOString().slice(0, 10) }; });
+  }
+  function openVault(v, id, pw) {
+    return vaultKey(id, pw, b64d(v.salt), v.iter || 600000).then(function (k) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(v.iv) }, k, b64d(v.ct)); })
+      .then(function (pt) { return JSON.parse(new TextDecoder().decode(pt)); });
+  }
+  function validVault(v) { return !!(v && v.v === 1 && v.salt && v.iv && v.ct); }
+  function localVault() { try { var v = JSON.parse(localStorage.getItem(VAULT_LS) || 'null'); return validVault(v) ? v : null; } catch (e) { return null; } }
+  function loadVaults() {
+    VAULTS = []; var lv = localVault(); if (lv) VAULTS.push({ v: lv, where: 'this device' });
+    return fetch('/dashboard/access.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      .then(function (sv) { if (validVault(sv) && !(lv && lv.ct === sv.ct)) VAULTS.push({ v: sv, where: 'labsnmx.com' }); return VAULTS; });
+  }
+  var CRYPTO_OK = !!(window.crypto && crypto.subtle && window.TextEncoder);
+  function loginMode(forceKey) {
+    if (!CRYPTO_OK) return;
+    loadVaults().then(function () {
+      var pw = VAULTS.length > 0 && !forceKey;
+      $('pwForm').hidden = !pw; $('loginForm').hidden = pw; $('usePw').hidden = !VAULTS.length;
+      $('loginIntro').textContent = pw ? 'For the site owner. Sign in with your user ID and password.'
+        : 'For the site owner. Sign in with your admin key.' + (VAULTS.length ? '' : ' Once you’re in, you can set a user ID and password for next time.');
+      var u = localStorage.getItem('nmx-dash-user'); if (pw && u && !$('uid').value) $('uid').value = u;
+      setTimeout(function () { var f = pw ? ($('uid').value ? $('pwd') : $('uid')) : $('key'); if (f) f.focus(); }, 30);
+    });
+  }
+  $('useKey').addEventListener('click', function () { loginMode(true); });
+  $('usePw').addEventListener('click', function () { loginMode(false); });
+  $('pwForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var id = $('uid').value.trim(), pw = $('pwd').value, st = $('pwStatus'), btn = $('pwForm').querySelector('button[type="submit"]'), i = 0;
+    if (!id || !pw) { st.textContent = 'Enter your user ID and password.'; return; }
+    btn.disabled = true; st.textContent = 'Checking…';
+    (function next() {
+      if (i >= VAULTS.length) {
+        PW_FAILS++; st.textContent = 'That user ID and password don’t match.';
+        setTimeout(function () { btn.disabled = false; }, Math.min(10000, 700 * PW_FAILS)); return;
+      }
+      var vt = VAULTS[i++];
+      openVault(vt.v, id, pw).then(function (o) {
+        KEY = o.k;
+        return api({ op: 'stats' }).then(function (d) {
+          btn.disabled = false;
+          if (!d || !d.ok) { KEY = ''; st.textContent = 'Your password worked, but the admin key it unlocks was refused (' + ((d && d.error) || 'unknown') + '). Sign in with the admin key and save a new password.'; return; }
+          PW_FAILS = 0; setKey(KEY, $('pwRemember').checked); localStorage.setItem('nmx-dash-user', id);
+          $('pwd').value = ''; st.textContent = ''; show('dash'); load(false); paintPw();
+        });
+      }, next).catch(function () { btn.disabled = false; st.textContent = 'The backend didn’t answer. Check your connection and try again.'; });
+    })();
+  });
+  function paintPw() {
+    if (!$('pwState')) return;
+    if (!CRYPTO_OK) { $('pwState').textContent = 'This browser can’t do the encryption needed. Use the admin key here.'; $('pwSet').hidden = true; return; }
+    var lv = localVault(), u = localStorage.getItem('nmx-dash-user');
+    $('pwState').textContent = lv ? 'Set up on this device' + (u ? ' for “' + u + '”' : '') + '. Saving again replaces the old password.'
+      : 'Choose a user ID and password to use instead of the admin key. Use a password you don’t use anywhere else.';
+    if (u && !$('newUid').value) $('newUid').value = u;
+    $('pwShare').hidden = !lv; LAST_VAULT = lv;
+  }
+  $('pwSet').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var id = $('newUid').value.trim(), p1 = $('newPwd').value, p2 = $('newPwd2').value, st = $('pwSetSt');
+    if (!KEY) { st.textContent = 'Sign in first.'; return; }
+    if (id.length < 3) { st.textContent = 'Use at least 3 characters for the user ID.'; return; }
+    if (p1.length < 10) { st.textContent = 'Use at least 10 characters for the password.'; return; }
+    if (p1 !== p2) { st.textContent = 'The two passwords don’t match.'; return; }
+    if (p1.toLowerCase().indexOf(id.toLowerCase()) > -1) { st.textContent = 'Keep your user ID out of the password.'; return; }
+    st.textContent = 'Saving…';
+    makeVault(id, p1, KEY).then(function (v) {
+      localStorage.setItem(VAULT_LS, JSON.stringify(v)); localStorage.setItem('nmx-dash-user', id);
+      $('newPwd').value = ''; $('newPwd2').value = ''; st.textContent = 'Saved. Next time, sign in with “' + id + '” and your password.'; paintPw();
+    }).catch(function (er) { st.textContent = 'Couldn’t save: ' + (er && er.message || er); });
+  });
+  $('pwDl').addEventListener('click', function () {
+    var v = LAST_VAULT || localVault(); if (!v) return;
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(v, null, 1) + '\n'], { type: 'application/json' }));
+    a.download = 'access.json'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+  });
+
+  /* ---------------- v16: the dashboard as its own app on your phone ---------------- */
+  var UAS = navigator.userAgent || '', IOS = /iPhone|iPad|iPod/.test(UAS) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var STANDALONE = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var IOS_BR = /CriOS/.test(UAS) ? 'Chrome' : /FxiOS/.test(UAS) ? 'Firefox' : /EdgiOS/.test(UAS) ? 'Edge' : 'Safari';
+  var installEvt = null;
+  addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; paintApp(); });
+  addEventListener('appinstalled', function () { installEvt = null; paintApp(); });
+  function installNow() {
+    if (!installEvt) { var c = $('acct'); if (c) c.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
+    installEvt.prompt(); installEvt.userChoice.then(function () { installEvt = null; paintApp(); });
+  }
+  function paintApp() {
+    var st = $('appState'), steps = $('appSteps'); if (!st) return;
+    $('appInstall').hidden = !installEvt || STANDALONE; $('appTop').hidden = STANDALONE || !(installEvt || IOS);
+    if (STANDALONE) { st.textContent = 'You’re using the dashboard app. It keeps you signed in for 30 days if you ticked “Keep me signed in”.'; steps.innerHTML = ''; return; }
+    if (installEvt) { st.textContent = 'Add it as its own app with its own icon. It opens straight to this dashboard, separate from the website app.'; steps.innerHTML = ''; return; }
+    if (IOS) {
+      st.textContent = 'On iPhone or iPad, add it to your Home Screen from ' + IOS_BR + ' (any browser works):';
+      var share = IOS_BR === 'Chrome' ? 'Tap <b>Share</b> in the address bar.' : IOS_BR === 'Edge' ? 'Tap the <b>⋯</b> menu, then <b>Share</b>.' : IOS_BR === 'Firefox' ? 'Tap the <b>≡</b> menu, then <b>Share</b>.' : 'Tap <b>Share</b> (don’t see it? tap <b>⋯</b> first).';
+      steps.innerHTML = '<li>' + share + '</li><li>Tap <b>Add to Home Screen</b>, keep the name <b>Dashboard</b>, then <b>Add</b>.</li><li>Open <b>Dashboard</b> from your Home Screen and sign in once.</li>';
+      return;
+    }
+    st.textContent = 'Open labsnmx.com/dashboard/ in Chrome or Edge on your phone, then choose Install app (or Add to Home screen) from the browser menu.'; steps.innerHTML = '';
+  }
+  $('appInstall').addEventListener('click', installNow); $('appTop').addEventListener('click', installNow);
+
+  /* ---------------- v16: phone alerts (sent by .github/workflows/owner-alerts.yml) ---------------- */
+  var swReg = null;
+  function b64u(t) { var p = '='.repeat((4 - t.length % 4) % 4), raw = atob((t + p).replace(/-/g, '+').replace(/_/g, '/')), out = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i); return out; }
+  // Same service worker address as the rest of the site (assets/engage.js), so nothing changes for your readers.
+  function dashSW() {
+    if (!('serviceWorker' in navigator) || !window.isSecureContext) return Promise.reject(new Error('This browser can’t receive notifications here.'));
+    var url = '/sw.js' + (window.NMX_backendReady && window.NMX_backendReady() ? '?b=' + encodeURIComponent(CFG.BACKEND_URL) : '');
+    return navigator.serviceWorker.register(url, { scope: '/' }).then(function () { return navigator.serviceWorker.ready; });
+  }
+  function deviceName() { return IOS ? (/iPad/.test(UAS) || navigator.maxTouchPoints > 1 && !/iPhone/.test(UAS) ? 'iPad' : 'iPhone') : /Android/.test(UAS) ? 'Android phone' : /Windows/.test(UAS) ? 'Windows' : /Mac/.test(UAS) ? 'Mac' : 'device'; }
+  function codeFor(sub) {
+    var j = sub.toJSON(), k = j.keys || {};
+    return 'nmx1.' + btoa(JSON.stringify({ e: j.endpoint, p: k.p256dh, a: k.auth, d: deviceName() })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function showCode(sub) { $('alCode').value = codeFor(sub); $('alBox').hidden = false; $('alOn').textContent = 'Alerts are on for this phone'; }
+  function alertsInit() {
+    if (!$('alOn')) return;
+    if (localStorage.getItem('nmx-dash-alerts') === '1' && 'Notification' in window && Notification.permission === 'granted')
+      dashSW().then(function (reg) { swReg = reg; return reg.pushManager.getSubscription(); }).then(function (sub) { if (sub) showCode(sub); }).catch(function () {});
+  }
+  $('alOn').addEventListener('click', function () {
+    var st = $('alSt'), vapid = String(CFG.VAPID_PUBLIC_KEY || '').trim();
+    if (IOS && !STANDALONE) { st.textContent = 'On iPhone and iPad, alerts work in the dashboard app: add it to your Home Screen first (see the steps beside this), open it, and tap this button there.'; return; }
+    if (!('Notification' in window) || !('PushManager' in window)) { st.textContent = 'This browser can’t receive notifications. Use Chrome, Edge, Firefox or Samsung Internet, or the iPhone Home Screen app.'; return; }
+    if (!/^[A-Za-z0-9_-]{80,100}$/.test(vapid)) { st.textContent = 'The notification key isn’t set in /assets/nmx.js yet.'; return; }
+    st.textContent = 'Tap Allow when your browser asks…';
+    var ask = Notification.permission === 'granted' ? Promise.resolve('granted') : new Promise(function (res) { var r = Notification.requestPermission(res); if (r && r.then) r.then(res); });
+    ask.then(function (p) {
+      if (p !== 'granted') throw new Error(p === 'denied' ? 'Notifications are blocked for labsnmx.com on this device. Allow them in the browser’s site settings, then tap the button again.' : 'The permission prompt was closed. Tap the button again and choose Allow.');
+      return dashSW();
+    }).then(function (reg) {
+      swReg = reg;
+      return reg.pushManager.getSubscription().then(function (s) { return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(vapid) }); });
+    }).then(function (sub) {
+      localStorage.setItem('nmx-dash-alerts', '1'); showCode(sub);
+      st.textContent = 'Ready on this phone. Add the code to GitHub once (steps below) and alerts start within 30 minutes.';
+    }).catch(function (er) { st.textContent = (er && er.message) || String(er); });
+  });
+  $('alCopy').addEventListener('click', function () {
+    var v = $('alCode').value; (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () { $('alSt').textContent = 'Code copied.'; },
+      function () { $('alCode').select(); $('alSt').textContent = 'Selected. Copy it from the box.'; });
+  });
+  $('alTest').addEventListener('click', function () {
+    (swReg ? Promise.resolve(swReg) : dashSW()).then(function (reg) {
+      return reg.showNotification('New enquiry (test)', { body: 'This is how dashboard alerts look on this phone.', icon: '/dashboard/icons/icon-192.png', badge: '/assets/pwa/badge-96.png', tag: 'nmx-owner-test', data: { url: '/dashboard/' } });
+    }).then(function () { $('alSt').textContent = 'Test shown. If you didn’t see it, check that notifications for this browser or app are allowed in your phone’s settings.'; },
+      function (er) { $('alSt').textContent = 'Couldn’t show it: ' + ((er && er.message) || er); });
+  });
+
   window.addEventListener('load', function () {
     CFG = window.NMX_CFG || {};
     if (!window.NMX_backendReady || !window.NMX_backendReady()) { show('noBackend'); return; }
-    KEY = getKey(); preview();
-    if (KEY) { show('dash'); load(false); } else show('login');
+    KEY = getKey(); preview(); lmInit(); paintApp(); alertsInit(); paintPw();
+    if (KEY) { show('dash'); load(false); } else { show('login'); loginMode(); }
   });
 })();
