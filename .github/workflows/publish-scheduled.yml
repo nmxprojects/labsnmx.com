@@ -1,26 +1,25 @@
-# Publishes scheduled blog posts on their date and rebuilds every listing, the feed and the sitemaps.
-# Runs daily at 00:05 IST, whenever content/posts.json, _scheduled/ or the Learn lessons change, and on demand (Actions tab > Run workflow).
-# v5: the same run builds Learn and Play (scripts/build_learn.py) and adds Learn/Play links to every page's menu.
-# v6: also rebuilds the news page, the homepage wire and the "Latest in" bar (content/news.json), the short courses, llms.txt and llms-full.txt.
-# v8: also runs when content/videos.json changes (the Videos page), rewrites #services links to /services/ on every page
-#     and keeps every real page in sitemap.xml.
-# v9: also runs when content/youtube.json or scripts/build_v9.py change (bento blog, most read, regions, YouTube tiles,
-#     sitemap_index.xml, 404 page). It reads the counts-only "most read" list, so it needs internet access (GitHub has it).
-# v10: also runs when scripts/build_v10.py changes (LinkedIn and Pinterest links, Play arcade, Pinterest pins on the blog and
-#      home pages from the profile's public feed, blog/pinterest.xml for Pinterest's Auto-publish).
-# v7: also runs when content/home-carousel.json changes (homepage graphic slides), and warns in the run summary
-#     when a published post's page file is missing (the cause of 404s in Search Console).
+# Publishes scheduled blog posts and news stories at their date AND time (India), and rebuilds every listing, the feed
+# and the sitemaps. v17 (28 Nov 2026) replaces the once-a-night schedule, which ignored the time you picked.
+#
+# When it runs
+#  - The moment something is due: Code-Blog.gs v12 checks every 5 minutes and starts this workflow (workflow_dispatch).
+#  - Every 30 minutes as a safety net: first `python scripts/build.py --due` asks whether anything is due, so most runs
+#    stop after a few seconds and commit nothing.
+#  - Nightly at 00:05 IST (lessons, most read, Pinterest), on every upload of content or scripts, and by hand (Actions tab).
+# What "instant" means
+#  - A post or story with today's date and no time (Content Blog Creator: "Publish now") goes live with the upload's own run.
+#  - Right after it's live on labsnmx.com, the backend is told (action=announce), so the email and the browser
+#    notification start within minutes (emails between 9:00 and 21:00 India time), and news marked "instant push" get
+#    their own notification (scripts/push_news.py).
 #
 # One-time setup in GitHub: Settings > Actions > General > Workflow permissions > "Read and write permissions".
-# Hosting:
-#  - GitHub Pages, Netlify, Vercel or Cloudflare Pages connected to this repo: nothing else to do; the commit below redeploys.
-#  - Hostinger/cPanel or any FTP host: add repository secrets FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-#    (and optionally FTP_DIR, e.g. public_html/). The last step then uploads the changed files.
+# Secrets it uses if present: PUSH_API_URL + PUSH_API_KEY (already set for notifications), FTP_SERVER/USERNAME/PASSWORD/DIR.
 name: Publish scheduled posts
 
 on:
   schedule:
-    - cron: '35 18 * * *'        # 18:35 UTC = 00:05 IST
+    - cron: '35 18 * * *'          # 18:35 UTC = 00:05 IST, the nightly rebuild
+    - cron: '20,50 * * * *'        # every 30 minutes: anything whose date and time have come
   push:
     branches: [main, master]
     paths: ['content/posts.json', '_scheduled/**', 'content/lessons.json', 'content/learn/**', 'content/quiz-extra.json', 'content/courses.json', 'content/news.json', 'content/home-carousel.json', 'content/videos.json', 'content/youtube.json', 'scripts/build.py', 'scripts/build_v9.py', 'scripts/build_v10.py', 'scripts/build_learn.py', 'scripts/build_news.py']
@@ -28,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  actions: write                   # to start send-push.yml for instant news notifications
 
 concurrency:
   group: publish
@@ -36,35 +36,52 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      PUSH_API_URL: ${{ secrets.PUSH_API_URL }}
+      PUSH_API_KEY: ${{ secrets.PUSH_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}          # the branch as it is now (a queued run never works on an old copy)
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
+      - name: Anything due?
+        id: due
+        if: github.event_name == 'schedule'
+        run: python scripts/build.py --due
+
       - name: Check the schedule (max 2 posts a day, files present)
+        if: steps.due.outputs.due != 'false'
         run: python scripts/build.py --check
 
-      - name: Publish posts due today and rebuild listings
+      - name: Publish what's due and rebuild listings
+        id: build
+        if: steps.due.outputs.due != 'false'
         run: python scripts/build.py
 
       - name: Commit and push changes
+        id: commit
+        if: steps.due.outputs.due != 'false'
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "nmx-publisher"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
-            git commit -m "Publish scheduled posts ($(TZ=Asia/Kolkata date +%F))"
+            git commit -m "Publish scheduled posts ($(TZ=Asia/Kolkata date '+%F %H:%M') IST)"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Nothing due today."
+            echo "Nothing to publish right now."
           fi
 
       - name: Upload to host over FTP (only if FTP secrets are set)
-        if: ${{ env.FTP_SERVER != '' }}
+        if: env.FTP_SERVER != '' && steps.commit.outputs.pushed == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -79,3 +96,25 @@ jobs:
             content/**
             _scheduled/**
             **/*.md
+
+      - name: Instant notifications for news stories
+        if: steps.commit.outputs.pushed == 'true' && steps.build.outputs.push_news != '' && steps.build.outputs.push_news != '[]'
+        env:
+          PUSH_NEWS: ${{ steps.build.outputs.push_news }}
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/push_news.py
+
+      - name: Email and notify subscribers about new posts
+        if: steps.commit.outputs.pushed == 'true' && steps.build.outputs.new_posts != '' && env.PUSH_API_URL != '' && env.PUSH_API_KEY != ''
+        env:
+          NEW_POSTS: ${{ steps.build.outputs.new_posts }}
+        run: |
+          # Wait until each new post answers on labsnmx.com (GitHub Pages takes a minute or two), then tell the backend.
+          for slug in ${NEW_POSTS//,/ }; do
+            for i in $(seq 1 40); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "https://labsnmx.com/blog/${slug}/?t=$(date +%s)")
+              [ "$code" = "200" ] && { echo "Live: ${slug}"; break; }
+              sleep 15
+            done
+          done
+          curl -sS -L -X POST "$PUSH_API_URL" --data-urlencode "action=announce" --data-urlencode "key=$PUSH_API_KEY" | head -c 600; echo

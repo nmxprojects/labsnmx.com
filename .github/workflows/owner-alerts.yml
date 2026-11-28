@@ -1,0 +1,82 @@
+# Phone alerts for you, the site owner: new enquiries, new subscribers and a 9 PM summary of the day, sent to the phones
+# whose codes are in the OWNER_PUSH secret. Your readers never get these.
+#
+# One-time setup (labsnmx.com/dashboard/ > "Sign-in, phone app and alerts" walks you through it):
+#   ADMIN_KEY    the admin key you use on the dashboard
+#   OWNER_PUSH   the code the dashboard shows under "Phone alerts" (one per line for several phones)
+# It also uses the secrets you already have for reader notifications: PUSH_API_URL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY,
+# VAPID_SUBJECT. Until ADMIN_KEY and OWNER_PUSH exist, every run just says "not set up" and stops.
+#
+# Runs every 30 minutes (GitHub sometimes starts scheduled runs a few minutes late). Public repository: free.
+# Private repository: about 1,450 of the 2,000 free Actions minutes a month; change the cron to '7 * * * *' (hourly) there.
+name: Owner alerts
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Send a test alert to every phone in OWNER_PUSH (nothing else)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-alerts
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      READY: ${{ secrets.ADMIN_KEY != '' && secrets.OWNER_PUSH != '' }}
+    steps:
+      - name: Not set up yet
+        if: env.READY != 'true'
+        run: echo "::notice::Phone alerts aren't set up. Add the ADMIN_KEY and OWNER_PUSH secrets (labsnmx.com/dashboard/ shows how)."
+
+      - uses: actions/checkout@v4
+        if: env.READY == 'true'
+        with:
+          sparse-checkout: scripts
+          sparse-checkout-cone-mode: true
+
+      - name: Remember what was already sent
+        if: env.READY == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: .owner-alerts
+          key: owner-alerts-${{ github.run_id }}
+          restore-keys: owner-alerts-
+
+      - uses: actions/setup-node@v4
+        if: env.READY == 'true'
+        with:
+          node-version: 22
+
+      - name: Install web-push
+        if: env.READY == 'true'
+        run: npm install --no-save --no-audit --no-fund web-push@3.6.7
+
+      - name: Check and send
+        if: env.READY == 'true'
+        run: node scripts/owner-alerts.mjs
+        env:
+          PUSH_API_URL: ${{ secrets.PUSH_API_URL }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          OWNER_PUSH: ${{ secrets.OWNER_PUSH }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          TEST: ${{ inputs.test }}
+
+      - name: Save the time stamp
+        if: always() && env.READY == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .owner-alerts
+          key: owner-alerts-${{ github.run_id }}
